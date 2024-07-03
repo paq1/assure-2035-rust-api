@@ -1,0 +1,36 @@
+[package]
+name = "assure-2035-rust-api"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+
+
+[target.x86_64-unknown-linux-musl.dependencies]
+openssl-sys = "0.9.66"
+
+[dependencies]
+actix-cors = "0.7.0"
+actix-web = "4"
+serde = { version = "1.0.203", features = ["derive"] }
+async-trait = "0.1.80"
+utoipa = { version = "4.2.3", features = ["actix_extras", "chrono"] }
+utoipa-swagger-ui = { version = "6.0.0", features = ["actix-web"] }
+serde_json = "1.0.118"
+futures = "0.3.30"
+dotenv = "0.15.0"
+jsonwebtoken = "9.3.0"
+chrono = { version = "0.4.38", features = ["serde"] }
+
+[dependencies.mongodb]
+version = "3.0.0"
+features = ["sync"]
+
+[dependencies.uuid]
+version = "1.9.1"
+features = [
+    "v4",                # Lets you generate random UUIDs
+    "fast-rng",          # Use a faster (but still sufficiently random) RNG
+    "macro-diagnostics", # Enable better diagnostics for compile-time UUIDs
+]

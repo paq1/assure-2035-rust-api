@@ -1,0 +1,28 @@
+version: '3'
+
+services:
+  app:
+    image: ppaquin/seed-api-actix:latest
+    ports:
+      - "8080:8080"
+    depends_on:
+      - db
+    environment:
+      - API_ADDRESS=0.0.0.0
+      - API_PORT=8000
+      - MONGO_URI=mongodb://db:27017
+    networks:
+      - seed-actix-api-network
+  db:
+    image: mongo:latest
+    #    ports:
+    #      - "27017:27017"
+    volumes:
+      - seed_api_actix_db_data:/data/db
+    networks:
+      - seed-actix-api-network
+volumes:
+  seed_api_actix_db_data:
+networks:
+  seed-actix-api-network:
+#    driver: bridge
