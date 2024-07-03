@@ -7,20 +7,20 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use crate::api::shared::token::JwtTokenService;
 use crate::api::swagger::ApiDoc;
-use api::todos::routes::read_routes::{fetch_many, fetch_one};
-use crate::api::todos::services::TodosServiceImpl;
-use crate::api::todos::todo_event_mongo_repository::TodosEventMongoRepository;
-use crate::api::todos::todos_mongo_dao::{TodosEventMongoDAO, TodosMongoDAO};
-use crate::api::todos::todos_mongo_repository::TodosMongoRepository;
-use api::todos::routes::write_routes::{insert_one, update_one};
-use crate::api::todos::routes::read_routes::fetch_events;
+use api::clients::routes::read_routes::{fetch_many, fetch_one};
+use crate::api::clients::services::ClientsServiceImpl;
+use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
+use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoDAO};
+use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
+use api::clients::routes::write_routes::{insert_one, update_one};
+use crate::api::clients::routes::read_routes::fetch_events;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::core::todos::command_handler::command_handler_impl::{CreateTodoHandler, UpdateTodoHandler};
-use crate::core::todos::data::{TodoEvents, TodoStates};
-use crate::core::todos::reducer::TodoReducer;
+use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, UpdateClientHandler};
+use crate::core::clients::data::{ClientEvents, ClientStates};
+use crate::core::clients::reducer::ClientReducer;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::todos::commands::TodoCommands;
+use crate::models::clients::commands::ClientsCommands;
 
 mod core;
 mod api;
@@ -30,37 +30,37 @@ mod models;
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
-    let store: Arc<Mutex<TodosMongoRepository>> = Arc::new(
+    let store: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
         Mutex::new(
-            TodosMongoRepository {
-                dao: TodosMongoDAO::new("seedtodomongo".to_string(), "todos_store_actix".to_string()).await
+            ClientsMongoRepository {
+                dao: ClientsMongoDAO::new("seedassure2035mongo".to_string(), "clients_store_actix".to_string()).await
             }
         )
     );
 
-    let journal: Arc<Mutex<TodosEventMongoRepository>> = Arc::new(
+    let journal: Arc<Mutex<ClientsEventMongoRepository>> = Arc::new(
         Mutex::new(
-            TodosEventMongoRepository {
-                dao: TodosEventMongoDAO::new("seedtodomongo".to_string(), "todos_journal_actix".to_string()).await
+            ClientsEventMongoRepository {
+                dao: ClientsEventMongoDAO::new("seedassure2035mongo".to_string(), "clients_journal_actix".to_string()).await
             }
         )
     );
 
-    let todos_service: Arc<Mutex<TodosServiceImpl<TodosMongoRepository, TodosEventMongoRepository>>> = Arc::new(
+    let clients_service: Arc<Mutex<ClientsServiceImpl<ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(
         Mutex::new(
-            TodosServiceImpl {
+            ClientsServiceImpl {
                 store: Arc::clone(&store),
                 journal: Arc::clone(&journal),
             }
         )
     );
 
-    let engine_todo: Arc<Mutex<Engine<TodoStates, TodoCommands, TodoEvents, TodosMongoRepository, TodosEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
+    let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
-            CommandHandler::Create(Box::new(CreateTodoHandler {})),
-            CommandHandler::Update(Box::new(UpdateTodoHandler {})),
+            CommandHandler::Create(Box::new(CreateClientHandler {})),
+            CommandHandler::Update(Box::new(UpdateClientHandler {})),
         ],
-        reducer: TodoReducer::new().underlying,
+        reducer: ClientReducer::new().underlying,
         store: Arc::clone(&store),
         journal: Arc::clone(&journal)
     }));
@@ -80,7 +80,7 @@ async fn main() -> std::io::Result<()> {
 
 
         App::new()
-            .app_data(web::Data::new(Arc::clone(&engine_todo)))
+            .app_data(web::Data::new(Arc::clone(&engine_client)))
             .app_data(web::Data::new(standard_http_error))
             .app_data(web::Data::new(jwt_token_service))
             .app_data(
@@ -90,7 +90,7 @@ async fn main() -> std::io::Result<()> {
                 web::Data::new(Arc::clone(&journal))
             )
             .app_data(
-                web::Data::new(Arc::clone(&todos_service))
+                web::Data::new(Arc::clone(&clients_service))
             )
             .wrap(cors)
             .service(SwaggerUi::new("/swagger-ui/{_:.*}").url(

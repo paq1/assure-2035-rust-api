@@ -1,24 +1,24 @@
 use async_trait::async_trait;
 
 use crate::api::shared::daos::dbos::EntityDBO;
-use crate::api::todos::todo_dbo::TodoDboState;
-use crate::api::todos::todos_mongo_dao::TodosMongoDAO;
+use crate::api::clients::clients_dbo::ClientDboState;
+use crate::api::clients::clients_mongo_dao::ClientsMongoDAO;
 use crate::core::shared::can_get_id::CanGetId;
 use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
 use crate::core::shared::data::Entity;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, WriteOnlyEntityRepo};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::query::Query;
-use crate::core::todos::data::TodoStates;
+use crate::core::clients::data::ClientStates;
 use crate::models::shared::errors::ResultErr;
 
-pub struct TodosMongoRepository {
-    pub dao: TodosMongoDAO,
+pub struct ClientsMongoRepository {
+    pub dao: ClientsMongoDAO,
 }
 
 #[async_trait]
-impl CanFetchAll<Entity<TodoStates, String>> for TodosMongoRepository {
-    async fn fetch_all(&self, query: Query) -> ResultErr<Vec<Entity<TodoStates, String>>> {
+impl CanFetchAll<Entity<ClientStates, String>> for ClientsMongoRepository {
+    async fn fetch_all(&self, query: Query) -> ResultErr<Vec<Entity<ClientStates, String>>> {
         self.dao
             .fetch_all(query)
             .await
@@ -32,29 +32,29 @@ impl CanFetchAll<Entity<TodoStates, String>> for TodosMongoRepository {
 }
 
 #[async_trait]
-impl CanFetchMany<Entity<TodoStates, String>> for TodosMongoRepository {}
+impl CanFetchMany<Entity<ClientStates, String>> for ClientsMongoRepository {}
 
 #[async_trait]
-impl ReadOnlyEntityRepo<TodoStates, String> for TodosMongoRepository {
-    async fn fetch_one(&self, id: String) -> ResultErr<Option<Entity<TodoStates, String>>> {
+impl ReadOnlyEntityRepo<ClientStates, String> for ClientsMongoRepository {
+    async fn fetch_one(&self, id: String) -> ResultErr<Option<Entity<ClientStates, String>>> {
         self.dao
             .fetch_one(id).await
             .map(|maybedata| maybedata.map(|dbo| dbo.into()))
     }
 }
 
-impl CanGetId<String> for EntityDBO<TodoDboState, String> {
+impl CanGetId<String> for EntityDBO<ClientDboState, String> {
     fn id(&self) -> &String {
         &self.entity_id
     }
 }
 
 #[async_trait]
-impl WriteOnlyEntityRepo<TodoStates, String> for TodosMongoRepository {
-    async fn insert(&self, todo: Entity<TodoStates, String>) -> ResultErr<String> {
-        let entity_dbo: EntityDBO<TodoDboState, String> = todo.into();
+impl WriteOnlyEntityRepo<ClientStates, String> for ClientsMongoRepository {
+    async fn insert(&self, client: Entity<ClientStates, String>) -> ResultErr<String> {
+        let entity_dbo: EntityDBO<ClientDboState, String> = client.into();
 
-        let sanitize_version: EntityDBO<TodoDboState, String> = EntityDBO {
+        let sanitize_version: EntityDBO<ClientDboState, String> = EntityDBO {
             version: Some(0),
             ..entity_dbo.clone()
         };
@@ -62,9 +62,9 @@ impl WriteOnlyEntityRepo<TodoStates, String> for TodosMongoRepository {
         self.dao.insert(sanitize_version).await
     }
 
-    async fn update(&self, id: String, todo: Entity<TodoStates, String>) -> ResultErr<String> {
-        let entity_dbo: EntityDBO<TodoDboState, String> = todo.into();
-        let sanitize_version: EntityDBO<TodoDboState, String> = EntityDBO {
+    async fn update(&self, id: String, client: Entity<ClientStates, String>) -> ResultErr<String> {
+        let entity_dbo: EntityDBO<ClientDboState, String> = client.into();
+        let sanitize_version: EntityDBO<ClientDboState, String> = EntityDBO {
             version: entity_dbo.clone().version.map(|old| old + 1),
             ..entity_dbo.clone()
         };

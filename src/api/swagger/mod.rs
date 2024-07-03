@@ -1,15 +1,15 @@
 use utoipa::Modify;
 use utoipa::openapi::security::{HttpAuthScheme, HttpBuilder, SecurityScheme};
 
-use crate::api::todos::routes::read_routes::__path_fetch_many;
-use crate::api::todos::routes::read_routes::__path_fetch_events;
-use crate::api::todos::routes::read_routes::__path_fetch_one;
-use crate::api::todos::routes::write_routes::__path_insert_one;
-use crate::api::todos::routes::write_routes::__path_update_one;
-use crate::models::todos::commands::{CreateTodoCommand, UpdateTodoCommand, DeleteTodoCommand};
-use crate::models::todos::views::{Todo, TokenClaims};
+use crate::api::clients::routes::read_routes::__path_fetch_events;
+use crate::api::clients::routes::read_routes::__path_fetch_many;
+use crate::api::clients::routes::read_routes::__path_fetch_one;
+use crate::api::clients::routes::write_routes::__path_insert_one;
+use crate::api::clients::routes::write_routes::__path_update_one;
+use crate::core::clients::data::ClientStates;
+use crate::models::clients::views::{ClientView, TokenClaims};
 use crate::models::shared::jsonapi::Many;
-use crate::core::todos::data::TodoStates;
+use crate::models::clients::commands::*;
 
 #[derive(utoipa::OpenApi)]
 #[openapi(
@@ -23,12 +23,11 @@ use crate::core::todos::data::TodoStates;
     components(
         schemas(
             TokenClaims,
-            Todo,
-            Many<TodoStates>,
-            Todo,
-            CreateTodoCommand,
-            UpdateTodoCommand,
-            DeleteTodoCommand
+            ClientView,
+            Many<ClientStates>,
+            CreateClientCommand,
+            UpdateClientCommand,
+            DeleteClientCommand
         )
     ),
     modifiers(&SecurityAddon)

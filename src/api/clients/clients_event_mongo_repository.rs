@@ -1,24 +1,24 @@
 use async_trait::async_trait;
 
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::api::todos::todo_dbo::TodoDboEvent;
-use crate::api::todos::todos_mongo_dao::TodosEventMongoDAO;
+use crate::api::clients::clients_dbo::ClientDboEvent;
+use crate::api::clients::clients_mongo_dao::ClientsEventMongoDAO;
 use crate::core::shared::can_get_id::CanGetId;
 use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
 use crate::core::shared::data::EntityEvent;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEventRepo, WriteOnlyEventRepo};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::query::Query;
-use crate::core::todos::data::TodoEvents;
+use crate::core::clients::data::ClientEvents;
 use crate::models::shared::errors::ResultErr;
 
-pub struct TodosEventMongoRepository {
-    pub dao: TodosEventMongoDAO,
+pub struct ClientsEventMongoRepository {
+    pub dao: ClientsEventMongoDAO,
 }
 
 #[async_trait]
-impl CanFetchAll<EntityEvent<TodoEvents, String>> for TodosEventMongoRepository {
-    async fn fetch_all(&self, query: Query) -> ResultErr<Vec<EntityEvent<TodoEvents, String>>> {
+impl CanFetchAll<EntityEvent<ClientEvents, String>> for ClientsEventMongoRepository {
+    async fn fetch_all(&self, query: Query) -> ResultErr<Vec<EntityEvent<ClientEvents, String>>> {
         self.dao
             .fetch_all(query)
             .await
@@ -32,11 +32,11 @@ impl CanFetchAll<EntityEvent<TodoEvents, String>> for TodosEventMongoRepository 
 }
 
 #[async_trait]
-impl CanFetchMany<EntityEvent<TodoEvents, String>> for TodosEventMongoRepository {}
+impl CanFetchMany<EntityEvent<ClientEvents, String>> for ClientsEventMongoRepository {}
 
 #[async_trait]
-impl ReadOnlyEventRepo<TodoEvents, String> for TodosEventMongoRepository {
-    async fn fetch_one(&self, event_id: String) -> ResultErr<Option<EntityEvent<TodoEvents, String>>> {
+impl ReadOnlyEventRepo<ClientEvents, String> for ClientsEventMongoRepository {
+    async fn fetch_one(&self, event_id: String) -> ResultErr<Option<EntityEvent<ClientEvents, String>>> {
         self.dao.fetch_one(event_id).await.map(|maybevent| {
             maybevent.map(|event_dbo| {
                 event_dbo.into()
@@ -45,18 +45,18 @@ impl ReadOnlyEventRepo<TodoEvents, String> for TodosEventMongoRepository {
     }
 }
 
-impl CanGetId<String> for EventDBO<TodoDboEvent, String> {
+impl CanGetId<String> for EventDBO<ClientDboEvent, String> {
     fn id(&self) -> &String {
         &self.event_id
     }
 }
 
 #[async_trait]
-impl WriteOnlyEventRepo<TodoEvents, String> for TodosEventMongoRepository {
-    async fn insert(&self, todo: EntityEvent<TodoEvents, String>) -> ResultErr<String> {
-        let dao: EventDBO<TodoDboEvent, String> = todo.into();
+impl WriteOnlyEventRepo<ClientEvents, String> for ClientsEventMongoRepository {
+    async fn insert(&self, client: EntityEvent<ClientEvents, String>) -> ResultErr<String> {
+        let dao: EventDBO<ClientDboEvent, String> = client.into();
 
-        let dao_sanitize_version: EventDBO<TodoDboEvent, String> = EventDBO {
+        let dao_sanitize_version: EventDBO<ClientDboEvent, String> = EventDBO {
             version: Some(0),
             ..dao.clone()
         };

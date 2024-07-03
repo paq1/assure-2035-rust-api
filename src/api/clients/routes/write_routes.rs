@@ -5,34 +5,34 @@ use futures::lock::Mutex;
 use uuid::Uuid;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::JwtTokenService;
-use crate::api::todos::todo_event_mongo_repository::TodosEventMongoRepository;
-use crate::api::todos::todos_mongo_repository::TodosMongoRepository;
+use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
+use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::core::todos::data::{TodoEvents, TodoStates};
+use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::todos::commands::{CreateTodoCommand, TodoCommands, UpdateTodoCommand};
-use crate::models::todos::views::Todo;
+use crate::models::clients::commands::{CreateClientCommand, ClientsCommands, UpdateClientCommand};
+use crate::models::clients::views::ClientView;
 
 #[utoipa::path(
-    request_body = CreateTodoCommand,
+    request_body = CreateClientCommand,
     responses(
-    (status = 201, description = "fait ca", body = Todo),
+    (status = 201, description = "fait ca", body = ClientView),
     ),
     security(
     ("bearer_auth" = [])
     )
 )]
-#[post("/todos/commands/create")]
+#[post("/clients/commands/create")]
 pub async fn insert_one(
     req: HttpRequest,
-    body: web::Json<CreateTodoCommand>,
+    body: web::Json<CreateClientCommand>,
     jwt_token_service: web::Data<JwtTokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<TodoStates, TodoCommands, TodoEvents, TodosMongoRepository, TodosEventMongoRepository>>>>
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()) {
         Ok(ctx) => {
-            let command = TodoCommands::Create(body.into_inner());
+            let command = ClientsCommands::Create(body.into_inner());
 
             let entity_id = Uuid::new_v4().to_string();
 
@@ -40,7 +40,7 @@ pub async fn insert_one(
                 .compute(command, entity_id.clone(), "create".to_string(), ctx).await;
 
             match event {
-                Ok(_res) => HttpResponse::Created().json(Todo { name: entity_id }),
+                Ok(_res) => HttpResponse::Created().json(ClientView { name: entity_id }),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -49,34 +49,34 @@ pub async fn insert_one(
 }
 
 #[utoipa::path(
-    request_body = UpdateTodoCommand,
+    request_body = UpdateClientCommand,
     responses(
-    (status = 200, description = "fait ca", body = Todo),
+    (status = 200, description = "fait ca", body = ClientView),
     ),
     security(
     ("bearer_auth" = [])
     )
 )]
-#[put("/todos/commands/update/{entity_id}")]
+#[put("/clients/commands/update/{entity_id}")]
 pub async fn update_one(
     path: web::Path<String>,
     req: HttpRequest,
-    body: web::Json<UpdateTodoCommand>,
+    body: web::Json<UpdateClientCommand>,
     jwt_token_service: web::Data<JwtTokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<TodoStates, TodoCommands, TodoEvents, TodosMongoRepository, TodosEventMongoRepository>>>>
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()) {
         Ok(ctx) => {
 
             let id = path.into_inner();
-            let command = TodoCommands::Update(body.into_inner());
+            let command = ClientsCommands::Update(body.into_inner());
 
             let event = engine.lock().await
                 .compute(command, id, "update".to_string(), ctx).await;
 
             match event {
-                Ok(_res) => HttpResponse::Ok().json(Todo { name: "xxx".to_string() }),
+                Ok(_res) => HttpResponse::Ok().json(ClientView { name: "xxx".to_string() }),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }

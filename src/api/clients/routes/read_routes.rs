@@ -4,9 +4,9 @@ use actix_web::{get, HttpResponse, Responder, web};
 use actix_web::web::Query;
 use futures::lock::Mutex;
 
-use crate::api::todos::query::TodoQuery;
-use crate::api::todos::todo_event_mongo_repository::TodosEventMongoRepository;
-use crate::api::todos::todos_mongo_repository::TodosMongoRepository;
+use crate::api::clients::query::ClientQuery;
+use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
+use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
@@ -15,17 +15,17 @@ use crate::models::shared::jsonapi::Many;
 
 #[utoipa::path(
     responses(
-        (status = 200, description = "fait ca", body = Many < TodoStates >)
+        (status = 200, description = "fait ca", body = Many < ClientStates >)
     ),
     params(
-        TodoQuery
+        ClientQuery
     )
 )]
-#[get("/todos")]
+#[get("/clients")]
 pub async fn fetch_many(
-    store: web::Data<Arc<Mutex<TodosMongoRepository>>>,
+    store: web::Data<Arc<Mutex<ClientsMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
-    query: Query<TodoQuery>,
+    query: Query<ClientQuery>,
 ) -> impl Responder {
 
     let store_lock = store.lock().await;
@@ -40,12 +40,12 @@ pub async fn fetch_many(
         (
         status = 200,
         description = "Get the current state.",
-        body = Todo
+        body = ClientStates
         )
     )
 )]
-#[get("/todos/{entity_id}")]
-pub async fn fetch_one(path: web::Path<String>, repo: web::Data<Arc<Mutex<TodosMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
+#[get("/clients/{entity_id}")]
+pub async fn fetch_one(path: web::Path<String>, repo: web::Data<Arc<Mutex<ClientsMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
     let id = path.into_inner();
 
     let repo_lock = repo.lock().await;
@@ -63,19 +63,19 @@ pub async fn fetch_one(path: web::Path<String>, repo: web::Data<Arc<Mutex<TodosM
         (
         status = 200,
         description = "Get the current state.",
-        body = Todo
+        body = ClientView
         )
     ),
     params(
-        TodoQuery
+        ClientQuery
     )
 )]
-#[get("/todos/{entity_id}/events")]
+#[get("/clients/{entity_id}/events")]
 pub async fn fetch_events(
     path: web::Path<String>,
-    journal: web::Data<Arc<Mutex<TodosEventMongoRepository>>>,
+    journal: web::Data<Arc<Mutex<ClientsEventMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
-    query: Query<TodoQuery>,
+    query: Query<ClientQuery>,
 ) -> impl Responder {
     let id = path.into_inner();
     let query_core: QueryCore = query.into();

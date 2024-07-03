@@ -5,15 +5,15 @@ use crate::core::shared::repositories::filter::Filter;
 use crate::core::shared::repositories::query::PaginationDef;
 
 #[derive(Serialize, Deserialize, IntoParams, Debug)]
-pub struct TodoQuery {
+pub struct ClientQuery {
     #[serde(rename="page[number]")]
     pub number: Option<usize>,
     #[serde(rename="page[size]")]
     pub size: Option<usize>
 }
 
-impl From<Query<TodoQuery>> for crate::core::shared::repositories::query::Query {
-    fn from(value: Query<TodoQuery>) -> Self {
+impl From<Query<ClientQuery>> for crate::core::shared::repositories::query::Query {
+    fn from(value: Query<ClientQuery>) -> Self {
         let size = value.size.unwrap_or(10);
         let number = value.number.unwrap_or(1);
 

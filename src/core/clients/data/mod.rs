@@ -3,12 +3,12 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 #[derive(Serialize, Deserialize, Clone)]
-pub enum TodoStates {
-    Todo { name: String }
+pub enum ClientStates {
+    Client { name: String }
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub enum TodoEvents {
+pub enum ClientEvents {
     Created {
         by: String,
         #[serde(with = "ts_seconds")]

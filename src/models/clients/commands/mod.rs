@@ -2,23 +2,23 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub enum TodoCommands {
-    Create (CreateTodoCommand),
-    Update (UpdateTodoCommand),
-    Delete (DeleteTodoCommand)
+pub enum ClientsCommands {
+    Create (CreateClientCommand),
+    Update (UpdateClientCommand),
+    Delete (DeleteClientCommand)
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct CreateTodoCommand {
+pub struct CreateClientCommand {
     #[schema(example = "input")]
     pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct UpdateTodoCommand {
+pub struct UpdateClientCommand {
     #[schema(example = "input")]
     pub name: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct DeleteTodoCommand;
+pub struct DeleteClientCommand;

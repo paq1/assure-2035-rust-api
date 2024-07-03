@@ -3,23 +3,23 @@ use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-pub enum TodoDboState {
-    TodoDbo { name: String }
+pub enum ClientDboState {
+    ClientDbo { name: String }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(untagged)]
-pub enum TodoDboEvent {
-    TodoCreatedDbo {
+pub enum ClientDboEvent {
+    ClientCreatedDbo {
         by: String,
         at: DateTime<Utc>,
         name: String
     },
-    Updated(TodoUpdatedDbo)
+    Updated(ClientUpdatedDbo)
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct TodoUpdatedDbo {
+pub struct ClientUpdatedDbo {
     pub by: String,
     pub at: DateTime<Utc>,
     pub name: String
