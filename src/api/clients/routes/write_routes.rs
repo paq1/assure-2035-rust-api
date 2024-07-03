@@ -37,7 +37,7 @@ pub async fn insert_one(
             let entity_id = Uuid::new_v4().to_string();
 
             let event = engine.lock().await
-                .compute(command, entity_id.clone(), "create".to_string(), ctx).await;
+                .compute(command, entity_id.clone(), "create-client".to_string(), ctx).await;
 
             match event {
                 Ok(_res) => HttpResponse::Created().json(ClientView { name: entity_id }),
@@ -73,7 +73,7 @@ pub async fn update_one(
             let command = ClientsCommands::Update(body.into_inner());
 
             let event = engine.lock().await
-                .compute(command, id, "update".to_string(), ctx).await;
+                .compute(command, id, "update-client".to_string(), ctx).await;
 
             match event {
                 Ok(_res) => HttpResponse::Ok().json(ClientView { name: "xxx".to_string() }),
