@@ -2,13 +2,13 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(untagged)]
+#[serde(tag = "type")]
 pub enum ContratDboState {
     ContratDbo { name: String }
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-#[serde(untagged)]
+#[serde(tag = "type")]
 pub enum ContratDboEvent {
     ContratCreatedDbo {
         by: String,
