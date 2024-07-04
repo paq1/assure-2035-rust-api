@@ -1,3 +1,4 @@
+use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
@@ -11,7 +12,12 @@ pub enum ClientsCommands {
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct CreateClientCommand {
     #[schema(example = "input")]
-    pub name: String,
+    #[serde(rename = "firstName")]
+    pub first_name: String,
+    #[serde(rename = "lastName")]
+    pub last_name: String,
+    #[serde(rename = "birthDate")]
+    pub birth_date: DateTime<Utc>,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]

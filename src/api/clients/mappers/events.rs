@@ -6,7 +6,14 @@ use crate::core::clients::data::{ClientEvents, UpdatedEvent};
 impl From<ClientDboEvent> for ClientEvents {
     fn from(value: ClientDboEvent) -> Self {
         match value {
-            ClientDboEvent::Created(event_dbo) => ClientEvents::Created { by: event_dbo.by, at: event_dbo.at, name: event_dbo.name },
+            ClientDboEvent::Created(event_dbo) =>
+                ClientEvents::Created {
+                    by: event_dbo.by,
+                    at: event_dbo.at,
+                    first_name: event_dbo.first_name,
+                    last_name: event_dbo.last_name,
+                    birth_date: event_dbo.birth_date,
+                },
             ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, name: event_dbo.name })
         }
     }
@@ -38,7 +45,13 @@ impl From<EntityEvent<ClientEvents, String>> for EventDBO<ClientDboEvent, String
 impl From<ClientEvents> for ClientDboEvent {
     fn from(value: ClientEvents) -> Self {
         match value {
-            ClientEvents::Created { by, at, name } => ClientDboEvent::Created( ClientCreatedDbo { by, at, name }),
+            ClientEvents::Created {
+                by,
+                at,
+                first_name,
+                last_name,
+                birth_date
+            } => ClientDboEvent::Created( ClientCreatedDbo { by, at, first_name, last_name, birth_date }),
             ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, name: updated.name })
         }
     }

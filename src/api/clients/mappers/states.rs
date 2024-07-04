@@ -1,14 +1,16 @@
 use crate::api::shared::daos::dbos::EntityDBO;
 use crate::api::clients::clients_dbo::ClientDboState;
 use crate::core::shared::data::Entity;
-use crate::core::clients::data::ClientStates;
+use crate::core::clients::data::{ClientData, ClientStates};
 
 impl From<ClientDboState> for ClientStates {
     fn from(value: ClientDboState) -> Self {
         match value {
-            ClientDboState::ClientDbo { name } => ClientStates::Client {
-                name: name.clone()
-            }
+            ClientDboState::ClientDbo { first_name, last_name, birth_date } => ClientStates::Client(ClientData {
+                first_name,
+                last_name,
+                birth_date,
+            })
         }
     }
 }
@@ -28,7 +30,13 @@ impl From<Entity<ClientStates, String>> for EntityDBO<ClientDboState, String> {
 impl From<ClientStates> for ClientDboState {
     fn from(value: ClientStates) -> Self {
         match value {
-            ClientStates::Client { name } => ClientDboState::ClientDbo { name: name.clone() }
+            ClientStates::Client(data) => {
+                ClientDboState::ClientDbo {
+                    first_name: data.first_name,
+                    last_name: data.last_name,
+                    birth_date: data.birth_date,
+                }
+            }
         }
     }
 }
