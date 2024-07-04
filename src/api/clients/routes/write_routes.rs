@@ -3,15 +3,16 @@ use std::sync::Arc;
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use futures::lock::Mutex;
 use uuid::Uuid;
-use crate::api::shared::token::authenticated::authenticated;
-use crate::api::shared::token::JwtTokenService;
+
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
-use crate::core::shared::event_sourcing::engine::Engine;
+use crate::api::shared::token::authenticated::authenticated;
+use crate::api::shared::token::JwtTokenService;
 use crate::core::clients::data::{ClientEvents, ClientStates};
-use crate::models::shared::errors::StandardHttpError;
-use crate::models::clients::commands::{CreateClientCommand, ClientsCommands, UpdateClientCommand};
+use crate::core::shared::event_sourcing::engine::Engine;
+use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
 use crate::models::clients::views::ClientView;
+use crate::models::shared::errors::StandardHttpError;
 
 #[utoipa::path(
     request_body = CreateClientCommand,
@@ -23,7 +24,7 @@ use crate::models::clients::views::ClientView;
     )
 )]
 #[post("/clients/commands/create")]
-pub async fn insert_one(
+pub async fn insert_one_client(
     req: HttpRequest,
     body: web::Json<CreateClientCommand>,
     jwt_token_service: web::Data<JwtTokenService>,
@@ -58,7 +59,7 @@ pub async fn insert_one(
     )
 )]
 #[put("/clients/commands/update/{entity_id}")]
-pub async fn update_one(
+pub async fn update_one_client(
     path: web::Path<String>,
     req: HttpRequest,
     body: web::Json<UpdateClientCommand>,

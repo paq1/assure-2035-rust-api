@@ -7,13 +7,13 @@ use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use crate::api::shared::token::JwtTokenService;
 use crate::api::swagger::ApiDoc;
-use api::clients::routes::read_routes::{fetch_many, fetch_one};
+use api::clients::routes::read_routes::{fetch_many_client, fetch_one_client};
 use crate::api::clients::services::ClientsServiceImpl;
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoDAO};
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
-use api::clients::routes::write_routes::{insert_one, update_one};
-use crate::api::clients::routes::read_routes::fetch_events;
+use api::clients::routes::write_routes::{insert_one_client, update_one_client};
+use crate::api::clients::routes::read_routes::fetch_events_client;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, UpdateClientHandler};
@@ -30,18 +30,20 @@ mod models;
 async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
-    let store: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
+    let dbname = "seedassure2035mongo";
+
+    let store_clients: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
         Mutex::new(
             ClientsMongoRepository {
-                dao: ClientsMongoDAO::new("seedassure2035mongo".to_string(), "clients_store_actix".to_string()).await
+                dao: ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await
             }
         )
     );
 
-    let journal: Arc<Mutex<ClientsEventMongoRepository>> = Arc::new(
+    let journal_clients: Arc<Mutex<ClientsEventMongoRepository>> = Arc::new(
         Mutex::new(
             ClientsEventMongoRepository {
-                dao: ClientsEventMongoDAO::new("seedassure2035mongo".to_string(), "clients_journal_actix".to_string()).await
+                dao: ClientsEventMongoDAO::new(dbname.to_string(), "clients_journal_actix".to_string()).await
             }
         )
     );
@@ -49,8 +51,8 @@ async fn main() -> std::io::Result<()> {
     let clients_service: Arc<Mutex<ClientsServiceImpl<ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(
         Mutex::new(
             ClientsServiceImpl {
-                store: Arc::clone(&store),
-                journal: Arc::clone(&journal),
+                store: Arc::clone(&store_clients),
+                journal: Arc::clone(&journal_clients),
             }
         )
     );
@@ -61,8 +63,8 @@ async fn main() -> std::io::Result<()> {
             CommandHandler::Update(Box::new(UpdateClientHandler {})),
         ],
         reducer: ClientReducer::new().underlying,
-        store: Arc::clone(&store),
-        journal: Arc::clone(&journal)
+        store: Arc::clone(&store_clients),
+        journal: Arc::clone(&journal_clients)
     }));
 
     let openapi = ApiDoc::openapi();
@@ -84,10 +86,10 @@ async fn main() -> std::io::Result<()> {
             .app_data(web::Data::new(standard_http_error))
             .app_data(web::Data::new(jwt_token_service))
             .app_data(
-                web::Data::new(Arc::clone(&store))
+                web::Data::new(Arc::clone(&store_clients))
             )
             .app_data(
-                web::Data::new(Arc::clone(&journal))
+                web::Data::new(Arc::clone(&journal_clients))
             )
             .app_data(
                 web::Data::new(Arc::clone(&clients_service))
@@ -97,11 +99,11 @@ async fn main() -> std::io::Result<()> {
                 "/api-docs/openapi.json",
                 openapi.clone(),
             ))
-            .service(fetch_one)
-            .service(fetch_many)
-            .service(fetch_events)
-            .service(insert_one)
-            .service(update_one)
+            .service(fetch_one_client)
+            .service(fetch_many_client)
+            .service(fetch_events_client)
+            .service(insert_one_client)
+            .service(update_one_client)
     })
         .workers(2)
         .bind((api_address, api_port))?

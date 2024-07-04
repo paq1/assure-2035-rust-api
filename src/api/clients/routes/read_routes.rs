@@ -22,7 +22,7 @@ use crate::models::shared::jsonapi::Many;
     )
 )]
 #[get("/clients")]
-pub async fn fetch_many(
+pub async fn fetch_many_client(
     store: web::Data<Arc<Mutex<ClientsMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ClientQuery>,
@@ -45,7 +45,7 @@ pub async fn fetch_many(
     )
 )]
 #[get("/clients/{entity_id}")]
-pub async fn fetch_one(path: web::Path<String>, repo: web::Data<Arc<Mutex<ClientsMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
+pub async fn fetch_one_client(path: web::Path<String>, repo: web::Data<Arc<Mutex<ClientsMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
     let id = path.into_inner();
 
     let repo_lock = repo.lock().await;
@@ -71,7 +71,7 @@ pub async fn fetch_one(path: web::Path<String>, repo: web::Data<Arc<Mutex<Client
     )
 )]
 #[get("/clients/{entity_id}/events")]
-pub async fn fetch_events(
+pub async fn fetch_events_client(
     path: web::Path<String>,
     journal: web::Data<Arc<Mutex<ClientsEventMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
