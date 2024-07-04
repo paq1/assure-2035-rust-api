@@ -6,9 +6,17 @@ use crate::api::clients::routes::read_routes::__path_fetch_many_client;
 use crate::api::clients::routes::read_routes::__path_fetch_one_client;
 use crate::api::clients::routes::write_routes::__path_insert_one_client;
 use crate::api::clients::routes::write_routes::__path_update_one_client;
+use crate::api::contrats::routes::read_routes::__path_fetch_events_contrat;
+use crate::api::contrats::routes::read_routes::__path_fetch_many_contrat;
+use crate::api::contrats::routes::read_routes::__path_fetch_one_contrat;
+use crate::api::contrats::routes::write_routes::__path_insert_one_contrat;
+use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
 use crate::core::clients::data::ClientStates;
+use crate::core::contrats::data::ContratStates;
 use crate::models::clients::commands::*;
 use crate::models::clients::views::ClientView;
+use crate::models::contrats::commands::*;
+use crate::models::contrats::views::ContratView;
 use crate::models::shared::jsonapi::Many;
 
 #[derive(utoipa::OpenApi)]
@@ -18,18 +26,28 @@ use crate::models::shared::jsonapi::Many;
         fetch_one_client,
         insert_one_client,
         update_one_client,
-        fetch_events_client
+        fetch_events_client,
+        fetch_many_contrat,
+        fetch_one_contrat,
+        insert_one_contrat,
+        update_one_contrat,
+        fetch_events_contrat
     ),
     components(
         schemas(
             ClientView,
-            Many<ClientStates>,
+            Many < ClientStates >,
             CreateClientCommand,
             UpdateClientCommand,
-            DeleteClientCommand
+            DeleteClientCommand,
+            ContratView,
+            Many < ContratStates >,
+            CreateContratCommand,
+            UpdateContratCommand,
+            DeleteContratCommand
         )
     ),
-    modifiers(&SecurityAddon)
+    modifiers(& SecurityAddon)
 )]
 pub struct ApiDoc;
 
@@ -44,7 +62,7 @@ impl Modify for SecurityAddon {
                     .scheme(HttpAuthScheme::Bearer)
                     .bearer_format("JWT")
                     .build()
-            )
+            ),
         )
     }
 }

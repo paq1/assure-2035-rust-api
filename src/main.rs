@@ -14,13 +14,23 @@ use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoD
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use api::clients::routes::write_routes::{insert_one_client, update_one_client};
 use crate::api::clients::routes::read_routes::fetch_events_client;
+use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
+use crate::api::contrats::contrats_mongo_dao::{ContratsEventMongoDAO, ContratsMongoDAO};
+use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
+use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contrat};
+use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
+use crate::api::contrats::services::ContratsServiceImpl;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, UpdateClientHandler};
 use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::core::clients::reducer::ClientReducer;
+use crate::core::contrats::data::{ContratEvents, ContratStates};
+use crate::core::contrats::reducer::ContratReducer;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::clients::commands::ClientsCommands;
+use crate::models::contrats::commands::ContratsCommands;
+use crate::core::contrats::command_handler::command_handler_impl::{CreateContratHandler, UpdateContratHandler};
 
 mod core;
 mod api;
@@ -32,6 +42,7 @@ async fn main() -> std::io::Result<()> {
 
     let dbname = "seedassure2035mongo";
 
+    // client ontology
     let store_clients: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
         Mutex::new(
             ClientsMongoRepository {
@@ -39,7 +50,6 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-
     let journal_clients: Arc<Mutex<ClientsEventMongoRepository>> = Arc::new(
         Mutex::new(
             ClientsEventMongoRepository {
@@ -47,7 +57,6 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-
     let clients_service: Arc<Mutex<ClientsServiceImpl<ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(
         Mutex::new(
             ClientsServiceImpl {
@@ -56,7 +65,6 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-
     let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
@@ -65,6 +73,39 @@ async fn main() -> std::io::Result<()> {
         reducer: ClientReducer::new().underlying,
         store: Arc::clone(&store_clients),
         journal: Arc::clone(&journal_clients)
+    }));
+
+    // contrat ontology
+    let store_contrats: Arc<Mutex<ContratsMongoRepository>> = Arc::new(
+        Mutex::new(
+            ContratsMongoRepository {
+                dao: ContratsMongoDAO::new(dbname.to_string(), "contrats_store_actix".to_string()).await
+            }
+        )
+    );
+    let journal_contrats: Arc<Mutex<ContratsEventMongoRepository>> = Arc::new(
+        Mutex::new(
+            ContratsEventMongoRepository {
+                dao: ContratsEventMongoDAO::new(dbname.to_string(), "contrats_journal_actix".to_string()).await
+            }
+        )
+    );
+    let contrats_service: Arc<Mutex<ContratsServiceImpl<ContratsMongoRepository, ContratsEventMongoRepository>>> = Arc::new(
+        Mutex::new(
+            ContratsServiceImpl {
+                store: Arc::clone(&store_contrats),
+                journal: Arc::clone(&journal_contrats),
+            }
+        )
+    );
+    let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsMongoRepository, ContratsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
+        handlers: vec![
+            CommandHandler::Create(Box::new(CreateContratHandler {})),
+            CommandHandler::Update(Box::new(UpdateContratHandler {})),
+        ],
+        reducer: ContratReducer::new().underlying,
+        store: Arc::clone(&store_contrats),
+        journal: Arc::clone(&journal_contrats)
     }));
 
     let openapi = ApiDoc::openapi();
@@ -82,9 +123,16 @@ async fn main() -> std::io::Result<()> {
 
 
         App::new()
-            .app_data(web::Data::new(Arc::clone(&engine_client)))
+            .wrap(cors)
+            .service(SwaggerUi::new("/swagger-ui/{_:.*}").url(
+                "/api-docs/openapi.json",
+                openapi.clone(),
+            ))
+
             .app_data(web::Data::new(standard_http_error))
             .app_data(web::Data::new(jwt_token_service))
+            // clients services
+            .app_data(web::Data::new(Arc::clone(&engine_client)))
             .app_data(
                 web::Data::new(Arc::clone(&store_clients))
             )
@@ -94,16 +142,29 @@ async fn main() -> std::io::Result<()> {
             .app_data(
                 web::Data::new(Arc::clone(&clients_service))
             )
-            .wrap(cors)
-            .service(SwaggerUi::new("/swagger-ui/{_:.*}").url(
-                "/api-docs/openapi.json",
-                openapi.clone(),
-            ))
+            // contrats services
+            .app_data(web::Data::new(Arc::clone(&engine_contrat)))
+            .app_data(
+                web::Data::new(Arc::clone(&store_contrats))
+            )
+            .app_data(
+                web::Data::new(Arc::clone(&journal_contrats))
+            )
+            .app_data(
+                web::Data::new(Arc::clone(&contrats_service))
+            )
+            // client routes
             .service(fetch_one_client)
             .service(fetch_many_client)
             .service(fetch_events_client)
             .service(insert_one_client)
             .service(update_one_client)
+            // contrats routes
+            .service(fetch_one_contrat)
+            .service(fetch_many_contrat)
+            .service(fetch_events_contrat)
+            .service(insert_one_contrat)
+            .service(update_one_contrat)
     })
         .workers(2)
         .bind((api_address, api_port))?
