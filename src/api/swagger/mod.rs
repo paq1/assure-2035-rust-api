@@ -7,9 +7,9 @@ use crate::api::clients::routes::read_routes::__path_fetch_one;
 use crate::api::clients::routes::write_routes::__path_insert_one;
 use crate::api::clients::routes::write_routes::__path_update_one;
 use crate::core::clients::data::ClientStates;
-use crate::models::clients::views::{ClientView, TokenClaims};
-use crate::models::shared::jsonapi::Many;
 use crate::models::clients::commands::*;
+use crate::models::clients::views::ClientView;
+use crate::models::shared::jsonapi::Many;
 
 #[derive(utoipa::OpenApi)]
 #[openapi(
@@ -22,7 +22,6 @@ use crate::models::clients::commands::*;
     ),
     components(
         schemas(
-            TokenClaims,
             ClientView,
             Many<ClientStates>,
             CreateClientCommand,

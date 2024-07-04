@@ -6,9 +6,3 @@ pub struct ClientView {
     #[schema(example = "Roger")]
     pub name: String,
 }
-
-
-#[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct TokenClaims {
-    pub id: i32
-}
