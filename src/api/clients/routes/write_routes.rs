@@ -15,7 +15,7 @@ use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
 use crate::models::clients::views::ClientViewEvent;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::shared::jsonapi::from_outputhandle_to_view;
+use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 
 #[utoipa::path(
     request_body = CreateClientCommand,
@@ -45,7 +45,11 @@ pub async fn insert_one_client(
                 .compute(command, entity_id.clone(), "create-client".to_string(), ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Created().json(from_outputhandle_to_view::<ClientEvents, ClientViewEvent>(own_url.url.clone(), event, "clients".to_string())),
+                Ok((event, _state)) => HttpResponse::Created().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                    own_url.url.clone(),
+                    event,
+                    "clients".to_string()
+                )),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -81,7 +85,7 @@ pub async fn update_one_client(
                 .compute(command, id, "update-client".to_string(), ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Ok().json(from_outputhandle_to_view::<ClientEvents, ClientViewEvent>(own_url.url.clone(), event, "clients".to_string())),
+                Ok((event, _state)) => HttpResponse::Ok().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(own_url.url.clone(), event, "clients".to_string())),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
