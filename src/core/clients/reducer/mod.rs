@@ -28,8 +28,8 @@ impl ClientReducer {
                         }
                         None => {
                             match event {
-                                Created { by: _, at: _, first_name, last_name, birth_date } =>
-                                    Some(ClientStates::Client(ClientData { first_name, last_name, birth_date })),
+                                Created (data) =>
+                                    Some(ClientStates::Client(ClientData { first_name: data.first_name, last_name: data.last_name, birth_date: data.birth_date })),
                                 _ => None
                             }
                         }

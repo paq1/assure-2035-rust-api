@@ -1,19 +1,19 @@
 use crate::api::shared::daos::dbos::EventDBO;
 use crate::api::clients::clients_dbo::{ClientCreatedDbo, ClientDboEvent, ClientUpdatedDbo};
 use crate::core::shared::data::EntityEvent;
-use crate::core::clients::data::{ClientEvents, UpdatedEvent};
+use crate::core::clients::data::{ClientEvents, CreatedEvent, UpdatedEvent};
 
 impl From<ClientDboEvent> for ClientEvents {
     fn from(value: ClientDboEvent) -> Self {
         match value {
             ClientDboEvent::Created(event_dbo) =>
-                ClientEvents::Created {
+                ClientEvents::Created(CreatedEvent {
                     by: event_dbo.by,
                     at: event_dbo.at,
                     first_name: event_dbo.first_name,
                     last_name: event_dbo.last_name,
                     birth_date: event_dbo.birth_date,
-                },
+                }),
             ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, name: event_dbo.name })
         }
     }
@@ -45,13 +45,15 @@ impl From<EntityEvent<ClientEvents, String>> for EventDBO<ClientDboEvent, String
 impl From<ClientEvents> for ClientDboEvent {
     fn from(value: ClientEvents) -> Self {
         match value {
-            ClientEvents::Created {
-                by,
-                at,
-                first_name,
-                last_name,
-                birth_date
-            } => ClientDboEvent::Created( ClientCreatedDbo { by, at, first_name, last_name, birth_date }),
+            ClientEvents::Created(
+                CreatedEvent {
+                    by,
+                    at,
+                    first_name,
+                    last_name,
+                    birth_date
+                }
+            ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, first_name, last_name, birth_date }),
             ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, name: updated.name })
         }
     }

@@ -2,7 +2,7 @@ use async_trait::async_trait;
 
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUpdate};
-use crate::core::clients::data::{ClientEvents, ClientStates, UpdatedEvent};
+use crate::core::clients::data::{ClientEvents, ClientStates, CreatedEvent, UpdatedEvent};
 use crate::models::shared::errors::{Error, ResultErr};
 use crate::models::clients::commands::ClientsCommands;
 
@@ -17,13 +17,13 @@ impl CommandHandlerCreate<ClientStates, ClientsCommands, ClientEvents> for Creat
     async fn on_command(&self, _id: String, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
         match command {
             ClientsCommands::Create(c) => Ok(
-                ClientEvents::Created {
+                ClientEvents::Created(CreatedEvent {
                     by: context.subject,
                     at: context.now,
                     first_name: c.first_name,
                     last_name: c.last_name,
                     birth_date: c.birth_date,
-                }
+                })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }

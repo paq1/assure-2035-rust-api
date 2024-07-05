@@ -24,15 +24,19 @@ impl ClientStates {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ClientEvents {
-    Created {
-        by: String,
-        #[serde(with = "ts_seconds")]
-        at: DateTime<Utc>,
-        first_name: String,
-        last_name: String,
-        birth_date: DateTime<Utc>,
-    },
+    Created(CreatedEvent),
     Updated(UpdatedEvent),
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+#[serde(tag = "typecustom", rename = "pouet")]
+pub struct CreatedEvent {
+    pub by: String,
+    #[serde(with = "ts_seconds")]
+    pub at: DateTime<Utc>,
+    pub first_name: String,
+    pub last_name: String,
+    pub birth_date: DateTime<Utc>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
