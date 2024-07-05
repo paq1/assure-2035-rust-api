@@ -5,6 +5,8 @@ use serde::{Deserialize, Serialize};
 #[serde(tag = "type")]
 pub enum ClientDboState {
     ClientDbo {
+        #[serde(rename = "_kind")]
+        kind: String,
         #[serde(rename = "firstName")]
         first_name: String,
         #[serde(rename = "lastName")]

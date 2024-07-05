@@ -41,3 +41,6 @@ pub trait CanBeView<DATAVIEW> {
     fn to_view(&self) -> DATAVIEW;
 }
 
+pub trait CanGetTypee {
+    fn get_type(&self) -> String;
+}

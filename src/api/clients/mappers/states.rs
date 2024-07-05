@@ -1,15 +1,18 @@
 use crate::api::clients::clients_dbo::ClientDboState;
 use crate::api::shared::daos::dbos::EntityDBO;
-use crate::core::clients::data::ClientStates;
+use crate::core::clients::data::{ClientActif, ClientStates};
 use crate::core::shared::data::Entity;
 use crate::models::clients::shared::ClientData;
 impl From<ClientDboState> for ClientStates {
     fn from(value: ClientDboState) -> Self {
         match value {
-            ClientDboState::ClientDbo { first_name, last_name, birth_date } => ClientStates::Client(ClientData {
-                first_name,
-                last_name,
-                birth_date,
+            ClientDboState::ClientDbo { kind, first_name, last_name, birth_date } => ClientStates::Client(ClientActif {
+                kind,
+                data: ClientData {
+                    first_name,
+                    last_name,
+                    birth_date,
+                },
             })
         }
     }
@@ -32,9 +35,10 @@ impl From<ClientStates> for ClientDboState {
         match value {
             ClientStates::Client(data) => {
                 ClientDboState::ClientDbo {
-                    first_name: data.first_name,
-                    last_name: data.last_name,
-                    birth_date: data.birth_date,
+                    kind: data.kind,
+                    first_name: data.data.first_name,
+                    last_name: data.data.last_name,
+                    birth_date: data.data.birth_date,
                 }
             }
         }

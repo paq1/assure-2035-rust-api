@@ -3,19 +3,35 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 use crate::models::clients::shared::ClientData;
 use crate::models::clients::views::{ClientUpdatedView, ClientView, ClientViewActif, ClientViewEvent, ClientViewState};
-use crate::models::shared::jsonapi::CanBeView;
+use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "statusType")]
 pub enum ClientStates {
     #[serde(rename = "actif")]
-    Client (ClientData)
+    Client (ClientActif)
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ClientActif {
+    #[serde(rename = "_kind")]
+    pub kind: String,
+    #[serde(flatten)]
+    pub data: ClientData
 }
 
 impl ClientStates {
     pub fn data(&self) -> ClientData {
         match self {
-            ClientStates::Client(client_data) => client_data.clone()
+            ClientStates::Client(client_data) => client_data.data.clone()
+        }
+    }
+}
+
+impl CanGetTypee for ClientStates {
+    fn get_type(&self) -> String {
+        match self {
+            ClientStates::Client(_c) => "urn:example:insurance:client".to_string()
         }
     }
 }
@@ -24,9 +40,9 @@ impl CanBeView<ClientViewState> for ClientStates {
     fn to_view(&self) -> ClientViewState {
         match self {
             ClientStates::Client(d) => ClientViewState::Client (ClientViewActif {
-                first_name: d.first_name.clone(),
-                last_name: d.last_name.clone(),
-                birth_date: d.birth_date,
+                first_name: d.data.first_name.clone(),
+                last_name: d.data.last_name.clone(),
+                birth_date: d.data.birth_date,
             })
         }
     }

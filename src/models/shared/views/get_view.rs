@@ -1,7 +1,7 @@
 use serde::Serialize;
 
 use crate::core::shared::data::Entity;
-use crate::models::shared::jsonapi::CanBeView;
+use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 use crate::models::shared::views::DataWrapperView;
 use crate::models::shared::views::entities::{EntityView, LinksEntity};
 
@@ -12,13 +12,13 @@ pub fn from_states_to_view<DATA, VIEW>(
 ) -> DataWrapperView<EntityView<VIEW>>
 where
     VIEW: Serialize + Clone,
-    DATA: Serialize + Clone + CanBeView<VIEW>,
+    DATA: Serialize + Clone + CanBeView<VIEW> + CanGetTypee,
 {
     let entity_id = entity.entity_id.as_str();
 
     DataWrapperView {
         data: EntityView {
-            r#type: format!("org:example:insurance:{ontology}"),
+            r#type: entity.data.get_type(),
             id: entity_id.to_string(),
             attributes: entity.data.to_view(),
             links: LinksEntity {
