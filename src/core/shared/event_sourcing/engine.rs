@@ -32,7 +32,7 @@ where
     STORE: WriteOnlyEntityRepo<STATE, String> + ReadOnlyEntityRepo<STATE, String>,
     JOURNAL: WriteOnlyEventRepo<EVENT, String>,
 {
-    pub async fn compute(&self, command: COMMAND, entity_id: String, name: String, context: Context) -> ResultErr<(EVENT, STATE)> {
+    pub async fn compute(&self, command: COMMAND, entity_id: String, name: String, context: Context) -> ResultErr<(EntityEvent<EVENT, String>, Entity<STATE, String>)> {
 
         let command_handler_found = self.handlers
             .iter().find(|handler| {
@@ -66,9 +66,9 @@ where
         };
 
         if maybe_entity.is_none() {
-            self.store.lock().await.insert(new_entity).await?;
+            self.store.lock().await.insert(new_entity.clone()).await?;
         } else {
-            self.store.lock().await.update(entity_id.clone(), new_entity).await?;
+            self.store.lock().await.update(entity_id.clone(), new_entity.clone()).await?;
         }
 
         let event_entity = EntityEvent {
@@ -76,8 +76,8 @@ where
             event_id:  Self::generate_id(),
             data: event.clone()
         };
-        self.journal.lock().await.insert(event_entity).await?;
-        Ok((event, new_state))
+        self.journal.lock().await.insert(event_entity.clone()).await?;
+        Ok((event_entity, new_entity))
     }
 
     fn generate_id() -> String {

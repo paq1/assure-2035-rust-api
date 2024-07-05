@@ -2,17 +2,21 @@ use std::sync::Arc;
 
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use futures::lock::Mutex;
+use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
+use crate::api::shared::OwnUrl;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::clients::data::{ClientEvents, ClientStates};
+use crate::core::shared::data::{Entity, EntityEvent};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
 use crate::models::shared::errors::StandardHttpError;
+use crate::models::shared::jsonapi::from_t_to_view;
 
 #[utoipa::path(
     request_body = CreateClientCommand,
@@ -29,7 +33,8 @@ pub async fn insert_one_client(
     body: web::Json<CreateClientCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>,
+    own_url: web::Data<OwnUrl>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -41,7 +46,7 @@ pub async fn insert_one_client(
                 .compute(command, entity_id.clone(), "create-client".to_string(), ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Created().json(event),
+                Ok((event, _state)) => HttpResponse::Created().json(from_t_to_view(own_url.url.clone(), event, "clients".to_string())),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -65,11 +70,11 @@ pub async fn update_one_client(
     body: web::Json<UpdateClientCommand>,
     jwt_token_service: web::Data<JwtHMACTokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>,
+    own_url: web::Data<OwnUrl>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
-
             let id = path.into_inner();
             let command = ClientsCommands::Update(body.into_inner());
 
@@ -77,11 +82,10 @@ pub async fn update_one_client(
                 .compute(command, id, "update-client".to_string(), ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Created().json(event),
+                Ok((event, _state)) => HttpResponse::Ok().json(from_t_to_view(own_url.url.clone(), event, "clients".to_string())),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
         Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
     }
 }
-

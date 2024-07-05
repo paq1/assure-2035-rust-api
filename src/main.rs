@@ -22,6 +22,7 @@ use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many
 use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
 use crate::api::shared::cache::CacheAsync;
+use crate::api::shared::OwnUrl;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
@@ -48,37 +49,6 @@ async fn main() -> std::io::Result<()> {
 
     let cache = Arc::new(CacheAsync { underlying: Cache::new(10_000) });
     let http_client = Arc::new(reqwest::Client::new());
-
-
-    // todo delete exemple
-    // let locked_cache = Arc::clone(&cache);
-    // let result_compute = match Arc::clone(&cache)
-    //     .get("1234".to_string()).await {
-    //     Some(r) => {
-    //         r
-    //     }
-    //     None => {
-    //         println!("compute result");
-    //         let value = "onfsdodnfosndklnfnsldnflnsdflknls".to_string();
-    //         Arc::clone(&cache).clone().upsert("1234".to_string(), value.clone()).await;
-    //         value
-    //     }
-    // };
-    // let result_compute2 = match Arc::clone(&cache).clone()
-    //     .get("1234".to_string()).await {
-    //     Some(result) => {
-    //         result
-    //     }
-    //     None => {
-    //         println!("compute result");
-    //         let value = "onfsdodnfosndklnfnsldnflnsdflknls".to_string();
-    //         Arc::clone(&cache).clone().upsert("1234".to_string(), value.clone()).await;
-    //         value
-    //     }
-    // };
-    //
-    // println!("result : {result_compute} et {result_compute2}");
-
 
     // client ontology
     let store_clients: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
@@ -150,6 +120,8 @@ async fn main() -> std::io::Result<()> {
     let api_address = std::env::var("API_ADDRESS").unwrap();
     let api_port = std::env::var("API_PORT").unwrap().parse::<u16>().unwrap();
 
+    let own_url = OwnUrl::new(api_address.clone());
+
     HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
@@ -168,6 +140,7 @@ async fn main() -> std::io::Result<()> {
                 openapi.clone(),
             ))
             .app_data(web::Data::new(jwt_rsa_token_service))
+            .app_data(web::Data::new(own_url.clone()))
             .app_data(web::Data::new(standard_http_error))
             .app_data(web::Data::new(jwt_token_service))
             // clients services
