@@ -12,7 +12,7 @@ use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::shared::jsonapi::Many;
+use crate::models::shared::jsonapi::{CanBeView, Many};
 use crate::models::shared::views::{DataWrapperView, EntityView, LinksEntity};
 
 #[utoipa::path(
@@ -66,7 +66,7 @@ pub async fn fetch_one_client(
                 data: EntityView {
                     r#type: "org:example:insurance:client".to_string(),
                     id: entity_id.to_string(),
-                    attributes: entity.data.clone(),
+                    attributes: entity.data.to_view(),
                     links: LinksEntity {
                         events: format!("{url}/clients/{entity_id}/events"),
                         self_entity: format!("{url}/clients/{entity_id}"),

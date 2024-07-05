@@ -2,11 +2,13 @@ use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 use crate::models::clients::shared::ClientData;
-use crate::models::clients::views::{ClientUpdatedView, ClientView, ClientViewEvent};
+use crate::models::clients::views::{ClientUpdatedView, ClientView, ClientViewActif, ClientViewEvent, ClientViewState};
 use crate::models::shared::jsonapi::CanBeView;
 
 #[derive(Serialize, Deserialize, Clone)]
+#[serde(tag = "statusType")]
 pub enum ClientStates {
+    #[serde(rename = "actif")]
     Client (ClientData)
 }
 
@@ -18,6 +20,17 @@ impl ClientStates {
     }
 }
 
+impl CanBeView<ClientViewState> for ClientStates {
+    fn to_view(&self) -> ClientViewState {
+        match self {
+            ClientStates::Client(d) => ClientViewState::Client (ClientViewActif {
+                first_name: d.first_name.clone(),
+                last_name: d.last_name.clone(),
+                birth_date: d.birth_date,
+            })
+        }
+    }
+}
 
 impl CanBeView<ClientViewEvent> for ClientEvents {
     fn to_view(&self) -> ClientViewEvent {
