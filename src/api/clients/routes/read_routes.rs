@@ -7,12 +7,13 @@ use futures::lock::Mutex;
 use crate::api::clients::query::ClientQuery;
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
+use crate::api::shared::OwnUrl;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::Many;
-use crate::models::shared::views::{DataWrapperView, EntityView};
+use crate::models::shared::views::{DataWrapperView, EntityView, LinksEntity};
 
 #[utoipa::path(
     responses(
@@ -46,20 +47,30 @@ pub async fn fetch_many_client(
     )
 )]
 #[get("/clients/{entity_id}")]
-pub async fn fetch_one_client(path: web::Path<String>, repo: web::Data<Arc<Mutex<ClientsMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
+pub async fn fetch_one_client(
+    path: web::Path<String>,
+    repo: web::Data<Arc<Mutex<ClientsMongoRepository>>>,
+    http_error: web::Data<StandardHttpError>,
+    own_url: web::Data<OwnUrl>,
+) -> impl Responder {
     let id = path.into_inner();
 
     let repo_lock = repo.lock().await;
 
 
     match repo_lock.fetch_one(id).await {
-        Ok(Some(res)) => {
-
+        Ok(Some(entity)) => {
+            let entity_id = entity.entity_id.as_str();
+            let url = own_url.url.as_str();
             let view = DataWrapperView {
                 data: EntityView {
                     r#type: "org:example:insurance:client".to_string(),
-                    id: res.entity_id.clone(),
-                    attributes: res.data.clone(),
+                    id: entity_id.to_string(),
+                    attributes: entity.data.clone(),
+                    links: LinksEntity {
+                        events: format!("{url}/clients/{entity_id}/events"),
+                        self_entity: format!("{url}/clients/{entity_id}"),
+                    }
                 }
             };
 

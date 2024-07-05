@@ -6,7 +6,7 @@ pub struct DataWrapperView<T>
 where
     T: Serialize + Clone,
 {
-    pub data: T
+    pub data: T,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
@@ -17,4 +17,12 @@ where
     pub r#type: String,
     pub id: String,
     pub attributes: T,
+    pub links: LinksEntity,
+}
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct LinksEntity {
+    pub events: String,
+    #[serde(rename = "self")]
+    pub self_entity: String,
 }
