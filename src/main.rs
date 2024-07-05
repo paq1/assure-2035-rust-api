@@ -5,7 +5,7 @@ use actix_web::{App, HttpServer, web};
 use futures::lock::Mutex;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
-use crate::api::shared::token::JwtTokenService;
+use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::swagger::ApiDoc;
 use api::clients::routes::read_routes::{fetch_many_client, fetch_one_client};
 use crate::api::clients::services::ClientsServiceImpl;
@@ -119,7 +119,7 @@ async fn main() -> std::io::Result<()> {
             .supports_credentials();
 
         let standard_http_error = StandardHttpError::new();
-        let jwt_token_service = JwtTokenService::new("test".to_string());
+        let jwt_token_service = JwtHMACTokenService::new("test".to_string());
 
 
         App::new()

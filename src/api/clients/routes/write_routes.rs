@@ -7,7 +7,7 @@ use uuid::Uuid;
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::shared::token::authenticated::authenticated;
-use crate::api::shared::token::JwtTokenService;
+use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
@@ -27,11 +27,11 @@ use crate::models::shared::errors::StandardHttpError;
 pub async fn insert_one_client(
     req: HttpRequest,
     body: web::Json<CreateClientCommand>,
-    jwt_token_service: web::Data<JwtTokenService>,
+    jwt_token_service: web::Data<JwtHMACTokenService>,
     http_error: web::Data<StandardHttpError>,
     engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>
 ) -> impl Responder {
-    match authenticated(&req, jwt_token_service.get_ref()) {
+    match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
             let command = ClientsCommands::Create(body.into_inner());
 
@@ -63,11 +63,11 @@ pub async fn update_one_client(
     path: web::Path<String>,
     req: HttpRequest,
     body: web::Json<UpdateClientCommand>,
-    jwt_token_service: web::Data<JwtTokenService>,
+    jwt_token_service: web::Data<JwtHMACTokenService>,
     http_error: web::Data<StandardHttpError>,
     engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>
 ) -> impl Responder {
-    match authenticated(&req, jwt_token_service.get_ref()) {
+    match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
 
             let id = path.into_inner();

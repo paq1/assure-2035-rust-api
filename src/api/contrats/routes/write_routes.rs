@@ -6,7 +6,7 @@ use uuid::Uuid;
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::shared::token::authenticated::authenticated;
-use crate::api::shared::token::JwtTokenService;
+use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::contrats::commands::{ContratsCommands, CreateContratCommand, UpdateContratCommand};
@@ -26,11 +26,11 @@ use crate::models::shared::errors::StandardHttpError;
 pub async fn insert_one_contrat(
     req: HttpRequest,
     body: web::Json<CreateContratCommand>,
-    jwt_token_service: web::Data<JwtTokenService>,
+    jwt_token_service: web::Data<JwtHMACTokenService>,
     http_error: web::Data<StandardHttpError>,
     engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsMongoRepository, ContratsEventMongoRepository>>>>
 ) -> impl Responder {
-    match authenticated(&req, jwt_token_service.get_ref()) {
+    match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
             let command = ContratsCommands::Create(body.into_inner());
 
@@ -62,11 +62,11 @@ pub async fn update_one_contrat(
     path: web::Path<String>,
     req: HttpRequest,
     body: web::Json<UpdateContratCommand>,
-    jwt_token_service: web::Data<JwtTokenService>,
+    jwt_token_service: web::Data<JwtHMACTokenService>,
     http_error: web::Data<StandardHttpError>,
     engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsMongoRepository, ContratsEventMongoRepository>>>>
 ) -> impl Responder {
-    match authenticated(&req, jwt_token_service.get_ref()) {
+    match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
 
             let id = path.into_inner();

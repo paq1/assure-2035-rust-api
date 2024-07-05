@@ -1,14 +1,14 @@
 use actix_web::HttpRequest;
 
-use crate::api::shared::token::JwtTokenService;
+use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::jwt_claims::JwtClaims;
 use crate::core::shared::context::Context;
 use crate::core::shared::token::TokenService;
 use crate::models::shared::errors::{Error, ErrorHttpCustom, ResultErr};
 
-pub fn authenticated(
+pub async fn authenticated(
     req: &HttpRequest,
-    jwt_token_service: &JwtTokenService
+    jwt_token_service: &JwtHMACTokenService
 ) -> ResultErr<Context> {
     let maybe_authorization = req.headers().get("Authorization");
     match maybe_authorization {
@@ -31,7 +31,7 @@ pub fn authenticated(
                 .unwrap_or(&"");
 
             jwt_token_service
-                .decode::<JwtClaims>(jwt)
+                .decode::<JwtClaims>(jwt).await
                 .map(|claims| claims.into())
         }
         _ => Err(
