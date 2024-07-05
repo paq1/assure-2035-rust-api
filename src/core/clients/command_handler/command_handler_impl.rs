@@ -5,6 +5,7 @@ use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUp
 use crate::core::clients::data::{ClientEvents, ClientStates, CreatedEvent, UpdatedEvent};
 use crate::models::shared::errors::{Error, ResultErr};
 use crate::models::clients::commands::ClientsCommands;
+use crate::models::clients::shared::ClientData;
 
 pub struct CreateClientHandler;
 
@@ -20,9 +21,11 @@ impl CommandHandlerCreate<ClientStates, ClientsCommands, ClientEvents> for Creat
                 ClientEvents::Created(CreatedEvent {
                     by: context.subject,
                     at: context.now,
-                    first_name: c.first_name,
-                    last_name: c.last_name,
-                    birth_date: c.birth_date,
+                    data: ClientData {
+                        first_name: c.first_name,
+                        last_name: c.last_name,
+                        birth_date: c.birth_date,
+                    }
                 })
             ),
             _ => Err(Error::Simple("bad request".to_string()))

@@ -1,6 +1,7 @@
 use crate::core::shared::reducer::Reducer;
-use crate::core::clients::data::{ClientData, ClientEvents, ClientStates};
+use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::core::clients::data::ClientEvents::{Created, Updated};
+use crate::models::clients::shared::ClientData;
 
 pub struct ClientReducer {
     pub underlying: Reducer<ClientEvents, ClientStates>,
@@ -29,7 +30,7 @@ impl ClientReducer {
                         None => {
                             match event {
                                 Created (data) =>
-                                    Some(ClientStates::Client(ClientData { first_name: data.first_name, last_name: data.last_name, birth_date: data.birth_date })),
+                                    Some(ClientStates::Client(ClientData { first_name: data.data.first_name, last_name: data.data.last_name, birth_date: data.data.birth_date })),
                                 _ => None
                             }
                         }

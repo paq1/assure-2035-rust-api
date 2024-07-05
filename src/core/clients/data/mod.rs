@@ -1,19 +1,13 @@
 use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
+use crate::models::clients::shared::ClientData;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ClientStates {
     Client (ClientData)
 }
 
-
-#[derive(Serialize, Deserialize, Clone)]
-pub struct ClientData {
-    pub first_name: String,
-    pub last_name: String,
-    pub birth_date: DateTime<Utc>
-}
 impl ClientStates {
     pub fn data(&self) -> ClientData {
         match self {
@@ -37,12 +31,8 @@ pub struct CreatedEvent {
     pub by: String,
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,
-    #[serde(rename = "firstName")]
-    pub first_name: String,
-    #[serde(rename = "lastName")]
-    pub last_name: String,
-    #[serde(rename = "birthDate")]
-    pub birth_date: DateTime<Utc>,
+    #[serde(flatten)]
+    pub data: ClientData,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

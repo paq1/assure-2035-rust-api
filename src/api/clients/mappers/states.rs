@@ -1,8 +1,8 @@
-use crate::api::shared::daos::dbos::EntityDBO;
 use crate::api::clients::clients_dbo::ClientDboState;
+use crate::api::shared::daos::dbos::EntityDBO;
+use crate::core::clients::data::ClientStates;
 use crate::core::shared::data::Entity;
-use crate::core::clients::data::{ClientData, ClientStates};
-
+use crate::models::clients::shared::ClientData;
 impl From<ClientDboState> for ClientStates {
     fn from(value: ClientDboState) -> Self {
         match value {
