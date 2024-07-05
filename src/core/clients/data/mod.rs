@@ -2,6 +2,8 @@ use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 use crate::models::clients::shared::ClientData;
+use crate::models::clients::views::{ClientUpdatedView, ClientView, ClientViewEvent};
+use crate::models::shared::jsonapi::CanBeView;
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ClientStates {
@@ -15,6 +17,17 @@ impl ClientStates {
         }
     }
 }
+
+
+impl CanBeView<ClientViewEvent> for ClientEvents {
+    fn to_view(&self) -> ClientViewEvent {
+        match self {
+            ClientEvents::Created(c) => ClientViewEvent::Created (ClientView { data : c.data.clone()}),
+            ClientEvents::Updated(u) => ClientViewEvent::Updated(ClientUpdatedView { name: u.name.clone() })
+        }
+    }
+}
+
 
 #[derive(Serialize, Deserialize, Clone)]
 #[serde(tag = "eventType")]

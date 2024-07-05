@@ -36,13 +36,19 @@ pub struct Pagination {
     pub size: usize,
 }
 
-pub fn from_t_to_view<E>(
+
+pub trait CanBeView<DATAVIEW> {
+    fn to_view(&self) -> DATAVIEW;
+}
+
+pub fn from_outputhandle_to_view<DATA, VIEW>(
     self_url: String,
-    event: EntityEvent<E, String>,
+    event: EntityEvent<DATA, String>,
     ontology: String,
-) -> DataWrapperView<ApiView<E>>
+) -> DataWrapperView<ApiView<VIEW>>
 where
-    E: Serialize + Clone,
+    VIEW: Serialize + Clone,
+    DATA: Serialize + Clone + CanBeView<VIEW>,
 {
     let type_urn_event = "org:example:insurance:client:event"; // fixme
     let event_id = event.event_id;
@@ -53,7 +59,7 @@ where
             r#type: type_urn_event.to_string(),
             id: event_id.clone(),
             attributes: AttributesEvent {
-                attributes: event.data,
+                attributes: event.data.to_view(),
             },
             relationships: Relationships {
                 entity: DataWrapper {
