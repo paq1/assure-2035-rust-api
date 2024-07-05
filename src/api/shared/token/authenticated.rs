@@ -32,6 +32,10 @@ pub async fn authenticated<T: TokenService>(
             jwt_token_service
                 .decode::<JwtClaims>(jwt).await
                 .map(|claims| claims.into())
+                .map_err(|err| {
+                    println!("err: {err:?}");
+                    err
+                })
         }
         _ => Err(
             Error::Http(

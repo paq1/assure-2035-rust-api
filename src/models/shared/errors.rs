@@ -3,6 +3,7 @@ use utoipa::ToSchema;
 
 pub type ResultErr<DATA> = Result<DATA, Error>;
 
+#[derive(Debug)]
 pub enum Error {
     Http(ErrorHttpCustom),
     Simple(String),
@@ -27,7 +28,7 @@ impl StandardHttpError {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, ToSchema)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct ErrorHttpCustom {
     #[schema(example = "titre")]
     pub title: String,
@@ -50,7 +51,7 @@ impl ErrorHttpCustom {
     }
 }
 
-#[derive(Serialize, Deserialize, Clone, ToSchema)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct Problem {
     #[schema(example = "titre")]
     pub title: String,

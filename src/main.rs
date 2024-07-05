@@ -44,8 +44,10 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
     let dbname = "seedassure2035mongo";
+    let auth_back_url = std::env::var("AUTH_BACK_URL").unwrap_or("http://localhost:9001".to_string());
 
     let cache = Arc::new(CacheAsync { underlying: Cache::new(10_000) });
+    let http_client = Arc::new(reqwest::Client::new());
 
 
     // todo delete exemple
@@ -156,7 +158,7 @@ async fn main() -> std::io::Result<()> {
 
         let standard_http_error = StandardHttpError::new();
         let jwt_token_service = JwtHMACTokenService::new("test".to_string());
-        let jwt_rsa_token_service = JwtRSATokenService::new(Arc::clone(&cache));
+        let jwt_rsa_token_service = JwtRSATokenService::new(Arc::clone(&cache), Arc::clone(&http_client), auth_back_url.clone());
 
 
         App::new()
