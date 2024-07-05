@@ -41,7 +41,7 @@ pub async fn insert_one_client(
                 .compute(command, entity_id.clone(), "create-client".to_string(), ctx).await;
 
             match event {
-                Ok(res) => HttpResponse::Created().json(res),
+                Ok((event, _state)) => HttpResponse::Created().json(event),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -77,7 +77,7 @@ pub async fn update_one_client(
                 .compute(command, id, "update-client".to_string(), ctx).await;
 
             match event {
-                Ok(res) => HttpResponse::Created().json(res),
+                Ok((event, _state)) => HttpResponse::Created().json(event),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
