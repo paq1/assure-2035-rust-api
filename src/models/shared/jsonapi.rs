@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use crate::core::shared::data::EntityEvent;
 use crate::core::shared::repositories::query::Paged;
+use crate::models::shared::views::DataWrapperView;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct Many<T>
@@ -77,13 +78,7 @@ where
 
 }
 
-#[derive(Serialize, Deserialize, Clone)]
-pub struct DataWrapperView<T>
-where
-    T: Serialize + Clone,
-{
-    data: T
-}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ApiView<T>

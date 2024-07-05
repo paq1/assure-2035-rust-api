@@ -12,6 +12,7 @@ use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Opera
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::Many;
+use crate::models::shared::views::{DataWrapperView, EntityView};
 
 #[utoipa::path(
     responses(
@@ -52,7 +53,18 @@ pub async fn fetch_one_client(path: web::Path<String>, repo: web::Data<Arc<Mutex
 
 
     match repo_lock.fetch_one(id).await {
-        Ok(Some(res)) => HttpResponse::Ok().json(res.clone()),
+        Ok(Some(res)) => {
+
+            let view = DataWrapperView {
+                data: EntityView {
+                    r#type: "org:example:insurance:client".to_string(),
+                    id: res.entity_id.clone(),
+                    attributes: res.data.clone(),
+                }
+            };
+
+            HttpResponse::Ok().json(view)
+        },
         Ok(_) => HttpResponse::NotFound().json(http_error.not_found.clone()),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
