@@ -12,9 +12,9 @@ impl From<ClientDboEvent> for ClientEvents {
                     by: event_dbo.by,
                     at: event_dbo.at,
                     data: ClientData {
-                        first_name: event_dbo.first_name,
-                        last_name: event_dbo.last_name,
-                        birth_date: event_dbo.birth_date,
+                        first_name: event_dbo.data.first_name,
+                        last_name: event_dbo.data.last_name,
+                        birth_date: event_dbo.data.birth_date,
                     }
 
                 }),
@@ -53,13 +53,9 @@ impl From<ClientEvents> for ClientDboEvent {
                 CreatedEvent {
                     by,
                     at,
-                    data: ClientData {
-                        first_name,
-                        last_name,
-                        birth_date
-                    }
+                    data
                 }
-            ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, first_name, last_name, birth_date }),
+            ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, data }),
             ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, name: updated.name })
         }
     }

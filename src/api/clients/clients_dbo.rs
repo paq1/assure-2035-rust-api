@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+use crate::models::clients::shared::ClientData;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
@@ -28,12 +29,8 @@ pub enum ClientDboEvent {
 pub struct ClientCreatedDbo {
     pub by: String,
     pub at: DateTime<Utc>,
-    #[serde(rename = "firstName")]
-    pub first_name: String,
-    #[serde(rename = "lastName")]
-    pub last_name: String,
-    #[serde(rename = "birthDate")]
-    pub birth_date: DateTime<Utc>,
+    #[serde(flatten)]
+    pub data: ClientData
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

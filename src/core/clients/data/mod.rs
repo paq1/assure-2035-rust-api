@@ -39,11 +39,16 @@ impl CanGetTypee for ClientStates {
 impl CanBeView<ClientViewState> for ClientStates {
     fn to_view(&self) -> ClientViewState {
         match self {
-            ClientStates::Client(d) => ClientViewState::Client (ClientViewActif {
-                first_name: d.data.first_name.clone(),
-                last_name: d.data.last_name.clone(),
-                birth_date: d.data.birth_date,
-            })
+            ClientStates::Client(d) =>
+                ClientViewState::Client (
+                    ClientViewActif {
+                        data: ClientData {
+                            first_name: d.data.first_name.clone(),
+                            last_name: d.data.last_name.clone(),
+                            birth_date: d.data.birth_date,
+                        }
+                    }
+                )
         }
     }
 }

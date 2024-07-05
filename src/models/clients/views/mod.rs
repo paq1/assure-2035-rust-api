@@ -1,4 +1,3 @@
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use crate::models::clients::shared::ClientData;
@@ -18,12 +17,8 @@ pub enum ClientViewState {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ClientViewActif {
-    #[serde(rename = "firstName")]
-    pub first_name: String,
-    #[serde(rename = "lastName")]
-    pub last_name: String,
-    #[serde(rename = "birthDate")]
-    pub birth_date: DateTime<Utc>
+    #[serde(flatten)]
+    pub data: ClientData
 }
 
 
