@@ -22,9 +22,9 @@ impl CommandHandlerCreate<ClientStates, ClientsCommands, ClientEvents> for Creat
                     by: context.subject,
                     at: context.now,
                     data: ClientData {
-                        first_name: c.first_name,
-                        last_name: c.last_name,
-                        birth_date: c.birth_date,
+                        first_name: c.data.first_name,
+                        last_name: c.data.last_name,
+                        birth_date: c.data.birth_date,
                     }
                 })
             ),

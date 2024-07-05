@@ -1,6 +1,7 @@
-use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
+use crate::models::clients::shared::ClientData;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub enum ClientsCommands {
@@ -11,13 +12,8 @@ pub enum ClientsCommands {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct CreateClientCommand {
-    #[schema(example = "input")]
-    #[serde(rename = "firstName")]
-    pub first_name: String,
-    #[serde(rename = "lastName")]
-    pub last_name: String,
-    #[serde(rename = "birthDate")]
-    pub birth_date: DateTime<Utc>,
+    #[serde(flatten)]
+    pub data: ClientData
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
