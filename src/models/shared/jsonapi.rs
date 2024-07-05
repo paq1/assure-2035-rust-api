@@ -40,37 +40,44 @@ pub fn from_t_to_view<E>(
     self_url: String,
     event: EntityEvent<E, String>,
     ontology: String,
-) -> ApiView<E>
+) -> DataWrapperView<ApiView<E>>
 where
     E: Serialize + Clone,
 {
     let type_urn_event = "org:example:insurance:client:event"; // fixme
     let event_id = event.event_id;
-    let type_event = "created"; // fixme
     let state_id = event.entity_id;
     let urn_state_type = "org:example:insurance:client";
-
-    ApiView {
-        r#type: type_urn_event.to_string(),
-        id: event_id.clone(),
-        attributes: AttributesEvent {
-            attributes: event.data,
-            event_type: type_event.to_string(),
-        },
-        relationships: Relationships {
-            entity: DataWrapper {
-                data: DataRS {
-                    r#type: urn_state_type.to_string(),
-                    id: state_id.clone(),
+    DataWrapperView {
+        data: ApiView {
+            r#type: type_urn_event.to_string(),
+            id: event_id.clone(),
+            attributes: AttributesEvent {
+                attributes: event.data,
+            },
+            relationships: Relationships {
+                entity: DataWrapper {
+                    data: DataRS {
+                        r#type: urn_state_type.to_string(),
+                        id: state_id.clone(),
+                    }
                 }
-            }
-        },
-        links: Link {
-            selfevent: Some(format!("{self_url}/{ontology}/{state_id}/events/{event_id}"))
-        },
+            },
+            links: Link {
+                selfevent: Some(format!("{self_url}/{ontology}/{state_id}/events/{event_id}"))
+            },
+        }
     }
+
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct DataWrapperView<T>
+where
+    T: Serialize + Clone,
+{
+    data: T
+}
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ApiView<T>
@@ -92,8 +99,6 @@ where
 {
     #[serde(flatten)]
     pub attributes: T,
-    #[serde(rename = "eventType")]
-    pub event_type: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

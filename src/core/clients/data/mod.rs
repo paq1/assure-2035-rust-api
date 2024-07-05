@@ -23,8 +23,11 @@ impl ClientStates {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+#[serde(tag = "eventType")]
 pub enum ClientEvents {
+    #[serde(rename = "created")]
     Created(CreatedEvent),
+    #[serde(rename = "updated")]
     Updated(UpdatedEvent),
 }
 

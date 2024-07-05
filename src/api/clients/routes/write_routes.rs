@@ -2,7 +2,6 @@ use std::sync::Arc;
 
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use futures::lock::Mutex;
-use serde::{Deserialize, Serialize};
 use uuid::Uuid;
 
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
@@ -12,7 +11,6 @@ use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::clients::data::{ClientEvents, ClientStates};
-use crate::core::shared::data::{Entity, EntityEvent};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
 use crate::models::shared::errors::StandardHttpError;
