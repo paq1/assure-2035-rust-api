@@ -90,6 +90,7 @@ pub struct AttributesEvent<T>
 where
     T: Serialize + Clone,
 {
+    #[serde(flatten)]
     pub attributes: T,
     #[serde(rename = "eventType")]
     pub event_type: String,
