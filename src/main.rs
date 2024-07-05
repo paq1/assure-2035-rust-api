@@ -3,6 +3,7 @@ use std::sync::Arc;
 use actix_cors::Cors;
 use actix_web::{App, HttpServer, web};
 use futures::lock::Mutex;
+use moka::future::Cache;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
 use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
@@ -20,6 +21,8 @@ use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contrat};
 use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
+use crate::api::shared::cache::CacheAsync;
+use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, UpdateClientHandler};
@@ -41,6 +44,39 @@ async fn main() -> std::io::Result<()> {
     dotenv::dotenv().ok();
 
     let dbname = "seedassure2035mongo";
+
+    let cache = Arc::new(CacheAsync { underlying: Cache::new(10_000) });
+
+
+    // todo delete exemple
+    // let locked_cache = Arc::clone(&cache);
+    // let result_compute = match Arc::clone(&cache)
+    //     .get("1234".to_string()).await {
+    //     Some(r) => {
+    //         r
+    //     }
+    //     None => {
+    //         println!("compute result");
+    //         let value = "onfsdodnfosndklnfnsldnflnsdflknls".to_string();
+    //         Arc::clone(&cache).clone().upsert("1234".to_string(), value.clone()).await;
+    //         value
+    //     }
+    // };
+    // let result_compute2 = match Arc::clone(&cache).clone()
+    //     .get("1234".to_string()).await {
+    //     Some(result) => {
+    //         result
+    //     }
+    //     None => {
+    //         println!("compute result");
+    //         let value = "onfsdodnfosndklnfnsldnflnsdflknls".to_string();
+    //         Arc::clone(&cache).clone().upsert("1234".to_string(), value.clone()).await;
+    //         value
+    //     }
+    // };
+    //
+    // println!("result : {result_compute} et {result_compute2}");
+
 
     // client ontology
     let store_clients: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
@@ -72,7 +108,7 @@ async fn main() -> std::io::Result<()> {
         ],
         reducer: ClientReducer::new().underlying,
         store: Arc::clone(&store_clients),
-        journal: Arc::clone(&journal_clients)
+        journal: Arc::clone(&journal_clients),
     }));
 
     // contrat ontology
@@ -105,7 +141,7 @@ async fn main() -> std::io::Result<()> {
         ],
         reducer: ContratReducer::new().underlying,
         store: Arc::clone(&store_contrats),
-        journal: Arc::clone(&journal_contrats)
+        journal: Arc::clone(&journal_contrats),
     }));
 
     let openapi = ApiDoc::openapi();
@@ -120,6 +156,7 @@ async fn main() -> std::io::Result<()> {
 
         let standard_http_error = StandardHttpError::new();
         let jwt_token_service = JwtHMACTokenService::new("test".to_string());
+        let jwt_rsa_token_service = JwtRSATokenService::new(Arc::clone(&cache));
 
 
         App::new()
@@ -128,7 +165,7 @@ async fn main() -> std::io::Result<()> {
                 "/api-docs/openapi.json",
                 openapi.clone(),
             ))
-
+            .app_data(web::Data::new(jwt_rsa_token_service))
             .app_data(web::Data::new(standard_http_error))
             .app_data(web::Data::new(jwt_token_service))
             // clients services

@@ -1,14 +1,13 @@
 use actix_web::HttpRequest;
 
-use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::jwt_claims::JwtClaims;
 use crate::core::shared::context::Context;
 use crate::core::shared::token::TokenService;
 use crate::models::shared::errors::{Error, ErrorHttpCustom, ResultErr};
 
-pub async fn authenticated(
+pub async fn authenticated<T: TokenService>(
     req: &HttpRequest,
-    jwt_token_service: &JwtHMACTokenService
+    jwt_token_service: &T
 ) -> ResultErr<Context> {
     let maybe_authorization = req.headers().get("Authorization");
     match maybe_authorization {
