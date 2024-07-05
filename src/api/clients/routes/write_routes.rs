@@ -12,7 +12,6 @@ use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
-use crate::models::clients::views::ClientView;
 use crate::models::shared::errors::StandardHttpError;
 
 #[utoipa::path(
@@ -42,7 +41,7 @@ pub async fn insert_one_client(
                 .compute(command, entity_id.clone(), "create-client".to_string(), ctx).await;
 
             match event {
-                Ok(_res) => HttpResponse::Created().json(ClientView { name: entity_id }),
+                Ok(res) => HttpResponse::Created().json(res),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -78,7 +77,7 @@ pub async fn update_one_client(
                 .compute(command, id, "update-client".to_string(), ctx).await;
 
             match event {
-                Ok(_res) => HttpResponse::Ok().json(ClientView { name: "xxx".to_string() }),
+                Ok(res) => HttpResponse::Created().json(res),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }

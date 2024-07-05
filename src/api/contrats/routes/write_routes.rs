@@ -3,6 +3,7 @@ use std::sync::Arc;
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use futures::lock::Mutex;
 use uuid::Uuid;
+
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::shared::token::authenticated::authenticated;
@@ -10,7 +11,6 @@ use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::contrats::commands::{ContratsCommands, CreateContratCommand, UpdateContratCommand};
-use crate::models::contrats::views::ContratView;
 use crate::models::shared::errors::StandardHttpError;
 
 #[utoipa::path(
@@ -40,7 +40,7 @@ pub async fn insert_one_contrat(
                 .compute(command, entity_id.clone(), "create-contrat".to_string(), ctx).await;
 
             match event {
-                Ok(_res) => HttpResponse::Created().json(ContratView { name: entity_id }),
+                Ok(res) => HttpResponse::Created().json(res),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -76,7 +76,7 @@ pub async fn update_one_contrat(
                 .compute(command, id, "update-contrat".to_string(), ctx).await;
 
             match event {
-                Ok(_res) => HttpResponse::Ok().json(ContratView { name: "xxx".to_string() }),
+                Ok(res) => HttpResponse::Created().json(res),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
