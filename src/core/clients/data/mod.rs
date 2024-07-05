@@ -31,7 +31,7 @@ impl ClientStates {
 impl CanGetTypee for ClientStates {
     fn get_type(&self) -> String {
         match self {
-            ClientStates::Client(_c) => "urn:example:insurance:client".to_string()
+            ClientStates::Client(_c) => "org:example:insurance:client".to_string()
         }
     }
 }
