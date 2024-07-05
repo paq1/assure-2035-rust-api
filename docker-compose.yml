@@ -2,7 +2,7 @@ version: '3'
 
 services:
   app:
-    image: ppaquin/seed-api-actix:latest
+    image: ppaquin/assure-2035-rust-api:latest
     ports:
       - "8080:8080"
     depends_on:
