@@ -120,7 +120,7 @@ async fn main() -> std::io::Result<()> {
     let api_address = std::env::var("API_ADDRESS").unwrap();
     let api_port = std::env::var("API_PORT").unwrap().parse::<u16>().unwrap();
 
-    let own_url = OwnUrl::new(api_address.clone());
+    let own_url = OwnUrl::new("https://api.example.org/v1".to_string());
 
     HttpServer::new(move || {
         let cors = Cors::default()
