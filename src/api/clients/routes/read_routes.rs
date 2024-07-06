@@ -3,7 +3,7 @@ use std::sync::Arc;
 use actix_web::{get, HttpResponse, Responder, web};
 use actix_web::web::Query;
 use futures::lock::Mutex;
-use futures::stream::iter;
+
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::clients::query::ClientQuery;
@@ -13,7 +13,7 @@ use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Opera
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::{CanBeView, ManyView};
-use crate::models::shared::views::entities::{EntityView, LinksEntityView};
+use crate::models::shared::views::entities::EntityView;
 use crate::models::shared::views::get_view::from_states_to_view;
 
 #[utoipa::path(
@@ -126,7 +126,7 @@ pub async fn fetch_events_client(
 
             let paged_view = items.map(|x| {
                 EntityView { // todo entity event view ici ? (a voir avec les specs s'il faut un différence entre la vu event / state
-                    r#type: "org:example:insurance:client".to_string(),
+                    r#type: "org:example:insurance:client".to_string(), // fixme passer le client ontology
                     id: x.entity_id,
                     attributes: x.data.to_view(),
                     links: None
