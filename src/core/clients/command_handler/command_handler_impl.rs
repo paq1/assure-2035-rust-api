@@ -43,7 +43,7 @@ impl CommandHandlerUpdate<ClientStates, ClientsCommands, ClientEvents> for Updat
     async fn on_command(&self, _id: String, _state: ClientStates, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
         match command {
             ClientsCommands::Update(c) => Ok(
-                ClientEvents::Updated(UpdatedEvent { by: context.subject, at: context.now, name: c.name })
+                ClientEvents::Updated(UpdatedEvent { by: context.subject, at: context.now, name: c.data.first_name })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }

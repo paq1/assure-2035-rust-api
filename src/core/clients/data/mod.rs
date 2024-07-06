@@ -9,7 +9,7 @@ use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 #[serde(tag = "statusType")]
 pub enum ClientStates {
     #[serde(rename = "actif")]
-    Client (ClientActif)
+    ClientActif(ClientActif)
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -23,7 +23,7 @@ pub struct ClientActif {
 impl ClientStates {
     pub fn data(&self) -> ClientData {
         match self {
-            ClientStates::Client(client_data) => client_data.data.clone()
+            ClientStates::ClientActif(client_data) => client_data.data.clone()
         }
     }
 }
@@ -31,7 +31,7 @@ impl ClientStates {
 impl CanGetTypee for ClientStates {
     fn get_type(&self) -> String {
         match self {
-            ClientStates::Client(_c) => "org:example:insurance:client".to_string()
+            ClientStates::ClientActif(_c) => "org:example:insurance:client".to_string()
         }
     }
 }
@@ -39,7 +39,7 @@ impl CanGetTypee for ClientStates {
 impl CanBeView<ClientViewState> for ClientStates {
     fn to_view(&self) -> ClientViewState {
         match self {
-            ClientStates::Client(d) =>
+            ClientStates::ClientActif(d) =>
                 ClientViewState::Client (
                     ClientViewActif {
                         data: ClientData {

@@ -17,7 +17,7 @@ impl ClientReducer {
                             match event {
                                 Updated(e) =>
                                     Some(
-                                        ClientStates::Client({
+                                        ClientStates::ClientActif({
                                             let client_data = current_state.data();
                                             let last_name = client_data.last_name;
                                             let birth_date = client_data.birth_date;
@@ -34,7 +34,7 @@ impl ClientReducer {
                             match event {
                                 Created(data) =>
                                     Some(
-                                        ClientStates::Client(
+                                        ClientStates::ClientActif(
                                             ClientActif {
                                                 kind: "org:example:insurance:client".to_string(),
                                                 data: ClientData {

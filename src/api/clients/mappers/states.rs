@@ -6,7 +6,8 @@ use crate::models::clients::shared::ClientData;
 impl From<ClientDboState> for ClientStates {
     fn from(value: ClientDboState) -> Self {
         match value {
-            ClientDboState::ClientDbo { kind, first_name, last_name, birth_date } => ClientStates::Client(ClientActif {
+            ClientDboState::ClientDbo { kind, first_name, last_name, birth_date } => ClientStates::
+            ClientActif(ClientActif {
                 kind,
                 data: ClientData {
                     first_name,
@@ -33,7 +34,7 @@ impl From<Entity<ClientStates, String>> for EntityDBO<ClientDboState, String> {
 impl From<ClientStates> for ClientDboState {
     fn from(value: ClientStates) -> Self {
         match value {
-            ClientStates::Client(data) => {
+            ClientStates::ClientActif(data) => {
                 ClientDboState::ClientDbo {
                     kind: data.kind,
                     first_name: data.data.first_name,

@@ -18,8 +18,8 @@ pub struct CreateClientCommand {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct UpdateClientCommand {
-    #[schema(example = "input")]
-    pub name: String,
+    #[serde(flatten)]
+    pub data: ClientData
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]

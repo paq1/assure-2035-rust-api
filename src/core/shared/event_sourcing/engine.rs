@@ -41,7 +41,7 @@ where
                 CommandHandler::Update(updated) => updated.name() == name
             }
         })
-            .ok_or(Error::Simple("pas de gestionnaire pour cette commande".to_string()))?; // fixme changer l'erreur
+            .ok_or(Error::Simple("pas de handler pour cette commande".to_string()))?; // fixme changer l'erreur
 
         let maybe_entity = self.store.lock().await.fetch_one(entity_id.clone()).await?;
         let maybe_state = maybe_entity.clone().map(|entity| entity.data);

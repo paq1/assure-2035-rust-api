@@ -24,7 +24,6 @@ pub struct ClientViewActif {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct ClientUpdatedView {
-    #[serde(flatten)]
     pub name: String,
 }
 
