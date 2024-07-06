@@ -9,11 +9,12 @@ where
     pub r#type: String,
     pub id: String,
     pub attributes: T,
-    pub links: LinksEntity,
+    #[serde(skip_serializing_if = "Option::is_none")]
+    pub links: Option<LinksEntityView>,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct LinksEntity {
+pub struct LinksEntityView {
     pub events: String,
     #[serde(rename = "self")]
     pub self_entity: String,

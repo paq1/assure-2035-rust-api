@@ -11,13 +11,13 @@ use crate::api::contrats::routes::read_routes::__path_fetch_many_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_insert_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
-use crate::core::clients::data::ClientStates;
+use crate::models::clients::views::*;
 use crate::core::contrats::data::ContratStates;
 use crate::models::clients::commands::*;
 use crate::models::clients::views::ClientView;
 use crate::models::contrats::commands::*;
 use crate::models::contrats::views::ContratView;
-use crate::models::shared::jsonapi::Many;
+use crate::models::shared::jsonapi::ManyView;
 use crate::models::clients::shared::ClientData;
 
 #[derive(utoipa::OpenApi)]
@@ -37,12 +37,12 @@ use crate::models::clients::shared::ClientData;
     components(
         schemas(
             ClientView,
-            Many < ClientStates >,
+            ManyView < ClientViewState >,
             CreateClientCommand,
             UpdateClientCommand,
             DeleteClientCommand,
             ContratView,
-            Many < ContratStates >,
+            ManyView < ContratStates >,
             CreateContratCommand,
             UpdateContratCommand,
             DeleteContratCommand,

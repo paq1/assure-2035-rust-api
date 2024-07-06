@@ -10,7 +10,7 @@ use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::shared::jsonapi::Many;
+use crate::models::shared::jsonapi::ManyView;
 
 #[utoipa::path(
     responses(
@@ -29,7 +29,7 @@ pub async fn fetch_many_contrat(
 
     let store_lock = store.lock().await;
     match store_lock.fetch_many(query.into()).await {
-        Ok(items) => HttpResponse::Ok().json(Many::new(items)),
+        Ok(items) => HttpResponse::Ok().json(ManyView::new(items)),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
@@ -95,7 +95,7 @@ pub async fn fetch_events_contrat(
 
     let journal_lock = journal.lock().await;
     match journal_lock.fetch_many(query_core_with_filter).await {
-        Ok(items) => HttpResponse::Ok().json(Many::new(items)),
+        Ok(items) => HttpResponse::Ok().json(ManyView::new(items)),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }

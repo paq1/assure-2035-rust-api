@@ -10,7 +10,7 @@ pub fn from_output_command_handler_to_view<DATA, VIEW>(
 ) -> DataWrapperView<ApiView<VIEW>>
 where
     VIEW: Serialize + Clone,
-    DATA: Serialize + Clone + CanBeView<VIEW>,
+    DATA: Clone + CanBeView<VIEW>,
 {
     let type_urn_event = format!("org:example:insurance:client:event"); // fixme
     let event_id = event.event_id;

@@ -46,7 +46,6 @@ impl TokenService for JwtRSATokenService {
                 Ok(jwk)
             },
             None => {
-                // todo authback call http
                 let url = format!("{}/v1/jwks/{kid}/public", self.auth_back_url);
                 let response = self.http_client
                     .get(url)

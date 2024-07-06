@@ -4,7 +4,7 @@ use utoipa::ToSchema;
 use crate::core::shared::repositories::query::Paged;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct Many<T>
+pub struct ManyView<T>
 where
     T: Serialize + Clone,
 {
@@ -13,7 +13,7 @@ where
     pub meta: Option<Pagination>,
 }
 
-impl<T: Serialize + Clone> Many<T> {
+impl<T: Serialize + Clone> ManyView<T> {
     pub fn new(paged: Paged<T>) -> Self {
         Self {
             data: paged.data,
