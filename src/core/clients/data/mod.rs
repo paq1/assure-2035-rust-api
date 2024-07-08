@@ -12,7 +12,7 @@ pub enum ClientStates {
 #[derive(Clone, Debug)]
 pub struct ClientActif {
     pub kind: String,
-    pub data: ClientData
+    pub data: ClientData,
 }
 
 impl ClientStates {
@@ -35,7 +35,7 @@ impl CanBeView<ClientViewState> for ClientStates {
     fn to_view(&self) -> ClientViewState {
         match self {
             ClientStates::ClientActif(d) =>
-                ClientViewState::Client (
+                ClientViewState::Client(
                     ClientViewActif {
                         data: ClientData {
                             first_name: d.data.first_name.clone(),
@@ -51,8 +51,8 @@ impl CanBeView<ClientViewState> for ClientStates {
 impl CanBeView<ClientViewEvent> for ClientEvents {
     fn to_view(&self) -> ClientViewEvent {
         match self {
-            ClientEvents::Created(c) => ClientViewEvent::Created (ClientView { data : c.data.clone()}),
-            ClientEvents::Updated(u) => ClientViewEvent::Updated(ClientUpdatedView { name: u.name.clone() })
+            ClientEvents::Created(c) => ClientViewEvent::Created(ClientView { data: c.data.clone() }),
+            ClientEvents::Updated(u) => ClientViewEvent::Updated(ClientUpdatedView { data: u.data.clone() })
         }
     }
 }
@@ -75,5 +75,5 @@ pub struct CreatedEvent {
 pub struct UpdatedEvent {
     pub by: String,
     pub at: DateTime<Utc>,
-    pub name: String,
+    pub data: ClientData,
 }

@@ -18,7 +18,7 @@ impl From<ClientDboEvent> for ClientEvents {
                     }
 
                 }),
-            ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, name: event_dbo.name })
+            ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data })
         }
     }
 }
@@ -56,7 +56,7 @@ impl From<ClientEvents> for ClientDboEvent {
                     data
                 }
             ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, data }),
-            ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, name: updated.name })
+            ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, data: updated.data })
         }
     }
 }

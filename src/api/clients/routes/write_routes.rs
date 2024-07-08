@@ -66,7 +66,7 @@ pub async fn insert_one_client(
     ("bearer_auth" = [])
     )
 )]
-#[put("/clients/commands/update/{entity_id}")]
+#[put("/clients/{entity_id}/commands/update")]
 pub async fn update_one_client(
     path: web::Path<String>,
     req: HttpRequest,

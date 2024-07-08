@@ -18,12 +18,9 @@ impl ClientReducer {
                                 Updated(e) =>
                                     Some(
                                         ClientStates::ClientActif({
-                                            let client_data = current_state.data();
-                                            let last_name = client_data.last_name;
-                                            let birth_date = client_data.birth_date;
                                             ClientActif {
                                                 kind: "org:example:insurance:client".to_string(),
-                                                data: ClientData { first_name: e.name, last_name, birth_date },
+                                                data: e.data.clone(),
                                             }
                                         })
                                     ),
@@ -40,8 +37,8 @@ impl ClientReducer {
                                                 data: ClientData {
                                                     first_name: data.data.first_name,
                                                     last_name: data.data.last_name,
-                                                    birth_date: data.data.birth_date
-                                                }
+                                                    birth_date: data.data.birth_date,
+                                                },
                                             }
                                         )
                                     ),

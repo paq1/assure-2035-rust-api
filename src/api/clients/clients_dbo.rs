@@ -37,5 +37,5 @@ pub struct ClientCreatedDbo {
 pub struct ClientUpdatedDbo {
     pub by: String,
     pub at: DateTime<Utc>,
-    pub name: String,
+    pub data: ClientData,
 }
