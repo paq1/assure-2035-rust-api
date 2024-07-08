@@ -101,7 +101,7 @@ pub async fn update_one_client(
     ("bearer_auth" = [])
     )
 )]
-#[put("/clients/{entity_id}/commands/update")]
+#[put("/clients/{entity_id}/commands/disable")]
 pub async fn disable_one_client(
     path: web::Path<String>,
     req: HttpRequest,
