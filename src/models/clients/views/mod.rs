@@ -48,6 +48,6 @@ pub enum ClientViewEvent {
     Created(ClientView),
     #[serde(rename = "updated")]
     Updated(ClientUpdatedView),
-    #[serde(rename = "updated")]
+    #[serde(rename = "disabled")]
     Disabled(ClientDisabledView),
 }
