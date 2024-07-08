@@ -1,6 +1,8 @@
 use crate::api::clients::clients_dbo::ClientDboState;
 use crate::api::shared::daos::dbos::EntityDBO;
-use crate::core::clients::data::{ClientActif, ClientDisable, ClientStates};
+use crate::core::clients::data::states::client_actif::ClientActif;
+use crate::core::clients::data::states::client_disable::ClientDisable;
+use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::data::Entity;
 use crate::models::clients::shared::ClientData;
 impl From<ClientDboState> for ClientStates {

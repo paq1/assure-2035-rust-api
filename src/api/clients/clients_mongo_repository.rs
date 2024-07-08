@@ -3,13 +3,13 @@ use async_trait::async_trait;
 use crate::api::shared::daos::dbos::EntityDBO;
 use crate::api::clients::clients_dbo::ClientDboState;
 use crate::api::clients::clients_mongo_dao::ClientsMongoDAO;
+use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::can_get_id::CanGetId;
 use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
 use crate::core::shared::data::Entity;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, WriteOnlyEntityRepo};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::query::Query;
-use crate::core::clients::data::ClientStates;
 use crate::models::shared::errors::ResultErr;
 
 pub struct ClientsMongoRepository {

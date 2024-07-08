@@ -6,16 +6,16 @@ use futures::lock::Mutex;
 use moka::future::Cache;
 use utoipa::OpenApi;
 use utoipa_swagger_ui::SwaggerUi;
-use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
-use crate::api::swagger::ApiDoc;
+
 use api::clients::routes::read_routes::{fetch_many_client, fetch_one_client};
-use crate::api::clients::services::ClientsServiceImpl;
+use api::clients::routes::write_routes::{insert_one_client, update_one_client};
+
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoDAO};
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
-use api::clients::routes::write_routes::{insert_one_client, update_one_client};
 use crate::api::clients::routes::read_routes::{fetch_events_client, fetch_one_client_event};
 use crate::api::clients::routes::write_routes::disable_one_client;
+use crate::api::clients::services::ClientsServiceImpl;
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_dao::{ContratsEventMongoDAO, ContratsMongoDAO};
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
@@ -24,18 +24,21 @@ use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_
 use crate::api::contrats::services::ContratsServiceImpl;
 use crate::api::shared::cache::CacheAsync;
 use crate::api::shared::OwnUrl;
+use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
-use crate::core::shared::event_sourcing::CommandHandler;
-use crate::core::shared::event_sourcing::engine::Engine;
+use crate::api::swagger::ApiDoc;
 use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, DisableClientHandler, UpdateClientHandler};
-use crate::core::clients::data::{ClientEvents, ClientStates};
+use crate::core::clients::data::ClientEvents;
+use crate::core::clients::data::states::ClientStates;
 use crate::core::clients::reducer::ClientReducer;
+use crate::core::contrats::command_handler::command_handler_impl::{CreateContratHandler, UpdateContratHandler};
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::contrats::reducer::ContratReducer;
-use crate::models::shared::errors::StandardHttpError;
+use crate::core::shared::event_sourcing::CommandHandler;
+use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::ClientsCommands;
 use crate::models::contrats::commands::ContratsCommands;
-use crate::core::contrats::command_handler::command_handler_impl::{CreateContratHandler, UpdateContratHandler};
+use crate::models::shared::errors::StandardHttpError;
 
 mod core;
 mod api;

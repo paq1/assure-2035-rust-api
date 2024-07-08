@@ -2,7 +2,8 @@ use async_trait::async_trait;
 
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUpdate};
-use crate::core::clients::data::{ClientEvents, ClientStates, CreatedEvent, DisabledEvent, UpdatedEvent};
+use crate::core::clients::data::{ClientEvents, CreatedEvent, DisabledEvent, UpdatedEvent};
+use crate::core::clients::data::states::ClientStates;
 use crate::models::shared::errors::{Error, ResultErr};
 use crate::models::clients::commands::ClientsCommands;
 use crate::models::clients::shared::ClientData;
