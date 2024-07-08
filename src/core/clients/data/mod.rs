@@ -15,7 +15,7 @@ impl CanBeView<ClientViewEvent> for ClientEvents {
         match self {
             ClientEvents::Created(c) => ClientViewEvent::Created(ClientView { data: c.data.clone() }),
             ClientEvents::Updated(u) => ClientViewEvent::Updated(ClientUpdatedView { data: u.data.clone() }),
-            ClientEvents::Disabled(u) => ClientViewEvent::Disabled(ClientDisabledView { data: u.data.clone() }),
+            ClientEvents::Disabled(disabled) => ClientViewEvent::Disabled(ClientDisabledView { data: disabled.data.clone(), reason: disabled.reason.clone() }),
         }
     }
 }

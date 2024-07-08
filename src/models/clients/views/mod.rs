@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-use crate::models::clients::shared::ClientData;
+use crate::models::clients::shared::{ClientData, DisableReason};
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct ClientView {
@@ -38,7 +38,8 @@ pub struct ClientUpdatedView {
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct ClientDisabledView {
     #[serde(flatten)]
-    pub data: ClientData
+    pub data: ClientData,
+    pub reason: DisableReason
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
