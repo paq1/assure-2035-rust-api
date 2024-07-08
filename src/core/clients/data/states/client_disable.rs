@@ -1,8 +1,7 @@
 use crate::core::clients::data::ClientEvents;
-use crate::core::clients::data::states::client_actif::ClientActif;
 use crate::core::clients::data::states::ClientStates;
 use crate::models::clients::shared::{ClientData, DisableReason};
-use crate::models::clients::views::{ClientViewActif, ClientViewDisable, ClientViewState};
+use crate::models::clients::views::ClientViewDisable;
 use crate::models::shared::jsonapi::CanGetTypee;
 
 #[derive(Clone, Debug)]

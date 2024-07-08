@@ -1,14 +1,11 @@
-pub mod events;
-pub mod states;
-
 use chrono::{DateTime, Utc};
 
 use crate::models::clients::shared::{ClientData, DisableReason};
-use crate::models::clients::views::{ClientDisabledView, ClientUpdatedView, ClientView, ClientViewActif, ClientViewDisable, ClientViewEvent, ClientViewState};
-use crate::models::shared::errors::ResultErr;
-use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
+use crate::models::clients::views::{ClientDisabledView, ClientUpdatedView, ClientView, ClientViewEvent};
+use crate::models::shared::jsonapi::CanBeView;
 
-
+pub mod events;
+pub mod states;
 
 impl CanBeView<ClientViewEvent> for ClientEvents {
     fn to_view(&self) -> ClientViewEvent {
