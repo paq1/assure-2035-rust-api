@@ -12,11 +12,18 @@ pub struct ClientView {
 #[serde(tag = "statusType")]
 pub enum ClientViewState {
     #[serde(rename = "actif")]
-    Client (ClientViewActif)
+    Client (ClientViewActif),
+    ClientDisable(ClientViewDisable),
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct ClientViewActif {
+    #[serde(flatten)]
+    pub data: ClientData
+}
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct ClientViewDisable {
     #[serde(flatten)]
     pub data: ClientData
 }
@@ -29,10 +36,18 @@ pub struct ClientUpdatedView {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct ClientDisabledView {
+    #[serde(flatten)]
+    pub data: ClientData
+}
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 #[serde(tag = "eventType")]
 pub enum ClientViewEvent {
     #[serde(rename = "created")]
     Created(ClientView),
     #[serde(rename = "updated")]
-    Updated(ClientUpdatedView)
+    Updated(ClientUpdatedView),
+    #[serde(rename = "updated")]
+    Disabled(ClientDisabledView),
 }

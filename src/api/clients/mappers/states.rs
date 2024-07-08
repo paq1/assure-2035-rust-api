@@ -1,20 +1,34 @@
 use crate::api::clients::clients_dbo::ClientDboState;
 use crate::api::shared::daos::dbos::EntityDBO;
-use crate::core::clients::data::{ClientActif, ClientStates};
+use crate::core::clients::data::{ClientActif, ClientDisable, ClientStates};
 use crate::core::shared::data::Entity;
 use crate::models::clients::shared::ClientData;
 impl From<ClientDboState> for ClientStates {
     fn from(value: ClientDboState) -> Self {
         match value {
-            ClientDboState::ClientDbo { kind, first_name, last_name, birth_date } => ClientStates::
-            ClientActif(ClientActif {
-                kind,
-                data: ClientData {
-                    first_name,
-                    last_name,
-                    birth_date,
-                },
-            })
+            ClientDboState::ClientDbo { kind, first_name, last_name, birth_date } =>
+                ClientStates::ClientActif(
+                    ClientActif {
+                        kind,
+                        data: ClientData {
+                            first_name,
+                            last_name,
+                            birth_date,
+                        },
+                    }
+                ),
+            ClientDboState::ClientDisableDbo { kind, first_name, last_name, birth_date, reason } =>
+                ClientStates::ClientDisable(
+                    ClientDisable {
+                        kind,
+                        data: ClientData {
+                            first_name,
+                            last_name,
+                            birth_date,
+                        },
+                        reason,
+                    }
+                )
         }
     }
 }
@@ -40,6 +54,15 @@ impl From<ClientStates> for ClientDboState {
                     first_name: data.data.first_name,
                     last_name: data.data.last_name,
                     birth_date: data.data.birth_date,
+                }
+            }
+            ClientStates::ClientDisable(data) => {
+                ClientDboState::ClientDisableDbo {
+                    kind: data.kind,
+                    first_name: data.data.first_name,
+                    last_name: data.data.last_name,
+                    birth_date: data.data.birth_date,
+                    reason: data.reason,
                 }
             }
         }

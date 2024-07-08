@@ -1,7 +1,7 @@
+use crate::api::clients::clients_dbo::{ClientCreatedDbo, ClientDboEvent, ClientDisabledDbo, ClientUpdatedDbo};
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::api::clients::clients_dbo::{ClientCreatedDbo, ClientDboEvent, ClientUpdatedDbo};
+use crate::core::clients::data::{ClientEvents, CreatedEvent, DisabledEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
-use crate::core::clients::data::{ClientEvents, CreatedEvent, UpdatedEvent};
 use crate::models::clients::shared::ClientData;
 
 impl From<ClientDboEvent> for ClientEvents {
@@ -15,10 +15,10 @@ impl From<ClientDboEvent> for ClientEvents {
                         first_name: event_dbo.data.first_name,
                         last_name: event_dbo.data.last_name,
                         birth_date: event_dbo.data.birth_date,
-                    }
-
+                    },
                 }),
-            ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data })
+            ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
+            ClientDboEvent::Disable(event_dbo) => ClientEvents::Disabled(DisabledEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data, reason: event_dbo.reason })
         }
     }
 }
@@ -56,7 +56,8 @@ impl From<ClientEvents> for ClientDboEvent {
                     data
                 }
             ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, data }),
-            ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, data: updated.data })
+            ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, data: updated.data }),
+            ClientEvents::Disabled(disabled) => ClientDboEvent::Disable(ClientDisabledDbo { by: disabled.by, at: disabled.at, data: disabled.data, reason: disabled.reason }),
         }
     }
 }

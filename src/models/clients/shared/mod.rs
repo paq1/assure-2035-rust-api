@@ -11,3 +11,11 @@ pub struct ClientData {
     #[serde(rename = "birthDate")]
     pub birth_date: DateTime<Utc>
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
+pub enum DisableReason {
+    #[serde(rename = "gdpr")]
+    GDPR,
+    #[serde(rename = "death")]
+    DEATH
+}

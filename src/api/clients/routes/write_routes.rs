@@ -11,7 +11,7 @@ use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, UpdateClientCommand};
+use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, DisableClientCommand, UpdateClientCommand};
 use crate::models::clients::views::ClientViewEvent;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
@@ -91,3 +91,40 @@ pub async fn update_one_client(
         Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
     }
 }
+
+#[utoipa::path(
+    request_body = DisableClientCommand,
+    responses(
+    (status = 200, description = "fait ca", body = ClientView),
+    ),
+    security(
+    ("bearer_auth" = [])
+    )
+)]
+#[put("/clients/{entity_id}/commands/update")]
+pub async fn disable_one_client(
+    path: web::Path<String>,
+    req: HttpRequest,
+    body: web::Json<DisableClientCommand>,
+    jwt_token_service: web::Data<JwtRSATokenService>,
+    http_error: web::Data<StandardHttpError>,
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>,
+    own_url: web::Data<OwnUrl>,
+) -> impl Responder {
+    match authenticated(&req, jwt_token_service.get_ref()).await {
+        Ok(ctx) => {
+            let id = path.into_inner();
+            let command = ClientsCommands::Disable(body.into_inner());
+
+            let event = engine.lock().await
+                .compute(command, id, "disable-client".to_string(), ctx).await;
+
+            match event {
+                Ok((event, _state)) => HttpResponse::Ok().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(own_url.url.clone(), event, "clients".to_string())),
+                Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+            }
+        }
+        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+    }
+}
+

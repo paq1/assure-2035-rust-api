@@ -1,13 +1,13 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use crate::models::clients::shared::ClientData;
+use crate::models::clients::shared::{ClientData, DisableReason};
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub enum ClientsCommands {
     Create (CreateClientCommand),
     Update (UpdateClientCommand),
-    Delete (DeleteClientCommand)
+    Disable(DisableClientCommand)
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
@@ -23,4 +23,6 @@ pub struct UpdateClientCommand {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct DeleteClientCommand;
+pub struct DisableClientCommand {
+    pub reason: DisableReason
+}

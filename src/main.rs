@@ -15,6 +15,7 @@ use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoD
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use api::clients::routes::write_routes::{insert_one_client, update_one_client};
 use crate::api::clients::routes::read_routes::{fetch_events_client, fetch_one_client_event};
+use crate::api::clients::routes::write_routes::disable_one_client;
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_dao::{ContratsEventMongoDAO, ContratsMongoDAO};
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
@@ -26,7 +27,7 @@ use crate::api::shared::OwnUrl;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, UpdateClientHandler};
+use crate::core::clients::command_handler::command_handler_impl::{CreateClientHandler, DisableClientHandler, UpdateClientHandler};
 use crate::core::clients::data::{ClientEvents, ClientStates};
 use crate::core::clients::reducer::ClientReducer;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
@@ -77,6 +78,7 @@ async fn main() -> std::io::Result<()> {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
             CommandHandler::Update(Box::new(UpdateClientHandler {})),
+            CommandHandler::Update(Box::new(DisableClientHandler {}))
         ],
         reducer: ClientReducer::new().underlying,
         store: Arc::clone(&store_clients),
@@ -172,6 +174,7 @@ async fn main() -> std::io::Result<()> {
             .service(fetch_events_client)
             .service(insert_one_client)
             .service(update_one_client)
+            .service(disable_one_client)
             // contrats routes
             .service(fetch_one_contrat)
             .service(fetch_many_contrat)

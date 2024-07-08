@@ -6,6 +6,7 @@ use crate::api::clients::routes::read_routes::__path_fetch_many_client;
 use crate::api::clients::routes::read_routes::__path_fetch_one_client;
 use crate::api::clients::routes::write_routes::__path_insert_one_client;
 use crate::api::clients::routes::write_routes::__path_update_one_client;
+use crate::api::clients::routes::write_routes::__path_disable_one_client;
 use crate::api::contrats::routes::read_routes::__path_fetch_events_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_many_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_one_contrat;
@@ -30,6 +31,7 @@ use crate::models::shared::views::command_handler_view::ApiView;
         fetch_one_client,
         insert_one_client,
         update_one_client,
+        disable_one_client,
         fetch_events_client,
         fetch_many_contrat,
         fetch_one_contrat,
@@ -43,7 +45,7 @@ use crate::models::shared::views::command_handler_view::ApiView;
             ManyView < ClientViewState >,
             CreateClientCommand,
             UpdateClientCommand,
-            DeleteClientCommand,
+            DisableClientCommand,
             ContratView,
             ManyView < ContratStates >,
             CreateContratCommand,

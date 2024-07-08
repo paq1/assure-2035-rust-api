@@ -5,5 +5,5 @@ use crate::models::clients::commands::*;
 
 #[async_trait]
 pub trait ClientService {
-    async fn delete_client(&self, command: DeleteClientCommand, id: String, ctx: Context) -> ResultErr<String>;
+    async fn delete_client(&self, command: DisableClientCommand, id: String, ctx: Context) -> ResultErr<String>;
 }

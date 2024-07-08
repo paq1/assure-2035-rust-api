@@ -27,7 +27,7 @@ where
     STORE: WriteOnlyEntityRepo<ClientStates, String> + ReadOnlyEntityRepo<ClientStates, String> + Send,
     JOURNAL: WriteOnlyEventRepo<ClientEvents, String> + Send,
 {
-    async fn delete_client(&self, _command: DeleteClientCommand, _id: String, _ctx: Context) -> ResultErr<String> {
+    async fn delete_client(&self, _command: DisableClientCommand, _id: String, _ctx: Context) -> ResultErr<String> {
         todo!()
     }
 }
