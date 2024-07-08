@@ -18,7 +18,7 @@ impl From<ClientDboEvent> for ClientEvents {
                     },
                 }),
             ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
-            ClientDboEvent::Disable(event_dbo) => ClientEvents::Disabled(DisabledEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data, reason: event_dbo.reason })
+            ClientDboEvent::Disable(event_dbo) => ClientEvents::Disabled(DisabledEvent { by: event_dbo.by, at: event_dbo.at, reason: event_dbo.reason })
         }
     }
 }
@@ -57,7 +57,7 @@ impl From<ClientEvents> for ClientDboEvent {
                 }
             ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, data }),
             ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, data: updated.data }),
-            ClientEvents::Disabled(disabled) => ClientDboEvent::Disable(ClientDisabledDbo { by: disabled.by, at: disabled.at, data: disabled.data, reason: disabled.reason }),
+            ClientEvents::Disabled(disabled) => ClientDboEvent::Disable(ClientDisabledDbo { by: disabled.by, at: disabled.at, reason: disabled.reason }),
         }
     }
 }

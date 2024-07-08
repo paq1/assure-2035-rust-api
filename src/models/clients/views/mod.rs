@@ -37,8 +37,6 @@ pub struct ClientUpdatedView {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct ClientDisabledView {
-    #[serde(flatten)]
-    pub data: ClientData,
     pub reason: DisableReason
 }
 

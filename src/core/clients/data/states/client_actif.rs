@@ -26,7 +26,7 @@ impl ClientActif {
                 ClientStates::ClientDisable(
                     ClientDisable {
                         kind: self.kind.clone(),
-                        data: disabled.data.clone(),
+                        data: self.data.clone(),
                         reason: disabled.reason,
                     }
                 )

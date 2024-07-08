@@ -57,7 +57,6 @@ pub struct ClientUpdatedDbo {
 pub struct ClientDisabledDbo {
     pub by: String,
     pub at: DateTime<Utc>,
-    pub data: ClientData,
     pub reason: DisableReason,
 }
 

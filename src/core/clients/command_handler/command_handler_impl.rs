@@ -58,10 +58,10 @@ impl CommandHandlerUpdate<ClientStates, ClientsCommands, ClientEvents> for Disab
         "disable-client".to_string()
     }
 
-    async fn on_command(&self, _id: String, state: ClientStates, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
+    async fn on_command(&self, _id: String, _state: ClientStates, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
         match command {
             ClientsCommands::Disable(cmd) => Ok(
-                ClientEvents::Disabled(DisabledEvent { by: context.subject, at: context.now, data: state.data()?, reason: cmd.reason })
+                ClientEvents::Disabled(DisabledEvent { by: context.subject, at: context.now, reason: cmd.reason })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }
