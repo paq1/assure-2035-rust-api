@@ -13,6 +13,7 @@ pub struct ClientView {
 pub enum ClientViewState {
     #[serde(rename = "actif")]
     Client (ClientViewActif),
+    #[serde(rename = "inactif")]
     ClientDisable(ClientViewDisable),
 }
 
