@@ -14,7 +14,7 @@ use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoReposi
 use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoDAO};
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use api::clients::routes::write_routes::{insert_one_client, update_one_client};
-use crate::api::clients::routes::read_routes::fetch_events_client;
+use crate::api::clients::routes::read_routes::{fetch_events_client, fetch_one_client_event};
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_dao::{ContratsEventMongoDAO, ContratsMongoDAO};
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
@@ -167,6 +167,7 @@ async fn main() -> std::io::Result<()> {
             )
             // client routes
             .service(fetch_one_client)
+            .service(fetch_one_client_event)
             .service(fetch_many_client)
             .service(fetch_events_client)
             .service(insert_one_client)

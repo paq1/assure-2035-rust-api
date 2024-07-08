@@ -19,6 +19,9 @@ use crate::models::contrats::commands::*;
 use crate::models::contrats::views::ContratView;
 use crate::models::shared::jsonapi::ManyView;
 use crate::models::clients::shared::ClientData;
+use crate::models::shared::views::DataWrapperView;
+use crate::models::clients::views::ClientViewEvent;
+use crate::models::shared::views::command_handler_view::ApiView;
 
 #[derive(utoipa::OpenApi)]
 #[openapi(
@@ -46,7 +49,9 @@ use crate::models::clients::shared::ClientData;
             CreateContratCommand,
             UpdateContratCommand,
             DeleteContratCommand,
-            ClientData
+            ClientData,
+            DataWrapperView < ApiView < ClientViewEvent > >
+
         )
     ),
     modifiers(& SecurityAddon)

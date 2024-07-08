@@ -8,11 +8,14 @@ use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoReposi
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::OwnUrl;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
+use crate::core::clients::data::ClientEvents;
+use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, ReadOnlyEventRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
+use crate::models::clients::views::ClientViewEvent;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::{CanBeView, ManyView};
+use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 use crate::models::shared::views::entities::EntityView;
 use crate::models::shared::views::get_view::from_states_to_view;
 
@@ -135,6 +138,45 @@ pub async fn fetch_events_client(
 
             HttpResponse::Ok().json(ManyView::new(paged_view))
         },
+        Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+    }
+}
+
+
+#[utoipa::path(
+    responses(
+        (
+        status = 200,
+        description = "Get the current state.",
+        body = DataWrapperView < EventView < ClientViewEvent >>
+        )
+    )
+)]
+#[get("/clients/{entity_id}/events/{event_id}")]
+pub async fn fetch_one_client_event(
+    path: web::Path<(String, String)>,
+    journal: web::Data<Arc<Mutex<ClientsEventMongoRepository>>>,
+    http_error: web::Data<StandardHttpError>,
+    own_url: web::Data<OwnUrl>,
+) -> impl Responder {
+    let (_, event_id) = path.into_inner();
+    let journal_lock = journal.lock().await;
+    match journal_lock.fetch_one(event_id).await {
+        Ok(maybe_event) => {
+            match maybe_event {
+                Some(event) => {
+                    let view = from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                        own_url.url.clone(),
+                        event,
+                        "clients".to_string()
+                    );
+                    HttpResponse::Ok().json(view)
+                },
+                None => {
+                    HttpResponse::InternalServerError().json(http_error.not_found.clone())
+                }
+            }
+        }
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
