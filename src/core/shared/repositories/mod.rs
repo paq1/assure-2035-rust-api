@@ -12,7 +12,6 @@ pub mod filter;
 #[async_trait]
 pub trait ReadOnlyEntityRepo<DATA: Clone, ID: Clone>: CanFetchAll<Entity<DATA, ID>> + CanFetchMany<Entity<DATA, ID>> {
     async fn fetch_one(&self, id: ID) -> ResultErr<Option<Entity<DATA, ID>>>;
-    // async fn fetch_all(&self) -> ResultErr<Vec<Entity<DATA, ID>>>;
 }
 
 #[async_trait]
@@ -30,8 +29,6 @@ pub trait ReadOnlyEventRepo<DATA: Clone, ID: Clone>: CanFetchAll<EntityEvent<DAT
 #[async_trait]
 pub trait WriteOnlyEventRepo<DATA, ID> {
     async fn insert(&self, entity: EntityEvent<DATA, ID>) -> ResultErr<ID>;
-    // async fn update(&self, id: ID, entity: Entity<DATA, ID>) -> Result<ID, String>;
-    // async fn delete(&self, id: ID) -> Result<ID, String>;
 }
 
 #[async_trait]
