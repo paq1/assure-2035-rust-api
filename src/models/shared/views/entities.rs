@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
@@ -18,4 +20,6 @@ pub struct LinksEntityView {
     pub events: String,
     #[serde(rename = "self")]
     pub self_entity: String,
+    #[serde(flatten)]
+    pub links: HashMap<String, String>,
 }

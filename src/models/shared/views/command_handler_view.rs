@@ -1,4 +1,7 @@
+use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
+
 use crate::core::shared::data::EntityEvent;
 use crate::models::shared::jsonapi::CanBeView;
 use crate::models::shared::views::DataWrapperView;
@@ -31,8 +34,9 @@ where
                     }
                 }
             },
-            links: Link {
-                selfevent: Some(format!("{self_url}/{ontology}/{state_id}/events/{event_id}"))
+            links: LinkView {
+                selfevent: Some(format!("{self_url}/{ontology}/{state_id}/events/{event_id}")),
+                links: HashMap::new(), // fixme
             },
         }
     }
@@ -49,7 +53,7 @@ where
     pub id: String,
     pub attributes: AttributesEvent<T>,
     pub relationships: Relationships,
-    pub links: Link,
+    pub links: LinkView,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -80,8 +84,10 @@ pub struct DataRS {
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Link {
+pub struct LinkView {
     #[serde(rename = "self")]
     pub r#selfevent: Option<String>,
+    #[serde(flatten)]
+    pub links: HashMap<String, String>,
 }
 

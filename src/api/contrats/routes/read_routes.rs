@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use actix_web::{get, HttpResponse, Responder, web};
@@ -28,7 +29,7 @@ pub async fn fetch_many_contrat(
 ) -> impl Responder {
 
     let store_lock = store.lock().await;
-    match store_lock.fetch_many(query.into()).await {
+    match store_lock.fetch_many(query.into(), HashMap::new()).await {
         Ok(items) => HttpResponse::Ok().json(ManyView::new(items)),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
@@ -94,7 +95,7 @@ pub async fn fetch_events_contrat(
 
 
     let journal_lock = journal.lock().await;
-    match journal_lock.fetch_many(query_core_with_filter).await {
+    match journal_lock.fetch_many(query_core_with_filter, HashMap::new()).await {
         Ok(items) => HttpResponse::Ok().json(ManyView::new(items)),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }

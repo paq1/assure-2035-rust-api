@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use std::sync::Arc;
 
 use actix_web::{get, HttpResponse, Responder, web};
@@ -35,7 +36,11 @@ pub async fn fetch_many_client(
 ) -> impl Responder {
 
     let store_lock = store.lock().await;
-    match store_lock.fetch_many(query.into()).await {
+    match store_lock.fetch_many(
+        query.into(),
+        HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())]
+        )
+    ).await {
         Ok(items) => {
             let paged_view = items.map(|x| {
                 EntityView {
@@ -121,7 +126,7 @@ pub async fn fetch_events_client(
 
 
     let journal_lock = journal.lock().await;
-    match journal_lock.fetch_many(query_core_with_filter).await {
+    match journal_lock.fetch_many(query_core_with_filter, HashMap::new()).await {
 
 
 

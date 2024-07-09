@@ -2,6 +2,7 @@ use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
 use crate::core::shared::repositories::query::Paged;
+use crate::models::shared::views::command_handler_view::LinkView;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct ManyView<T>
@@ -11,6 +12,7 @@ where
     #[schema(example = "[]")]
     pub data: Vec<T>,
     pub meta: Option<PaginationView>,
+    pub links: Option<LinkView>
 }
 
 impl<T: Serialize + Clone> ManyView<T> {
@@ -27,6 +29,9 @@ impl<T: Serialize + Clone> ManyView<T> {
                     }
                 }
             ),
+            links: paged.links.map(|link| {
+                link.into()
+            })
         }
     }
 }

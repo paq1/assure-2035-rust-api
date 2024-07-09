@@ -1,9 +1,27 @@
+use std::collections::HashMap;
+
 use crate::core::shared::repositories::filter::Filter;
+use crate::models::shared::views::command_handler_view::LinkView;
 
 #[derive(Clone)]
 pub struct Paged<T> {
     pub data: Vec<T>,
     pub meta: InfoPaged,
+    pub links: Option<Link>,
+}
+
+#[derive(Clone)]
+pub struct Link {
+    pub links: HashMap<String, String>,
+}
+
+impl From<Link> for LinkView {
+    fn from(value: Link) -> Self {
+        Self {
+            selfevent: None, // fixme voir si toujours necessaire
+            links: value.links,
+        }
+    }
 }
 
 impl<T: Clone> Paged<T> {
@@ -15,6 +33,7 @@ impl<T: Clone> Paged<T> {
                 .map(|data| x(data))
                 .collect::<Vec<R>>(),
             meta: self.meta.clone(),
+            links: self.links.clone()
         }
     }
 }

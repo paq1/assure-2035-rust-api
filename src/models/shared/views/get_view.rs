@@ -1,3 +1,5 @@
+use std::collections::HashMap;
+
 use serde::Serialize;
 
 use crate::core::shared::data::Entity;
@@ -24,6 +26,7 @@ where
             links: Some(LinksEntityView {
                 events: format!("{self_url}/{ontology}/{entity_id}/events"),
                 self_entity: format!("{self_url}/{ontology}/{entity_id}"),
+                links: HashMap::new()
             })
         }
     }
