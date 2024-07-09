@@ -12,6 +12,7 @@ where
     #[schema(example = "[]")]
     pub data: Vec<T>,
     pub meta: Option<PaginationView>,
+    #[serde(skip_serializing_if = "Option::is_none")]
     pub links: Option<LinkView>
 }
 
