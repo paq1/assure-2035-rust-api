@@ -2,7 +2,7 @@ use async_trait::async_trait;
 
 use crate::core::shared::data::{Entity, EntityEvent};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
-use crate::core::shared::repositories::query::{InfoPaged, Paged, Query};
+use crate::core::shared::repositories::query::{InfoPaged, Page, Paged, Query};
 use crate::models::shared::errors::ResultErr;
 
 pub mod query;
@@ -38,7 +38,8 @@ pub trait WriteOnlyEventRepo<DATA, ID> {
 pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {
     async fn fetch_many(&self, query: Query) -> ResultErr<Paged<ENTITY>> {
         let entities = self.fetch_all(query.clone()).await?;
-        let start = (query.pagination.page_number - 1) * query.pagination.page_size;
+        let total_records = entities.len();
+        let start = query.pagination.page_number * query.pagination.page_size;
         let end = start.clone() + query.pagination.page_size;
         let max_page = f64::ceil(entities.len() as f64 / query.pagination.page_size as f64) as usize;
 
@@ -48,8 +49,8 @@ pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {
             if start > entities.len() {
                 vec![]
             } else {
-                let sanitize_end = if end > entities.len() {
-                    entities.len()
+                let sanitize_end = if end > total_records {
+                    total_records
                 } else {
                     end
                 };
@@ -62,8 +63,11 @@ pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {
                 data: paged_entities,
                 meta: InfoPaged {
                     total_pages: max_page,
-                    number: query.pagination.page_number,
-                    size: query.pagination.page_size,
+                    total_records,
+                    page: Page {
+                        number: query.pagination.page_number,
+                        size: query.pagination.page_size,
+                    }
                 },
             }
         )

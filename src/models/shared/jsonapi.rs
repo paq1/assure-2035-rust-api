@@ -10,7 +10,7 @@ where
 {
     #[schema(example = "[]")]
     pub data: Vec<T>,
-    pub meta: Option<Pagination>,
+    pub meta: Option<PaginationView>,
 }
 
 impl<T: Serialize + Clone> ManyView<T> {
@@ -18,10 +18,13 @@ impl<T: Serialize + Clone> ManyView<T> {
         Self {
             data: paged.data,
             meta: Some(
-                Pagination {
+                PaginationView {
                     total_pages: paged.meta.total_pages,
-                    number: paged.meta.number,
-                    size: paged.meta.size
+                    total_records: paged.meta.total_records,
+                    page: PageView {
+                        number: paged.meta.page.number,
+                        size: paged.meta.page.size
+                    }
                 }
             ),
         }
@@ -29,13 +32,19 @@ impl<T: Serialize + Clone> ManyView<T> {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct Pagination {
+pub struct PaginationView {
     #[serde(rename = "totalPages")]
     pub total_pages: usize,
+    #[serde(rename = "totalRecords")]
+    pub total_records: usize,
+    pub page: PageView
+}
+
+#[derive(Serialize, Deserialize, Clone, ToSchema)]
+pub struct PageView {
     pub number: usize,
     pub size: usize,
 }
-
 
 pub trait CanBeView<DATAVIEW> {
     fn to_view(&self) -> DATAVIEW;
