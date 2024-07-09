@@ -1,3 +1,4 @@
+use std::collections::HashMap;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 
@@ -7,12 +8,13 @@ impl From<JwtClaims> for Context {
     fn from(value: JwtClaims) -> Self {
         Self {
             subject: value.name,
-            now: Utc::now()
+            now: Utc::now(),
+            meta: HashMap::new(),
         }
     }
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JwtClaims {
-    pub name: String
+    pub name: String,
 }
