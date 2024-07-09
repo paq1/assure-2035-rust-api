@@ -62,7 +62,7 @@ pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {
                     total_pages: max_page,
                     total_records,
                     page: Page {
-                        number: query.pagination.page_number + 1,
+                        number: query.pagination.page_number - 1,
                         size: query.pagination.page_size,
                     },
                 },
