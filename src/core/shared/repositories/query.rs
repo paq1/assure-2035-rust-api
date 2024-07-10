@@ -30,7 +30,7 @@ impl<T: Clone> Paged<T> {
                 .into_iter()
                 .map(|data| x(data))
                 .collect::<Vec<R>>(),
-            meta: self.meta.clone()
+            meta: self.meta.clone(),
         }
     }
 }
@@ -58,4 +58,13 @@ pub struct Query {
 pub struct PaginationDef {
     pub page_number: usize,
     pub page_size: usize,
+}
+
+impl Default for PaginationDef {
+    fn default() -> Self {
+        Self {
+            page_size: 10,
+            page_number: 1,
+        }
+    }
 }

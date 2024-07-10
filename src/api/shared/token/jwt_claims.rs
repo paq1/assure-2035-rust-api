@@ -10,6 +10,7 @@ impl From<JwtClaims> for Context {
             subject: value.name,
             now: Utc::now(),
             meta: HashMap::new(),
+            filters: HashMap::new()
         }
     }
 }

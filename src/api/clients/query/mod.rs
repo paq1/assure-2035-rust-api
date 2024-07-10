@@ -4,7 +4,7 @@ use utoipa::IntoParams;
 use crate::core::shared::repositories::filter::Filter;
 use crate::core::shared::repositories::query::PaginationDef;
 
-#[derive(Serialize, Deserialize, IntoParams, Debug)]
+#[derive(Serialize, Deserialize, IntoParams, Debug, Clone)]
 pub struct ClientQuery {
     #[serde(rename="page[number]")]
     pub number: Option<usize>,

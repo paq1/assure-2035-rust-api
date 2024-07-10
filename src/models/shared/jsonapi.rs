@@ -1,6 +1,8 @@
 use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
 use crate::core::shared::context::Context;
 use crate::core::shared::repositories::query::Paged;
 use crate::models::shared::views::command_handler_view::LinkView;
@@ -25,8 +27,29 @@ impl<T: Serialize + Clone> ManyView<T> {
             .map(|urlref| urlref.clone())
             .unwrap_or("unknown".to_string());
 
+
+        let query_without_prefix = ctx.filters
+            .iter()
+            .map(|(k, v)| {
+                format!("{k}={v}")
+            })
+            .collect::<Vec<String>>()
+            .join("&");
+
+        let query = if query_without_prefix.is_empty() {
+            query_without_prefix
+        } else {
+            format!("?{query_without_prefix}")
+        };
+
         let links = LinkView {
-            links: HashMap::from([("self".to_string(), format!("{external_url}/{ontology}"))]) // fixme mettre les bonnes valeures ici
+            links: HashMap::from([
+                ("self".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+                ("last".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+                ("prev".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+                ("first".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+                ("next".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+            ]) // fixme mettre les bonnes valeures ici
         };
 
         Self {

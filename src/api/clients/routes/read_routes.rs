@@ -37,7 +37,14 @@ pub async fn fetch_many_client(
     req: HttpRequest,
 ) -> impl Responder {
 
-    let ctx: Context = Context::empty().decore_with_http_header(&req);
+    let ctx: Context = Context::empty()
+        .decore_with_http_header(&req)
+        .clone_with_filter(
+            HashMap::from([
+                ("page[number]".to_string(), query.number.map(|x| x.to_string()).unwrap_or("0".to_string())),
+                ("page[size]".to_string(), query.size.map(|x| x.to_string()).unwrap_or("10".to_string())),
+            ])
+        );
 
     let store_lock = store.lock().await;
     match store_lock.fetch_many(
@@ -116,9 +123,16 @@ pub async fn fetch_events_client(
     req: HttpRequest,
 ) -> impl Responder {
     let id = path.into_inner();
-    let query_core: QueryCore = query.into();
+    let query_core: QueryCore = query.clone().into();
 
-    let ctx: Context = Context::empty().decore_with_http_header(&req);
+    let ctx: Context = Context::empty()
+        .decore_with_http_header(&req)
+        .clone_with_filter(
+            HashMap::from([
+                ("page[number]".to_string(), query.number.map(|x| x.to_string()).unwrap_or("0".to_string())),
+                ("page[size]".to_string(), query.size.map(|x| x.to_string()).unwrap_or("10".to_string())),
+            ])
+        );
 
     let query_core_with_filter = QueryCore {
         filter: Filter::Expr(
