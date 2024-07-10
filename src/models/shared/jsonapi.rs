@@ -1,3 +1,4 @@
+use std::cmp::max;
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
@@ -27,7 +28,6 @@ impl<T: Serialize + Clone> ManyView<T> {
             .map(|urlref| urlref.clone())
             .unwrap_or("unknown".to_string());
 
-
         let query_without_prefix = ctx.filters
             .iter()
             .map(|(k, v)| {
@@ -42,12 +42,48 @@ impl<T: Serialize + Clone> ManyView<T> {
             format!("?{query_without_prefix}")
         };
 
+
+        let query_first_without_prefix = ctx.filters
+            .iter()
+            .filter(|(k, _)| **k == "page[number]".to_string() || **k == "page[size]".to_string())
+            .map(|(k, v)| {
+                format!("{k}={v}")
+            })
+            .chain(vec!["page[number]=0".to_string(), format!("page[size]={}", paged.meta.page.size)])
+            .collect::<Vec<String>>()
+            .join("&");
+
+        let query_first = if query_first_without_prefix.is_empty() {
+            query_first_without_prefix
+        } else {
+            format!("?{query_first_without_prefix}")
+        };
+
+        let query_prev_without_prefix = ctx.filters
+            .iter()
+            .filter(|(k, _)| **k == "page[number]".to_string() || **k == "page[size]".to_string())
+            .map(|(k, v)| {
+                format!("{k}={v}")
+            })
+            .chain(vec![format!("page[number]={}", max(paged.meta.page.number - 1, 0)), format!("page[size]={}", paged.meta.page.size)])
+            .collect::<Vec<String>>()
+            .join("&");
+
+        let query_prev = if query_prev_without_prefix.is_empty() {
+            query_prev_without_prefix
+        } else {
+            format!("?{query_first_without_prefix}")
+        };
+
+
+
+
         let links = LinkView {
             links: HashMap::from([
                 ("self".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
                 ("last".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
-                ("prev".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
-                ("first".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+                ("prev".to_string(), format!("{external_url}/{ontology}{}", query_prev.clone())),
+                ("first".to_string(), format!("{external_url}/{ontology}{query_first}")),
                 ("next".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
             ]) // fixme mettre les bonnes valeures ici
         };
