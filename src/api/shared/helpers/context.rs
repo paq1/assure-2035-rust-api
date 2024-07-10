@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-use std::fmt::format;
+
 use actix_web::HttpRequest;
 
 use crate::api::shared::helpers::header_value::CanSanitizeHeader;
@@ -7,7 +7,7 @@ use crate::core::shared::context::Context;
 use crate::models::shared::errors::ResultErr;
 
 impl CanDecoreFromHttpRequest for Context {
-    fn decore_with_http(&self, req: &HttpRequest) -> ResultErr<Self> {
+    fn decore_with_http_header(&self, req: &HttpRequest) -> ResultErr<Self> {
         let maybe_proto = req.headers()
             .get("X-Forwarded-Proto")
             .map(|header_value| header_value.clone().sanitize_header("X-Forwarded-Proto".to_string()))
@@ -57,5 +57,5 @@ impl CanDecoreFromHttpRequest for Context {
 }
 
 pub trait CanDecoreFromHttpRequest: Sized {
-    fn decore_with_http(&self, req: &HttpRequest) -> ResultErr<Self>;
+    fn decore_with_http_header(&self, req: &HttpRequest) -> ResultErr<Self>;
 }

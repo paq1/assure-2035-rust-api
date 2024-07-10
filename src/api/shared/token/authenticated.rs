@@ -35,7 +35,7 @@ pub async fn authenticated<T: TokenService>(
                     println!("err: {err:?}");
                     err
                 });
-            ctx?.decore_with_http(req)
+            ctx?.decore_with_http_header(req)
         }
         _ => Err(
             Error::Http(
