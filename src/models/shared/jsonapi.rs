@@ -78,7 +78,7 @@ impl<T: Serialize + Clone> ManyView<T> {
 
         let other_link_sanitize = other_link
             .into_iter()
-            .map(|(k, v)| (k, format!("{external_url}/{ontology}")))
+            .map(|(k, v)| (k, format!("{external_url}/{v}")))
             .collect::<HashMap<String, String>>();
 
 
