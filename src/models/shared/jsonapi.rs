@@ -21,7 +21,7 @@ where
 }
 
 impl<T: Serialize + Clone> ManyView<T> {
-    pub fn new(paged: Paged<T>, ctx: &Context, ontology: String) -> Self {
+    pub fn new(paged: Paged<T>, ctx: &Context, ontology: String, other_link: HashMap<String, String>) -> Self {
 
         let external_url = ctx.meta
             .get("externalUrl")
@@ -72,7 +72,7 @@ impl<T: Serialize + Clone> ManyView<T> {
         let query_prev = if query_prev_without_prefix.is_empty() {
             query_prev_without_prefix
         } else {
-            format!("?{query_first_without_prefix}")
+            format!("?{query_prev_without_prefix}")
         };
 
 

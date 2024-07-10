@@ -35,7 +35,7 @@ pub async fn fetch_many_contrat(
 
     let store_lock = store.lock().await;
     match store_lock.fetch_many(query.into(), HashMap::new()).await {
-        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string())),
+        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())]))),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
@@ -106,7 +106,7 @@ pub async fn fetch_events_contrat(
 
     let journal_lock = journal.lock().await;
     match journal_lock.fetch_many(query_core_with_filter, HashMap::new()).await {
-        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string())),
+        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string(), HashMap::new())),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }

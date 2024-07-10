@@ -62,7 +62,7 @@ pub async fn fetch_many_client(
                 }
             });
 
-            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string()))
+            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))
         },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
@@ -164,7 +164,7 @@ pub async fn fetch_events_client(
                 }
             });
 
-            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string()))
+            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string(), HashMap::new()))
         },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
