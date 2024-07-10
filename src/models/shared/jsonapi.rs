@@ -85,7 +85,7 @@ impl<T: Serialize + Clone> ManyView<T> {
 
         let links = LinkView {
             links: HashMap::from([
-                ("self".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
+                ("self".to_string(), format!("{external_url}/{ontology}")),
                 ("last".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
                 ("prev".to_string(), format!("{external_url}/{ontology}{}", query_prev.clone())),
                 ("first".to_string(), format!("{external_url}/{ontology}{query_first}")),
