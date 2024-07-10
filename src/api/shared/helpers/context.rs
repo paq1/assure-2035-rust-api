@@ -1,5 +1,5 @@
 use std::collections::HashMap;
-
+use std::fmt::format;
 use actix_web::HttpRequest;
 
 use crate::api::shared::helpers::header_value::CanSanitizeHeader;
@@ -26,7 +26,15 @@ impl CanDecoreFromHttpRequest for Context {
             .map(|x| x.map(|x| Some(x)).unwrap_or(None))
             .flatten();
 
-        let meta = vec![maybe_proto, maybe_host, maybe_prefix]
+        let maybe_external_url = match (maybe_proto.clone(), maybe_host.clone(), maybe_prefix.clone()) {
+            (Some(proto), Some(host), Some(prefix)) =>
+                Some(format!("{}:{}{}", proto.1, host.1, prefix.1)),
+            (Some(proto), Some(host), None) =>
+                Some(format!("{}:{}", proto.1, host.1)),
+            _ => None
+        }.map(|val| ("externalUrl".to_string(), val));
+
+        let meta = vec![maybe_proto, maybe_host, maybe_prefix, maybe_external_url]
             .iter()
             .fold(HashMap::new(), |acc, current| {
                 match current {
