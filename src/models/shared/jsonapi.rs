@@ -26,7 +26,6 @@ impl<T: Serialize + Clone> ManyView<T> {
             .unwrap_or("unknown".to_string());
 
         let links = LinkView {
-            selfevent: None,
             links: HashMap::from([("self".to_string(), format!("{external_url}/{ontology}"))]) // fixme mettre les bonnes valeures ici
         };
 

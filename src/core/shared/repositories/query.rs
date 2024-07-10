@@ -17,7 +17,6 @@ pub struct Link {
 impl From<Link> for LinkView {
     fn from(value: Link) -> Self {
         Self {
-            selfevent: None, // fixme voir si toujours necessaire
             links: value.links,
         }
     }

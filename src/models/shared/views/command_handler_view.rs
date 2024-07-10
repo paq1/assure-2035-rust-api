@@ -41,8 +41,12 @@ where
                 }
             },
             links: LinkView {
-                selfevent: Some(format!("{external_url}/{ontology}/{state_id}/events/{event_id}")),
-                links: HashMap::new(), // fixme
+                links: HashMap::from([
+                    (
+                        "self".to_string(),
+                        format!("{external_url}/{ontology}/{state_id}/events/{event_id}")
+                    )
+                ]),
             },
         }
     }
@@ -91,8 +95,6 @@ pub struct DataRS {
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct LinkView {
-    #[serde(rename = "self")]
-    pub r#selfevent: Option<String>,
     #[serde(flatten)]
     pub links: HashMap<String, String>,
 }
