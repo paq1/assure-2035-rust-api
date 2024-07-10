@@ -45,7 +45,7 @@ impl<T: Serialize + Clone> ManyView<T> {
 
         let query_first_without_prefix = ctx.filters
             .iter()
-            .filter(|(k, _)| **k == "page[number]".to_string() || **k == "page[size]".to_string())
+            .filter(|(k, _)| **k != "page[number]".to_string() || **k != "page[size]".to_string())
             .map(|(k, v)| {
                 format!("{k}={v}")
             })
@@ -61,11 +61,11 @@ impl<T: Serialize + Clone> ManyView<T> {
 
         let query_prev_without_prefix = ctx.filters
             .iter()
-            .filter(|(k, _)| **k == "page[number]".to_string() || **k == "page[size]".to_string())
+            .filter(|(k, _)| **k != "page[number]".to_string() || **k != "page[size]".to_string())
             .map(|(k, v)| {
                 format!("{k}={v}")
             })
-            .chain(vec![format!("page[number]={}", max(paged.meta.page.number - 1, 0)), format!("page[size]={}", paged.meta.page.size)])
+            .chain(vec![format!("page[number]={}", max(if paged.meta.page.number > 0 { paged.meta.page.number - 1 } else { 0 }, 0)), format!("page[size]={}", paged.meta.page.size)]) // fixme passer sur des isize pour la paginaition
             .collect::<Vec<String>>()
             .join("&");
 
