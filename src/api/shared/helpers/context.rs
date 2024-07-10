@@ -27,9 +27,9 @@ impl CanDecoreFromHttpRequest for Context {
 
         let maybe_external_url = match (maybe_proto.clone(), maybe_host.clone(), maybe_prefix.clone()) {
             (Some(proto), Some(host), Some(prefix)) =>
-                Some(format!("{}:{}{}", proto.1, host.1, prefix.1)),
+                Some(format!("{}://{}{}", proto.1, host.1, prefix.1)),
             (Some(proto), Some(host), None) =>
-                Some(format!("{}:{}", proto.1, host.1)),
+                Some(format!("{}://{}", proto.1, host.1)),
             _ => None
         }.map(|val| ("externalUrl".to_string(), val));
 
