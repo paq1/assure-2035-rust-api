@@ -45,7 +45,7 @@ impl<T: Serialize + Clone> ManyView<T> {
 
         let query_first_without_prefix = ctx.filters
             .iter()
-            .filter(|(k, _)| **k != "page[number]".to_string() || **k != "page[size]".to_string())
+            .filter(|(k, _)| **k != "page[number]".to_string() && **k != "page[size]".to_string())
             .map(|(k, v)| {
                 format!("{k}={v}")
             })
@@ -61,7 +61,7 @@ impl<T: Serialize + Clone> ManyView<T> {
 
         let query_prev_without_prefix = ctx.filters
             .iter()
-            .filter(|(k, _)| **k != "page[number]".to_string() || **k != "page[size]".to_string())
+            .filter(|(k, _)| **k != "page[number]".to_string() && **k != "page[size]".to_string())
             .map(|(k, v)| {
                 format!("{k}={v}")
             })
