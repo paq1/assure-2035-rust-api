@@ -30,9 +30,7 @@ impl<T: Serialize + Clone> ManyView<T> {
                     }
                 }
             ),
-            links: paged.links.map(|link| {
-                link.into()
-            })
+            links: None, // fixme passer les info link ici (c'est uniquement lié a la view)
         }
     }
 }

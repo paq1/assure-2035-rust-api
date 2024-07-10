@@ -1,15 +1,15 @@
 use std::collections::HashMap;
 
 use serde::{Deserialize, Serialize};
-
+use crate::core::shared::context::Context;
 use crate::core::shared::data::EntityEvent;
 use crate::models::shared::jsonapi::CanBeView;
 use crate::models::shared::views::DataWrapperView;
 
 pub fn from_output_command_handler_to_view<DATA, VIEW>(
-    self_url: String,
     event: EntityEvent<DATA, String>,
     ontology: String,
+    context: &Context,
 ) -> DataWrapperView<ApiView<VIEW>>
 where
     VIEW: Serialize + Clone,
@@ -19,6 +19,12 @@ where
     let event_id = event.event_id;
     let state_id = event.entity_id;
     let urn_state_type = "org:example:insurance:client";
+
+    let external_url = context.meta
+        .get("externalUrl")
+        .map(|urlref| urlref.clone())
+        .unwrap_or("unknown".to_string());
+
     DataWrapperView {
         data: ApiView {
             r#type: type_urn_event.to_string(),
@@ -35,7 +41,7 @@ where
                 }
             },
             links: LinkView {
-                selfevent: Some(format!("{self_url}/{ontology}/{state_id}/events/{event_id}")),
+                selfevent: Some(format!("{external_url}/{ontology}/{state_id}/events/{event_id}")),
                 links: HashMap::new(), // fixme
             },
         }

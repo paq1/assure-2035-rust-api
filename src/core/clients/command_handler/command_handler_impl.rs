@@ -16,11 +16,11 @@ impl CommandHandlerCreate<ClientStates, ClientsCommands, ClientEvents> for Creat
         "create-client".to_string()
     }
 
-    async fn on_command(&self, _id: String, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
+    async fn on_command(&self, _id: String, command: ClientsCommands, context: &Context) -> ResultErr<ClientEvents> {
         match command {
             ClientsCommands::Create(c) => Ok(
                 ClientEvents::Created(CreatedEvent {
-                    by: context.subject,
+                    by: context.subject.clone(),
                     at: context.now,
                     data: ClientData {
                         first_name: c.data.first_name,
@@ -41,10 +41,10 @@ impl CommandHandlerUpdate<ClientStates, ClientsCommands, ClientEvents> for Updat
         "update-client".to_string()
     }
 
-    async fn on_command(&self, _id: String, _state: ClientStates, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
+    async fn on_command(&self, _id: String, _state: ClientStates, command: ClientsCommands, context: &Context) -> ResultErr<ClientEvents> {
         match command {
             ClientsCommands::Update(c) => Ok(
-                ClientEvents::Updated(UpdatedEvent { by: context.subject, at: context.now, data: c.data })
+                ClientEvents::Updated(UpdatedEvent { by: context.subject.clone(), at: context.now, data: c.data })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }
@@ -58,10 +58,10 @@ impl CommandHandlerUpdate<ClientStates, ClientsCommands, ClientEvents> for Disab
         "disable-client".to_string()
     }
 
-    async fn on_command(&self, _id: String, _state: ClientStates, command: ClientsCommands, context: Context) -> ResultErr<ClientEvents> {
+    async fn on_command(&self, _id: String, _state: ClientStates, command: ClientsCommands, context: &Context) -> ResultErr<ClientEvents> {
         match command {
             ClientsCommands::Disable(cmd) => Ok(
-                ClientEvents::Disabled(DisabledEvent { by: context.subject, at: context.now, reason: cmd.reason })
+                ClientEvents::Disabled(DisabledEvent { by: context.subject.clone(), at: context.now, reason: cmd.reason })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }

@@ -14,10 +14,10 @@ impl CommandHandlerCreate<ContratStates, ContratsCommands, ContratEvents> for Cr
         "create-contrat".to_string()
     }
 
-    async fn on_command(&self, _id: String, command: ContratsCommands, context: Context) -> ResultErr<ContratEvents> {
+    async fn on_command(&self, _id: String, command: ContratsCommands, context: &Context) -> ResultErr<ContratEvents> {
         match command {
             ContratsCommands::Create(c) => Ok(
-                ContratEvents::Created { by: context.subject, at: context.now, name: c.name }
+                ContratEvents::Created { by: context.subject.clone(), at: context.now, name: c.name }
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }
@@ -31,11 +31,11 @@ impl CommandHandlerUpdate<ContratStates, ContratsCommands, ContratEvents> for Up
         "update-contrat".to_string()
     }
 
-    async fn on_command(&self, _id: String, _state: ContratStates, command: ContratsCommands, context: Context) -> ResultErr<ContratEvents> {
+    async fn on_command(&self, _id: String, _state: ContratStates, command: ContratsCommands, context: &Context) -> ResultErr<ContratEvents> {
 
         match command {
             ContratsCommands::Update(c) => Ok(
-                ContratEvents::Updated (UpdatedEvent {by: context.subject, at: context.now, name: c.name})
+                ContratEvents::Updated (UpdatedEvent {by: context.subject.clone(), at: context.now, name: c.name})
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }

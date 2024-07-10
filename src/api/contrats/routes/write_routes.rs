@@ -37,7 +37,7 @@ pub async fn insert_one_contrat(
             let entity_id = Uuid::new_v4().to_string();
 
             let event = engine.lock().await
-                .compute(command, entity_id.clone(), "create-contrat".to_string(), ctx).await;
+                .compute(command, entity_id.clone(), "create-contrat".to_string(), &ctx).await;
 
             match event {
                 Ok((event, _state)) => HttpResponse::Created().json(event),
@@ -73,7 +73,7 @@ pub async fn update_one_contrat(
             let command = ContratsCommands::Update(body.into_inner());
 
             let event = engine.lock().await
-                .compute(command, id, "update-contrat".to_string(), ctx).await;
+                .compute(command, id, "update-contrat".to_string(), &ctx).await;
 
             match event {
                 Ok((event, _state)) => HttpResponse::Created().json(event),

@@ -7,7 +7,6 @@ use crate::models::shared::views::command_handler_view::LinkView;
 pub struct Paged<T> {
     pub data: Vec<T>,
     pub meta: InfoPaged,
-    pub links: Option<Link>,
 }
 
 #[derive(Clone)]
@@ -32,8 +31,7 @@ impl<T: Clone> Paged<T> {
                 .into_iter()
                 .map(|data| x(data))
                 .collect::<Vec<R>>(),
-            meta: self.meta.clone(),
-            links: self.links.clone()
+            meta: self.meta.clone()
         }
     }
 }

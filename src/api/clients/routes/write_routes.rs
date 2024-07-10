@@ -42,14 +42,17 @@ pub async fn insert_one_client(
             let entity_id = Uuid::new_v4().to_string();
 
             let event = engine.lock().await
-                .compute(command, entity_id.clone(), "create-client".to_string(), ctx).await;
+                .compute(command, entity_id.clone(), "create-client".to_string(), &ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Created().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
-                    own_url.url.clone(),
-                    event,
-                    "clients".to_string()
-                )),
+                Ok((event, _state)) =>
+                    HttpResponse::Created().json(
+                        from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                            event,
+                            "clients".to_string(),
+                            &ctx
+                        )
+                    ),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -82,10 +85,17 @@ pub async fn update_one_client(
             let command = ClientsCommands::Update(body.into_inner());
 
             let event = engine.lock().await
-                .compute(command, id, "update-client".to_string(), ctx).await;
+                .compute(command, id, "update-client".to_string(), &ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Ok().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(own_url.url.clone(), event, "clients".to_string())),
+                Ok((event, _state)) => HttpResponse::Ok()
+                    .json(
+                        from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                            event,
+                            "clients".to_string(),
+                            &ctx
+                        )
+                    ),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
@@ -118,10 +128,10 @@ pub async fn disable_one_client(
             let command = ClientsCommands::Disable(body.into_inner());
 
             let event = engine.lock().await
-                .compute(command, id, "disable-client".to_string(), ctx).await;
+                .compute(command, id, "disable-client".to_string(), &ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Ok().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(own_url.url.clone(), event, "clients".to_string())),
+                Ok((event, _state)) => HttpResponse::Ok().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(event, "clients".to_string(), &ctx)),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }
