@@ -76,6 +76,11 @@ impl<T: Serialize + Clone> ManyView<T> {
         };
 
 
+        let other_link_sanitize = other_link
+            .into_iter()
+            .map(|(k, v)| (k, format!("{external_url}/{ontology}")))
+            .collect::<HashMap<String, String>>();
+
 
 
         let links = LinkView {
@@ -85,7 +90,9 @@ impl<T: Serialize + Clone> ManyView<T> {
                 ("prev".to_string(), format!("{external_url}/{ontology}{}", query_prev.clone())),
                 ("first".to_string(), format!("{external_url}/{ontology}{query_first}")),
                 ("next".to_string(), format!("{external_url}/{ontology}{}", query.clone())),
-            ]) // fixme mettre les bonnes valeures ici
+            ])
+                .into_iter().chain(other_link_sanitize)
+                .collect()
         };
 
         Self {
