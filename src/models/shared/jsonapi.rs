@@ -1,6 +1,7 @@
+use std::collections::HashMap;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-
+use crate::core::shared::context::Context;
 use crate::core::shared::repositories::query::Paged;
 use crate::models::shared::views::command_handler_view::LinkView;
 
@@ -17,7 +18,18 @@ where
 }
 
 impl<T: Serialize + Clone> ManyView<T> {
-    pub fn new(paged: Paged<T>) -> Self {
+    pub fn new(paged: Paged<T>, ctx: &Context, ontology: String) -> Self {
+
+        let external_url = ctx.meta
+            .get("externalUrl")
+            .map(|urlref| urlref.clone())
+            .unwrap_or("unknown".to_string());
+
+        let links = LinkView {
+            selfevent: None,
+            links: HashMap::from([("self".to_string(), format!("{external_url}/{ontology}"))]) // fixme mettre les bonnes valeures ici
+        };
+
         Self {
             data: paged.data,
             meta: Some(
@@ -30,7 +42,7 @@ impl<T: Serialize + Clone> ManyView<T> {
                     }
                 }
             ),
-            links: None, // fixme passer les info link ici (c'est uniquement lié a la view)
+            links: Some(links), // fixme passer les info link ici (c'est uniquement lié a la view)
         }
     }
 }

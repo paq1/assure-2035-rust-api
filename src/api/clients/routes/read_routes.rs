@@ -9,7 +9,6 @@ use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoReposi
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
-use crate::api::shared::OwnUrl;
 use crate::core::clients::data::ClientEvents;
 use crate::core::shared::context::Context;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, ReadOnlyEventRepo};
@@ -35,7 +34,10 @@ pub async fn fetch_many_client(
     store: web::Data<Arc<Mutex<ClientsMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ClientQuery>,
+    req: HttpRequest,
 ) -> impl Responder {
+
+    let ctx: Context = Context::empty().decore_with_http_header(&req);
 
     let store_lock = store.lock().await;
     match store_lock.fetch_many(
@@ -53,7 +55,7 @@ pub async fn fetch_many_client(
                 }
             });
 
-            HttpResponse::Ok().json(ManyView::new(paged_view))
+            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string()))
         },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
@@ -111,9 +113,12 @@ pub async fn fetch_events_client(
     journal: web::Data<Arc<Mutex<ClientsEventMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ClientQuery>,
+    req: HttpRequest,
 ) -> impl Responder {
     let id = path.into_inner();
     let query_core: QueryCore = query.into();
+
+    let ctx: Context = Context::empty().decore_with_http_header(&req);
 
     let query_core_with_filter = QueryCore {
         filter: Filter::Expr(
@@ -145,7 +150,7 @@ pub async fn fetch_events_client(
                 }
             });
 
-            HttpResponse::Ok().json(ManyView::new(paged_view))
+            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string()))
         },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }

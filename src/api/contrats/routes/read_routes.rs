@@ -1,12 +1,14 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
-use actix_web::{get, HttpResponse, Responder, web};
+use actix_web::{get, HttpRequest, HttpResponse, Responder, web};
 use actix_web::web::Query;
 use futures::lock::Mutex;
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::query::ContratQuery;
+use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
+use crate::core::shared::context::Context;
 use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
@@ -26,11 +28,14 @@ pub async fn fetch_many_contrat(
     store: web::Data<Arc<Mutex<ContratsMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ContratQuery>,
+    req: HttpRequest,
 ) -> impl Responder {
+
+    let ctx: Context = Context::empty().decore_with_http_header(&req);
 
     let store_lock = store.lock().await;
     match store_lock.fetch_many(query.into(), HashMap::new()).await {
-        Ok(items) => HttpResponse::Ok().json(ManyView::new(items)),
+        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string())),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
@@ -76,7 +81,12 @@ pub async fn fetch_events_contrat(
     journal: web::Data<Arc<Mutex<ContratsEventMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ContratQuery>,
+    req: HttpRequest,
 ) -> impl Responder {
+
+    let ctx: Context = Context::empty().decore_with_http_header(&req);
+
+
     let id = path.into_inner();
     let query_core: QueryCore = query.into();
 
@@ -96,7 +106,7 @@ pub async fn fetch_events_contrat(
 
     let journal_lock = journal.lock().await;
     match journal_lock.fetch_many(query_core_with_filter, HashMap::new()).await {
-        Ok(items) => HttpResponse::Ok().json(ManyView::new(items)),
+        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string())),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }

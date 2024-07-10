@@ -23,7 +23,6 @@ use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many
 use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
 use crate::api::shared::cache::CacheAsync;
-use crate::api::shared::OwnUrl;
 use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::api::swagger::ApiDoc;
@@ -125,8 +124,6 @@ async fn main() -> std::io::Result<()> {
     let api_address = std::env::var("API_ADDRESS").unwrap();
     let api_port = std::env::var("API_PORT").unwrap().parse::<u16>().unwrap();
 
-    let own_url = OwnUrl::new("https://api.example.org/v1".to_string());
-
     HttpServer::new(move || {
         let cors = Cors::default()
             .allow_any_origin()
@@ -145,7 +142,6 @@ async fn main() -> std::io::Result<()> {
                 openapi.clone(),
             ))
             .app_data(web::Data::new(jwt_rsa_token_service))
-            .app_data(web::Data::new(own_url.clone()))
             .app_data(web::Data::new(standard_http_error))
             .app_data(web::Data::new(jwt_token_service))
             // clients services
