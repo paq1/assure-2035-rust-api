@@ -48,6 +48,7 @@ pub async fn insert_one_contrat(
                         from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
                             event,
                             "contracts".to_string(),
+                            "org:example:insurance:contract".to_string(),
                             &ctx,
                         )
                     )
@@ -92,6 +93,7 @@ pub async fn update_one_contrat(
                         from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
                             event,
                             "contracts".to_string(),
+                            "org:example:insurance:contract".to_string(),
                             &ctx,
                         )
                     )

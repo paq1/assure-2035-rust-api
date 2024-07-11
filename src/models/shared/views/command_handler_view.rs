@@ -9,16 +9,16 @@ use crate::models::shared::views::DataWrapperView;
 pub fn from_output_command_handler_to_view<DATA, VIEW>(
     event: EntityEvent<DATA, String>,
     ontology: String,
+    complete_ontology: String,
     context: &Context,
 ) -> DataWrapperView<ApiView<VIEW>>
 where
     VIEW: Serialize + Clone,
     DATA: Clone + CanBeView<VIEW>,
 {
-    let type_urn_event = format!("org:example:insurance:client:event"); // fixme
+    let type_urn_event = format!("{complete_ontology}:event");
     let event_id = event.event_id;
     let state_id = event.entity_id;
-    let urn_state_type = "org:example:insurance:client";
 
     let external_url = context.meta
         .get("externalUrl")
@@ -27,7 +27,7 @@ where
 
     DataWrapperView {
         data: ApiView {
-            r#type: type_urn_event.to_string(),
+            r#type: type_urn_event,
             id: event_id.clone(),
             attributes: AttributesEvent {
                 attributes: event.data.to_view(),
@@ -35,7 +35,7 @@ where
             relationships: Relationships {
                 entity: DataWrapper {
                     data: DataRS {
-                        r#type: urn_state_type.to_string(),
+                        r#type: complete_ontology,
                         id: state_id.clone(),
                     }
                 }

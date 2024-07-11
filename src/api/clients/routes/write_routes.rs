@@ -48,6 +48,7 @@ pub async fn insert_one_client(
                         from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
                             event,
                             "clients".to_string(),
+                            "org:example:insurance:client".to_string(),
                             &ctx
                         )
                     ),
@@ -90,6 +91,7 @@ pub async fn update_one_client(
                         from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
                             event,
                             "clients".to_string(),
+                            "org:example:insurance:client".to_string(),
                             &ctx
                         )
                     ),
@@ -127,7 +129,13 @@ pub async fn disable_one_client(
                 .compute(command, id, "disable-client".to_string(), &ctx).await;
 
             match event {
-                Ok((event, _state)) => HttpResponse::Ok().json(from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(event, "clients".to_string(), &ctx)),
+                Ok((event, _state)) => HttpResponse::Ok().json(
+                    from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                        event,
+                        "clients".to_string(),
+                        "org:example:insurance:client".to_string(),
+                        &ctx
+                    )),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }
         }

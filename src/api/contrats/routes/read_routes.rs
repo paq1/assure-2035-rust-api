@@ -145,7 +145,7 @@ pub async fn fetch_events_contrat(
         Ok(items) => {
             let paged_view = items.map(|x| {
                 EntityView { // todo entity event view ici ? (a voir avec les specs s'il faut un différence entre la vu event / state
-                    r#type: "org:example:insurance:client".to_string(), // fixme passer le client ontology
+                    r#type: "org:example:insurance:contract".to_string(), // fixme passer le client ontology
                     id: x.entity_id,
                     attributes: x.data.to_view(),
                     links: None
