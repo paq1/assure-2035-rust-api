@@ -4,6 +4,7 @@ use crate::core::contrats::data::{ContratEvents, ContratStates, CreatedEvent, Up
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUpdate};
 use crate::models::contrats::commands::ContratsCommands;
+use crate::models::contrats::shared::CurrencyValue;
 use crate::models::shared::errors::{Error, ResultErr};
 
 pub struct CreateContratHandler;
@@ -17,7 +18,17 @@ impl CommandHandlerCreate<ContratStates, ContratsCommands, ContratEvents> for Cr
     async fn on_command(&self, _id: String, command: ContratsCommands, context: &Context) -> ResultErr<ContratEvents> {
         match command {
             ContratsCommands::Create(c) => Ok(
-                ContratEvents::Created (CreatedEvent { by: context.subject.clone(), at: context.now, data: c.data })
+                ContratEvents::Created (
+                    CreatedEvent {
+                        by: context.subject.clone(),
+                        at: context.now,
+                        data: c.data,
+                        premieum: CurrencyValue {
+                            value: 0.0,
+                            currency: "EUR".to_string()
+                        }
+                    }
+                )
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }

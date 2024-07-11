@@ -7,7 +7,8 @@ impl From<ContratDboState> for ContratStates {
     fn from(value: ContratDboState) -> Self {
         match value {
             ContratDboState::ContratDbo ( dbo ) => ContratStates::Contract (Contract {
-                data: dbo.data
+                data: dbo.data,
+                premieum: dbo.premieum
             })
         }
     }
@@ -28,7 +29,12 @@ impl From<Entity<ContratStates, String>> for EntityDBO<ContratDboState, String> 
 impl From<ContratStates> for ContratDboState {
     fn from(value: ContratStates) -> Self {
         match value {
-            ContratStates::Contract ( contract ) => ContratDboState::ContratDbo (ContractDbo {data: contract.data})
+            ContratStates::Contract ( contract ) => ContratDboState::ContratDbo (
+                ContractDbo {
+                    data: contract.data,
+                    premieum: contract.premieum
+                }
+            )
         }
     }
 }

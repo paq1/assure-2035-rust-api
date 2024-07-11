@@ -14,11 +14,11 @@ pub struct Vehicle {
     pub plate: String,
     pub brand: String,
     #[serde(rename = "insuredValue")]
-    pub insured_value: InsuredValue,
+    pub insured_value: CurrencyValue,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
-pub struct InsuredValue {
-    value: f32,
-    currency: String
+pub struct CurrencyValue {
+    pub value: f32,
+    pub currency: String
 }

@@ -1,8 +1,9 @@
+pub mod shared;
+
 use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
-
-use crate::models::contrats::shared::ContractData;
+use crate::models::contrats::shared::{ContractData, CurrencyValue};
 use crate::models::contrats::views::{ContractUpdatedView, ContractView, ContractViewEvent};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
@@ -23,10 +24,49 @@ pub enum ContratStates {
     Contract(Contract)
 }
 
+impl ContratStates {
+
+    pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
+        match self {
+            ContratStates::Contract(c) => c.reduce_state(event)
+        }
+    }
+
+    pub fn reduce_state_from_empty(event: &ContratEvents) -> Option<ContratStates> {
+        match event {
+            ContratEvents::Created(e) => Some(
+                ContratStates::Contract(
+                    Contract {
+                        data: e.data.clone(),
+                        premieum: e.premieum.clone()
+                    }
+                )
+            ),
+            _ => None
+        }
+    }
+
+}
+
 #[derive(Serialize, Deserialize, Clone)]
 pub struct Contract {
     #[serde(flatten)]
-    pub data: ContractData
+    pub data: ContractData,
+    pub premieum: CurrencyValue,
+}
+
+impl Contract {
+    pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
+        match event {
+            ContratEvents::Updated (e) => Some(
+                ContratStates::Contract (
+                    Contract {
+                        data: e.data.clone(),
+                        premieum: self.premieum.clone()
+                    })),
+            _ => None
+        }
+    }
 }
 
 
@@ -52,7 +92,8 @@ pub struct CreatedEvent {
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,
     #[serde(flatten)]
-    pub data: ContractData
+    pub data: ContractData,
+    pub premieum: CurrencyValue,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
