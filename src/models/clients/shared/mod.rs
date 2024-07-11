@@ -31,7 +31,7 @@ pub struct ClientData {
     #[serde(rename = "phoneNumber", skip_serializing_if = "Option::is_none")]
     pub phone_number: Option<PhoneNumber>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub adresse: Option<Adresse>
+    pub address: Option<Adresse>
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
