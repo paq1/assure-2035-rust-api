@@ -13,7 +13,9 @@ use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::shared::jsonapi::ManyView;
+use crate::models::shared::jsonapi::{CanBeView, ManyView};
+use crate::models::shared::views::entities::EntityView;
+use crate::models::shared::views::get_view::{from_states_to_entity_view, from_states_to_view};
 
 #[utoipa::path(
     responses(
@@ -31,11 +33,26 @@ pub async fn fetch_many_contrat(
     req: HttpRequest,
 ) -> impl Responder {
 
-    let ctx: Context = Context::empty().decore_with_http_header(&req);
+    let ctx: Context = Context::empty()
+        .decore_with_http_header(&req)
+        .clone_with_filter(
+            HashMap::from([
+                ("page[number]".to_string(), query.number.map(|x| x.to_string()).unwrap_or("0".to_string())),
+                ("page[size]".to_string(), query.size.map(|x| x.to_string()).unwrap_or("10".to_string())),
+            ])
+        );
 
     let store_lock = store.lock().await;
-    match store_lock.fetch_many(query.into(), HashMap::new()).await {
-        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())]))),
+    match store_lock.fetch_many(
+        query.into()
+    ).await {
+        Ok(items) => {
+            let paged_view = items.map(|entity| {
+                from_states_to_entity_view(entity, "contracts".to_string(), &ctx)
+            });
+
+            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "contracts".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))
+        },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
@@ -50,14 +67,26 @@ pub async fn fetch_many_contrat(
     )
 )]
 #[get("/contracts/{entity_id}")]
-pub async fn fetch_one_contrat(path: web::Path<String>, repo: web::Data<Arc<Mutex<ContratsMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
+pub async fn fetch_one_contrat(
+    path: web::Path<String>,
+    repo: web::Data<Arc<Mutex<ContratsMongoRepository>>>,
+    http_error: web::Data<StandardHttpError>,
+    req: HttpRequest
+) -> impl Responder {
     let id = path.into_inner();
 
     let repo_lock = repo.lock().await;
 
 
+    let ctx = Context::empty().decore_with_http_header(&req);
+
+
     match repo_lock.fetch_one(id).await {
-        Ok(Some(res)) => HttpResponse::Ok().json(res.clone()),
+        Ok(Some(entity)) => {
+            let view = from_states_to_view(entity, "contracts".to_string(), &ctx);
+
+            HttpResponse::Ok().json(view)
+        },
         Ok(_) => HttpResponse::NotFound().json(http_error.not_found.clone()),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
@@ -84,7 +113,14 @@ pub async fn fetch_events_contrat(
     req: HttpRequest,
 ) -> impl Responder {
 
-    let ctx: Context = Context::empty().decore_with_http_header(&req);
+    let ctx: Context = Context::empty()
+        .decore_with_http_header(&req)
+        .clone_with_filter(
+            HashMap::from([
+                ("page[number]".to_string(), query.number.map(|x| x.to_string()).unwrap_or("0".to_string())),
+                ("page[size]".to_string(), query.size.map(|x| x.to_string()).unwrap_or("10".to_string())),
+            ])
+        );
 
 
     let id = path.into_inner();
@@ -105,8 +141,19 @@ pub async fn fetch_events_contrat(
 
 
     let journal_lock = journal.lock().await;
-    match journal_lock.fetch_many(query_core_with_filter, HashMap::new()).await {
-        Ok(items) => HttpResponse::Ok().json(ManyView::new(items, &ctx, "contracts".to_string(), HashMap::new())),
+    match journal_lock.fetch_many(query_core_with_filter).await {
+        Ok(items) => {
+            let paged_view = items.map(|x| {
+                EntityView { // todo entity event view ici ? (a voir avec les specs s'il faut un différence entre la vu event / state
+                    r#type: "org:example:insurance:client".to_string(), // fixme passer le client ontology
+                    id: x.entity_id,
+                    attributes: x.data.to_view(),
+                    links: None
+                }
+            });
+
+            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string(), HashMap::new()))
+        },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }

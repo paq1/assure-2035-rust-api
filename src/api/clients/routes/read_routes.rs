@@ -48,9 +48,7 @@ pub async fn fetch_many_client(
 
     let store_lock = store.lock().await;
     match store_lock.fetch_many(
-        query.into(),
-        HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())]
-        )
+        query.into()
     ).await {
         Ok(items) => {
             let paged_view = items.map(|entity| {
@@ -144,12 +142,8 @@ pub async fn fetch_events_client(
 
 
     let journal_lock = journal.lock().await;
-    match journal_lock.fetch_many(query_core_with_filter, HashMap::new()).await {
-
-
-
+    match journal_lock.fetch_many(query_core_with_filter).await {
         Ok(items) => {
-
             let paged_view = items.map(|x| {
                 EntityView { // todo entity event view ici ? (a voir avec les specs s'il faut un différence entre la vu event / state
                     r#type: "org:example:insurance:client".to_string(), // fixme passer le client ontology

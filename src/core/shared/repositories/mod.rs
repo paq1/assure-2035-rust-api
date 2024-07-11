@@ -1,4 +1,3 @@
-use std::collections::HashMap;
 use async_trait::async_trait;
 
 use crate::core::shared::data::{Entity, EntityEvent};
@@ -34,7 +33,7 @@ pub trait WriteOnlyEventRepo<DATA, ID> {
 
 #[async_trait]
 pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {
-    async fn fetch_many(&self, query: Query, _linksadd: HashMap<String, String>) -> ResultErr<Paged<ENTITY>> {
+    async fn fetch_many(&self, query: Query) -> ResultErr<Paged<ENTITY>> {
         let entities = self.fetch_all(query.clone()).await?;
         let total_records = entities.len();
         let start = query.pagination.page_number * query.pagination.page_size;

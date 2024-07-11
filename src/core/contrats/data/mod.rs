@@ -3,7 +3,19 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::ContractData;
-use crate::models::shared::jsonapi::CanBeView;
+use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
+
+impl CanGetTypee for ContratStates {
+    fn get_type(&self) -> String {
+        "org:example:insurance:client".to_string()
+    }
+}
+
+impl CanBeView<ContratStates> for ContratStates {
+    fn to_view(&self) -> ContratStates {
+        self.clone()
+    }
+}
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ContratStates {
