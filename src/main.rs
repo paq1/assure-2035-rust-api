@@ -22,6 +22,8 @@ use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contrat};
 use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
+use crate::api::contrats::services::formule_repo_mock::FormuleRepoMock;
+use crate::api::contrats::services::formule_service_impl::FormuleServiceImpl;
 use crate::api::shared::cache::CacheAsync;
 use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
@@ -33,6 +35,9 @@ use crate::core::clients::reducer::ClientReducer;
 use crate::core::contrats::command_handler::command_handler_impl::{CreateContratHandler, UpdateContratHandler};
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::contrats::reducer::ContratReducer;
+use crate::core::contrats::services::ContratService;
+use crate::core::contrats::services::formule_repo::FormuleRepo;
+use crate::core::contrats::services::formule_service::FormuleService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::ClientsCommands;
@@ -102,17 +107,26 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-    let contrats_service: Arc<Mutex<ContratsServiceImpl<ContratsMongoRepository, ContratsEventMongoRepository>>> = Arc::new(
+
+    let formume_repo: Arc<Mutex<Box<dyn FormuleRepo>>> = Arc::new(Mutex::new(Box::new(FormuleRepoMock {  })));
+
+    let formule_service: Arc<Mutex<Box<dyn FormuleService>>> = Arc::new(Mutex::new(Box::new(FormuleServiceImpl { formule_repo: Arc::clone(&formume_repo) })));
+
+    let contrats_service: Arc<Mutex<Box<dyn ContratService>>> = Arc::new(
         Mutex::new(
-            ContratsServiceImpl {
-                store: Arc::clone(&store_contrats),
-                journal: Arc::clone(&journal_contrats),
-            }
+            Box::new(
+                ContratsServiceImpl {
+                    store: Arc::clone(&store_contrats),
+                    journal: Arc::clone(&journal_contrats),
+                    formule_service: Arc::clone(&formule_service)
+                }
+            )
         )
     );
+
     let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsMongoRepository, ContratsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
-            CommandHandler::Create(Box::new(CreateContratHandler {})),
+            CommandHandler::Create(Box::new(CreateContratHandler { contract_service: Arc::clone(&contrats_service) })),
             CommandHandler::Update(Box::new(UpdateContratHandler {})),
         ],
         reducer: ContratReducer::new().underlying,

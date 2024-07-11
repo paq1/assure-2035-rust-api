@@ -1,13 +1,17 @@
+use std::sync::Arc;
 use async_trait::async_trait;
-
+use futures::lock::Mutex;
 use crate::core::contrats::data::{ContratEvents, ContratStates, CreatedEvent, UpdatedEvent};
+use crate::core::contrats::services::ContratService;
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUpdate};
 use crate::models::contrats::commands::ContratsCommands;
 use crate::models::contrats::shared::CurrencyValue;
 use crate::models::shared::errors::{Error, ResultErr};
 
-pub struct CreateContratHandler;
+pub struct CreateContratHandler {
+    pub contract_service: Arc<Mutex<Box<dyn ContratService>>>
+}
 
 #[async_trait]
 impl CommandHandlerCreate<ContratStates, ContratsCommands, ContratEvents> for CreateContratHandler {
