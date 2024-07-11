@@ -8,10 +8,8 @@ use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRep
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
-use crate::core::clients::data::ClientEvents;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::models::clients::views::ClientViewEvent;
 use crate::models::contrats::commands::{ContratsCommands, CreateContratCommand, UpdateContratCommand};
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
