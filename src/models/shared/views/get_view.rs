@@ -27,7 +27,7 @@ where
         "events".to_string(), format!("{external_url}/{ontology}/{entity_id}/events")
     );
     let link_self = (
-        "events".to_string(), format!("{external_url}/{ontology}/{entity_id}")
+        "self".to_string(), format!("{external_url}/{ontology}/{entity_id}")
     );
 
     EntityView {
