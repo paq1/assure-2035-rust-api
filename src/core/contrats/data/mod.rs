@@ -38,7 +38,7 @@ impl ContratStates {
                 ContratStates::Contract(
                     Contract {
                         data: e.data.clone(),
-                        premieum: e.premieum.clone()
+                        premium: e.premium.clone()
                     }
                 )
             ),
@@ -52,7 +52,7 @@ impl ContratStates {
 pub struct Contract {
     #[serde(flatten)]
     pub data: ContractData,
-    pub premieum: CurrencyValue,
+    pub premium: CurrencyValue,
 }
 
 impl Contract {
@@ -62,7 +62,7 @@ impl Contract {
                 ContratStates::Contract (
                     Contract {
                         data: e.data.clone(),
-                        premieum: self.premieum.clone()
+                        premium: self.premium.clone()
                     })),
             _ => None
         }
@@ -93,7 +93,7 @@ pub struct CreatedEvent {
     pub at: DateTime<Utc>,
     #[serde(flatten)]
     pub data: ContractData,
-    pub premieum: CurrencyValue,
+    pub premium: CurrencyValue,
 }
 
 #[derive(Serialize, Deserialize, Clone)]

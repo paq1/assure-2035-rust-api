@@ -11,7 +11,7 @@ impl From<ContratDboEvent> for ContratEvents {
                     by: event_dbo.by,
                     at: event_dbo.at,
                     data: event_dbo.data,
-                    premieum: event_dbo.premieum,
+                    premium: event_dbo.premium,
                 }
             ),
             ContratDboEvent::Updated(event_dbo) => ContratEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data })
@@ -50,7 +50,7 @@ impl From<ContratEvents> for ContratDboEvent {
                     by: event.by,
                     at: event.at,
                     data: event.data,
-                    premieum: event.premieum
+                    premium: event.premium
                 }
             ),
             ContratEvents::Updated(updated) => ContratDboEvent::Updated(ContratUpdatedDbo { by: updated.by, at: updated.at, data: updated.data })

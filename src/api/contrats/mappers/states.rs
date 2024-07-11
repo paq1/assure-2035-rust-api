@@ -8,7 +8,7 @@ impl From<ContratDboState> for ContratStates {
         match value {
             ContratDboState::ContratDbo ( dbo ) => ContratStates::Contract (Contract {
                 data: dbo.data,
-                premieum: dbo.premieum
+                premium: dbo.premium
             })
         }
     }
@@ -32,7 +32,7 @@ impl From<ContratStates> for ContratDboState {
             ContratStates::Contract ( contract ) => ContratDboState::ContratDbo (
                 ContractDbo {
                     data: contract.data,
-                    premieum: contract.premieum
+                    premium: contract.premium
                 }
             )
         }

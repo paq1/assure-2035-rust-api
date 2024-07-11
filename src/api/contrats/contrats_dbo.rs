@@ -12,7 +12,7 @@ pub enum ContratDboState {
 pub struct ContractDbo {
     #[serde(flatten)]
     pub data: ContractData,
-    pub premieum: CurrencyValue,
+    pub premium: CurrencyValue,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -28,7 +28,7 @@ pub struct CreatedDbo {
     pub at: DateTime<Utc>,
     #[serde(flatten)]
     pub data: ContractData,
-    pub premieum: CurrencyValue,
+    pub premium: CurrencyValue,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
