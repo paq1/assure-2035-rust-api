@@ -5,7 +5,5 @@ use crate::models::contrats::commands::*;
 
 #[async_trait]
 pub trait ContratService {
-    async fn create_contrat(&self, command: CreateContratCommand, ctx: Context) -> ResultErr<String>;
-    async fn update_contrat(&self, command: UpdateContratCommand, id: String, ctx: Context) -> ResultErr<String>;
     async fn delete_contrat(&self, command: DeleteContratCommand, id: String, ctx: Context) -> ResultErr<String>;
 }

@@ -1,8 +1,9 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+use crate::models::contrats::shared::ContractData;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct ContratView {
-    #[schema(example = "Roger")]
-    pub name: String,
+    #[serde(flatten)]
+    pub data: ContractData
 }

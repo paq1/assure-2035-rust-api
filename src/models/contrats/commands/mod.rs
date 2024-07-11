@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+use crate::models::contrats::shared::ContractData;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub enum ContratsCommands {
@@ -10,14 +11,14 @@ pub enum ContratsCommands {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct CreateContratCommand {
-    #[schema(example = "input")]
-    pub name: String,
+    #[serde(flatten)]
+    pub data: ContractData
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct UpdateContratCommand {
-    #[schema(example = "input")]
-    pub name: String,
+    #[serde(flatten)]
+    pub data: ContractData
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]

@@ -23,7 +23,7 @@ use crate::models::shared::jsonapi::ManyView;
         ContratQuery
     )
 )]
-#[get("/contrats")]
+#[get("/contracts")]
 pub async fn fetch_many_contrat(
     store: web::Data<Arc<Mutex<ContratsMongoRepository>>>,
     http_error: web::Data<StandardHttpError>,
@@ -49,7 +49,7 @@ pub async fn fetch_many_contrat(
         )
     )
 )]
-#[get("/contrats/{entity_id}")]
+#[get("/contracts/{entity_id}")]
 pub async fn fetch_one_contrat(path: web::Path<String>, repo: web::Data<Arc<Mutex<ContratsMongoRepository>>>, http_error: web::Data<StandardHttpError>) -> impl Responder {
     let id = path.into_inner();
 
@@ -75,7 +75,7 @@ pub async fn fetch_one_contrat(path: web::Path<String>, repo: web::Data<Arc<Mute
         ContratQuery
     )
 )]
-#[get("/contrats/{entity_id}/events")]
+#[get("/contracts/{entity_id}/events")]
 pub async fn fetch_events_contrat(
     path: web::Path<String>,
     journal: web::Data<Arc<Mutex<ContratsEventMongoRepository>>>,

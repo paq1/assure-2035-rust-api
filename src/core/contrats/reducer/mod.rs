@@ -1,4 +1,4 @@
-use crate::core::contrats::data::{ContratEvents, ContratStates};
+use crate::core::contrats::data::{Contract, ContratEvents, ContratStates};
 use crate::core::contrats::data::ContratEvents::{Created, Updated};
 use crate::core::shared::reducer::Reducer;
 
@@ -14,12 +14,16 @@ impl ContratReducer {
                 compute_new_state: |current, event| {
                     if current.is_none() {
                         match event {
-                            Created { by: _, at: _, name} => Some(ContratStates::Contrat { name }),
+                            Created(e) => Some(
+                                ContratStates::Contract(
+                                    Contract {data: e.data}
+                                )
+                            ),
                             _ => None
                         }
                     } else {
                         match event {
-                            Updated (e) => Some(ContratStates::Contrat {name: e.name}),
+                            Updated (e) => Some(ContratStates::Contract (Contract { data: e.data })),
                             _ => None
                         }
                     }

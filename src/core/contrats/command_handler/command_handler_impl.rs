@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::core::contrats::data::{ContratEvents, ContratStates, UpdatedEvent};
+use crate::core::contrats::data::{ContratEvents, ContratStates, CreatedEvent, UpdatedEvent};
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUpdate};
 use crate::models::contrats::commands::ContratsCommands;
@@ -17,7 +17,7 @@ impl CommandHandlerCreate<ContratStates, ContratsCommands, ContratEvents> for Cr
     async fn on_command(&self, _id: String, command: ContratsCommands, context: &Context) -> ResultErr<ContratEvents> {
         match command {
             ContratsCommands::Create(c) => Ok(
-                ContratEvents::Created { by: context.subject.clone(), at: context.now, name: c.name }
+                ContratEvents::Created (CreatedEvent { by: context.subject.clone(), at: context.now, data: c.data })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }
@@ -35,7 +35,7 @@ impl CommandHandlerUpdate<ContratStates, ContratsCommands, ContratEvents> for Up
 
         match command {
             ContratsCommands::Update(c) => Ok(
-                ContratEvents::Updated (UpdatedEvent {by: context.subject.clone(), at: context.now, name: c.name})
+                ContratEvents::Updated (UpdatedEvent {by: context.subject.clone(), at: context.now, data: c.data})
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }

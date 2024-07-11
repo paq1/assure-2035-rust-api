@@ -22,7 +22,7 @@ use crate::models::shared::errors::StandardHttpError;
     ("bearer_auth" = [])
     )
 )]
-#[post("/contrats/commands/create")]
+#[post("/contracts/commands/create")]
 pub async fn insert_one_contrat(
     req: HttpRequest,
     body: web::Json<CreateContratCommand>,
@@ -57,7 +57,7 @@ pub async fn insert_one_contrat(
     ("bearer_auth" = [])
     )
 )]
-#[put("/contrats/commands/update/{entity_id}")]
+#[put("/contracts/commands/update/{entity_id}")]
 pub async fn update_one_contrat(
     path: web::Path<String>,
     req: HttpRequest,
