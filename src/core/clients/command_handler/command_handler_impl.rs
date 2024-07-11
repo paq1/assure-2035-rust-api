@@ -22,11 +22,7 @@ impl CommandHandlerCreate<ClientStates, ClientsCommands, ClientEvents> for Creat
                 ClientEvents::Created(CreatedEvent {
                     by: context.subject.clone(),
                     at: context.now,
-                    data: ClientData {
-                        first_name: c.data.first_name,
-                        last_name: c.data.last_name,
-                        birth_date: c.data.birth_date,
-                    }
+                    data: c.data
                 })
             ),
             _ => Err(Error::Simple("bad request".to_string()))

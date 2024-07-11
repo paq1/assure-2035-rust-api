@@ -11,11 +11,7 @@ impl From<ClientDboEvent> for ClientEvents {
                 ClientEvents::Created(CreatedEvent {
                     by: event_dbo.by,
                     at: event_dbo.at,
-                    data: ClientData {
-                        first_name: event_dbo.data.first_name,
-                        last_name: event_dbo.data.last_name,
-                        birth_date: event_dbo.data.birth_date,
-                    },
+                    data: event_dbo.data,
                 }),
             ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
             ClientDboEvent::Disable(event_dbo) => ClientEvents::Disabled(DisabledEvent { by: event_dbo.by, at: event_dbo.at, reason: event_dbo.reason })

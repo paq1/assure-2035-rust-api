@@ -45,11 +45,7 @@ impl CanGetTypee for ClientActif {
 impl From<ClientActif> for ClientViewActif {
     fn from(value: ClientActif) -> Self {
         ClientViewActif {
-            data: ClientData {
-                first_name: value.data.first_name.clone(),
-                last_name: value.data.last_name.clone(),
-                birth_date: value.data.birth_date,
-            }
+            data: value.data.clone()
         }
     }
 }

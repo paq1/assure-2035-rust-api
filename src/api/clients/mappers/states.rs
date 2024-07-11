@@ -4,30 +4,22 @@ use crate::core::clients::data::states::client_actif::ClientActif;
 use crate::core::clients::data::states::client_disable::ClientDisable;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::data::Entity;
-use crate::models::clients::shared::ClientData;
+
 impl From<ClientDboState> for ClientStates {
     fn from(value: ClientDboState) -> Self {
         match value {
-            ClientDboState::ClientDbo { kind, first_name, last_name, birth_date } =>
+            ClientDboState::ClientDbo { kind, data } =>
                 ClientStates::ClientActif(
                     ClientActif {
                         kind,
-                        data: ClientData {
-                            first_name,
-                            last_name,
-                            birth_date,
-                        },
+                        data,
                     }
                 ),
-            ClientDboState::ClientDisableDbo { kind, first_name, last_name, birth_date, reason } =>
+            ClientDboState::ClientDisableDbo { kind, data, reason } =>
                 ClientStates::ClientDisable(
                     ClientDisable {
                         kind,
-                        data: ClientData {
-                            first_name,
-                            last_name,
-                            birth_date,
-                        },
+                        data,
                         reason,
                     }
                 )
@@ -53,17 +45,13 @@ impl From<ClientStates> for ClientDboState {
             ClientStates::ClientActif(data) => {
                 ClientDboState::ClientDbo {
                     kind: data.kind,
-                    first_name: data.data.first_name,
-                    last_name: data.data.last_name,
-                    birth_date: data.data.birth_date,
+                    data: data.data,
                 }
             }
             ClientStates::ClientDisable(data) => {
                 ClientDboState::ClientDisableDbo {
                     kind: data.kind,
-                    first_name: data.data.first_name,
-                    last_name: data.data.last_name,
-                    birth_date: data.data.birth_date,
+                    data: data.data,
                     reason: data.reason,
                 }
             }

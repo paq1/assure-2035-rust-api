@@ -31,11 +31,7 @@ impl ClientStates {
                     ClientStates::ClientActif(
                         ClientActif {
                             kind: "org:example:insurance:client".to_string(),
-                            data: ClientData {
-                                first_name: data.data.first_name,
-                                last_name: data.data.last_name,
-                                birth_date: data.data.birth_date,
-                            },
+                            data: data.data,
                         }
                     )
                 ),

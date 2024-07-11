@@ -9,22 +9,17 @@ pub enum ClientDboState {
     ClientDbo {
         #[serde(rename = "_kind")]
         kind: String,
-        #[serde(rename = "firstName")]
-        first_name: String,
-        #[serde(rename = "lastName")]
-        last_name: String,
-        #[serde(rename = "birthDate")]
-        birth_date: DateTime<Utc>,
+
+        #[serde(flatten)]
+        data: ClientData,
     },
     ClientDisableDbo {
         #[serde(rename = "_kind")]
         kind: String,
-        #[serde(rename = "firstName")]
-        first_name: String,
-        #[serde(rename = "lastName")]
-        last_name: String,
-        #[serde(rename = "birthDate")]
-        birth_date: DateTime<Utc>,
+
+        #[serde(flatten)]
+        data: ClientData,
+        
         reason: DisableReason,
     },
 }

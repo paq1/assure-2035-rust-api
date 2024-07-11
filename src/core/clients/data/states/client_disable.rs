@@ -28,11 +28,7 @@ impl CanGetTypee for ClientDisable {
 impl From<ClientDisable> for ClientViewDisable {
     fn from(value: ClientDisable) -> Self {
         ClientViewDisable {
-            data: ClientData {
-                first_name: value.data.first_name.clone(),
-                last_name: value.data.last_name.clone(),
-                birth_date: value.data.birth_date,
-            }
+            data: value.data
         }
     }
 }
