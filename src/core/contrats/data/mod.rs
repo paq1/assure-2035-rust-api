@@ -3,11 +3,12 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::ContractData;
+use crate::models::contrats::views::{ContractUpdatedView, ContractView, ContractViewEvent};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 impl CanGetTypee for ContratStates {
     fn get_type(&self) -> String {
-        "org:example:insurance:client".to_string()
+        "org:example:insurance:contract".to_string()
     }
 }
 
@@ -29,9 +30,12 @@ pub struct Contract {
 }
 
 
-impl CanBeView<ContratEvents> for ContratEvents {
-    fn to_view(&self) -> ContratEvents {
-        return self.clone()
+impl CanBeView<ContractViewEvent> for ContratEvents {
+    fn to_view(&self) -> ContractViewEvent {
+        match self {
+            ContratEvents::Created(c) => ContractViewEvent::Created(ContractView {data: c.data.clone()}),
+            ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView {data: c.data.clone()}),
+        }
     }
 }
 

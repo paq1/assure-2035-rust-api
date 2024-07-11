@@ -11,6 +11,7 @@ use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::contrats::commands::{ContratsCommands, CreateContratCommand, UpdateContratCommand};
+use crate::models::contrats::views::ContractViewEvent;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 
@@ -44,7 +45,7 @@ pub async fn insert_one_contrat(
                 Ok((event, _state)) => {
                     HttpResponse::Created().json(
                         // fixme faire un view pour le contract
-                        from_output_command_handler_to_view::<ContratEvents, ContratEvents>(
+                        from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
                             event,
                             "contracts".to_string(),
                             &ctx,
@@ -88,7 +89,7 @@ pub async fn update_one_contrat(
                 Ok((event, _state)) => {
                     HttpResponse::Created().json(
                         // fixme faire un view pour le contract
-                        from_output_command_handler_to_view::<ContratEvents, ContratEvents>(
+                        from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
                             event,
                             "contracts".to_string(),
                             &ctx,
