@@ -23,12 +23,18 @@ impl From<Link> for LinkView {
 }
 
 impl<T: Clone> Paged<T> {
-    pub fn map<R>(&self, x: fn(T) -> R) -> Paged<R> {
+    pub fn map<R, F>(
+        &self,
+        f: F
+    ) -> Paged<R>
+    where
+        F: Fn(T) -> R
+    {
         Paged {
             data: self
                 .data.clone()
                 .into_iter()
-                .map(|data| x(data))
+                .map(|data| f(data))
                 .collect::<Vec<R>>(),
             meta: self.meta.clone(),
         }

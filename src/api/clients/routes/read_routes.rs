@@ -19,7 +19,7 @@ use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::{CanBeView, ManyView};
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 use crate::models::shared::views::entities::EntityView;
-use crate::models::shared::views::get_view::from_states_to_view;
+use crate::models::shared::views::get_view::{from_states_to_entity_view, from_states_to_view};
 
 #[utoipa::path(
     responses(
@@ -53,13 +53,8 @@ pub async fn fetch_many_client(
         )
     ).await {
         Ok(items) => {
-            let paged_view = items.map(|x| {
-                EntityView {
-                    r#type: "org:example:insurance:client".to_string(),
-                    id: x.entity_id,
-                    attributes: x.data.to_view(),
-                    links: None
-                }
+            let paged_view = items.map(|entity| {
+                from_states_to_entity_view(entity, "clients".to_string(), &ctx)
             });
 
             HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))

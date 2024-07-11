@@ -17,9 +17,6 @@ where
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct LinksEntityView {
-    pub events: String,
-    #[serde(rename = "self")]
-    pub self_entity: String,
     #[serde(flatten)]
     pub links: HashMap<String, String>,
 }
