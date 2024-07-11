@@ -15,7 +15,7 @@ impl FormuleService for FormuleServiceImpl {
         self.formule_repo.lock().await.fetch_all().await
     }
 
-    async fn can_get_formule(&self, name: &String) -> ResultErr<CurrencyValue> {
+    async fn get_formule_from_code(&self, name: &String) -> ResultErr<CurrencyValue> {
         self.formule_repo.lock().await.fetch_one(name).await
     }
 }

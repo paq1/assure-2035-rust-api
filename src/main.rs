@@ -22,6 +22,8 @@ use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contrat};
 use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
+use crate::api::contrats::services::facteur_pays_repo_mock::FacteurPaysRepoMock;
+use crate::api::contrats::services::facteur_vehicle_repo_mock::FacteurVehicleRepoMock;
 use crate::api::contrats::services::formule_repo_mock::FormuleRepoMock;
 use crate::api::contrats::services::formule_service_impl::FormuleServiceImpl;
 use crate::api::shared::cache::CacheAsync;
@@ -36,10 +38,13 @@ use crate::core::contrats::command_handler::command_handler_impl::{CreateContrat
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::contrats::reducer::ContratReducer;
 use crate::core::contrats::services::ContratService;
+use crate::core::contrats::services::facteur_pays_repo::FacteurPaysRepo;
+use crate::core::contrats::services::facteur_vehicle_repo::FacteurVehicleRepo;
 use crate::core::contrats::services::formule_repo::FormuleRepo;
 use crate::core::contrats::services::formule_service::FormuleService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
+use crate::core::shared::repositories::ReadOnlyEntityRepo;
 use crate::models::clients::commands::ClientsCommands;
 use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::StandardHttpError;
@@ -66,6 +71,17 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
+
+    let store_clients_readonly: Arc<Mutex<Box<dyn ReadOnlyEntityRepo<ClientStates, String>>>> = Arc::new(
+        Mutex::new(
+            Box::new(
+                ClientsMongoRepository {
+                    dao: ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await
+                }
+            )
+        )
+    );
+
     let journal_clients: Arc<Mutex<ClientsEventMongoRepository>> = Arc::new(
         Mutex::new(
             ClientsEventMongoRepository {
@@ -85,7 +101,7 @@ async fn main() -> std::io::Result<()> {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
             CommandHandler::Update(Box::new(UpdateClientHandler {})),
-            CommandHandler::Update(Box::new(DisableClientHandler {}))
+            CommandHandler::Update(Box::new(DisableClientHandler {})),
         ],
         reducer: ClientReducer::new().underlying,
         store: Arc::clone(&store_clients),
@@ -108,9 +124,25 @@ async fn main() -> std::io::Result<()> {
         )
     );
 
-    let formume_repo: Arc<Mutex<Box<dyn FormuleRepo>>> = Arc::new(Mutex::new(Box::new(FormuleRepoMock {  })));
+    let formume_repo: Arc<Mutex<Box<dyn FormuleRepo>>> = Arc::new(Mutex::new(Box::new(FormuleRepoMock {})));
 
     let formule_service: Arc<Mutex<Box<dyn FormuleService>>> = Arc::new(Mutex::new(Box::new(FormuleServiceImpl { formule_repo: Arc::clone(&formume_repo) })));
+
+    let facteur_vehicle_repo: Arc<Mutex<Box<dyn FacteurVehicleRepo>>> = Arc::new(
+        Mutex::new(
+            Box::new(
+                FacteurVehicleRepoMock {}
+            )
+        )
+    );
+
+    let facteur_pays_repo: Arc<Mutex<Box<dyn FacteurPaysRepo>>> = Arc::new(
+        Mutex::new(
+            Box::new(
+                FacteurPaysRepoMock {}
+            )
+        )
+    );
 
     let contrats_service: Arc<Mutex<Box<dyn ContratService>>> = Arc::new(
         Mutex::new(
@@ -118,7 +150,10 @@ async fn main() -> std::io::Result<()> {
                 ContratsServiceImpl {
                     store: Arc::clone(&store_contrats),
                     journal: Arc::clone(&journal_contrats),
-                    formule_service: Arc::clone(&formule_service)
+                    formule_service: Arc::clone(&formule_service),
+                    store_personne: Arc::clone(&store_clients_readonly),
+                    facteur_pays_repo: Arc::clone(&facteur_pays_repo),
+                    facteur_vehicle_repo: Arc::clone(&facteur_vehicle_repo),
                 }
             )
         )
