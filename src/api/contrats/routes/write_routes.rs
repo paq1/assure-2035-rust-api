@@ -53,7 +53,11 @@ pub async fn insert_one_contrat(
                         )
                     )
                 }
-                Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+                Err(err) => {
+                    println!("creation impossible !");
+                    println!("reasons : {err:?}");
+                    HttpResponse::InternalServerError().json(err)
+                }
             }
         }
         Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())

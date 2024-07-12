@@ -3,7 +3,7 @@ use utoipa::ToSchema;
 
 pub type ResultErr<DATA> = Result<DATA, Error>;
 
-#[derive(Debug)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub enum Error {
     Http(ErrorHttpCustom),
     Simple(String),
@@ -11,7 +11,7 @@ pub enum Error {
 }
 
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct StandardHttpError {
     pub not_found: ErrorHttpCustom,
     pub internal_server_error: ErrorHttpCustom,
