@@ -10,7 +10,7 @@ where
 
     fn to_created(&self) -> HttpResponse {
         match self {
-            Ok(k) => HttpResponse::Created().json(self),
+            Ok(k) => HttpResponse::Created().json(k),
             Err(err) => {
                 match err {
                     Error::Http(http_error) => {
@@ -28,7 +28,7 @@ where
 
     fn to_ok(&self) -> HttpResponse {
         match self {
-            Ok(k) => HttpResponse::Ok().json(self),
+            Ok(k) => HttpResponse::Ok().json(k),
             Err(err) => {
                 match err {
                     Error::Http(http_error) => {
