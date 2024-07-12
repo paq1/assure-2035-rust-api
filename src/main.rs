@@ -19,7 +19,7 @@ use crate::api::clients::services::ClientsServiceImpl;
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::contrats_mongo_dao::{ContratsEventMongoDAO, ContratsMongoDAO};
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
-use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contrat};
+use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contract_event, fetch_one_contrat};
 use crate::api::contrats::routes::write_routes::{insert_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
 use crate::api::contrats::services::facteur_pays_repo_mock::FacteurPaysRepoMock;
@@ -215,6 +215,7 @@ async fn main() -> std::io::Result<()> {
             .service(update_one_client)
             .service(disable_one_client)
             // contrats routes
+            .service(fetch_one_contract_event)
             .service(fetch_one_contrat)
             .service(fetch_many_contrat)
             .service(fetch_events_contrat)
