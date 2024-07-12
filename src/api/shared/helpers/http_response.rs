@@ -12,7 +12,7 @@ pub enum HttpKindResponse {
 impl HttpKindResponse {
     pub fn to_http_response<T>(&self, data: &T) -> HttpResponse
     where
-        T: Serialize + DeserializeOwned
+        T: Serialize + DeserializeOwned,
     {
         match self {
             HttpKindResponse::Created => HttpResponse::Created().json(data),
@@ -23,9 +23,8 @@ impl HttpKindResponse {
 
 impl<T> CanToHttpResponse<T> for ResultErr<T>
 where
-    T: Serialize + DeserializeOwned
+    T: Serialize + DeserializeOwned,
 {
-
     fn to_http_response_with_error_mapping(&self, http_status: HttpKindResponse) -> HttpResponse {
         match self {
             Ok(k) => http_status.to_http_response(k),
@@ -37,14 +36,12 @@ where
                             Some(404) => HttpResponse::NotFound().json(err),
                             _ => HttpResponse::InternalServerError().json(err)
                         }
-                    },
+                    }
                     Error::Simple(_) => HttpResponse::InternalServerError().json(err)
                 }
             }
         }
     }
-
-
 }
 
 pub trait CanToHttpResponse<T> {

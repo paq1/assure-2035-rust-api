@@ -1,6 +1,7 @@
-use chrono::{DateTime, NaiveDate, Utc};
+use chrono::NaiveDate;
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
 use crate::models::shared_business::Adresse;
 
 #[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]

@@ -13,7 +13,9 @@ pub struct ContratView {
 #[serde(tag = "statusType")]
 pub enum ContractViewState {
     #[serde(rename = "pending-subscription")]
-    Pending(BaseContractStateView)
+    Pending(BaseContractStateView),
+    #[serde(rename = "actif")]
+    Actif(BaseContractStateView)
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

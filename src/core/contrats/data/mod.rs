@@ -20,6 +20,10 @@ impl CanBeView<ContractViewState> for ContratStates {
             ContratStates::Pending(c) => ContractViewState::Pending(BaseContractStateView {
                 data: c.data.clone(),
                 premium: c.premium.clone(),
+            }),
+            ContratStates::Actif(c) => ContractViewState::Actif(BaseContractStateView {
+                data: c.data.clone(),
+                premium: c.premium.clone(),
             })
         }
     }
@@ -27,13 +31,15 @@ impl CanBeView<ContractViewState> for ContratStates {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ContratStates {
-    Pending(PendingContract)
+    Pending(PendingContract),
+    Actif(ActifContract),
 }
 
 impl ContratStates {
     pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
         match self {
-            ContratStates::Pending(c) => c.reduce_state(event)
+            ContratStates::Pending(c) => c.reduce_state(event),
+            ContratStates::Actif(c) => c.reduce_state(event),
         }
     }
 
@@ -72,6 +78,30 @@ impl PendingContract {
         }
     }
 }
+
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct ActifContract {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+}
+
+impl ActifContract {
+    pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
+        match event {
+            ContratEvents::Approved(_) => Some(
+                ContratStates::Actif(
+                    ActifContract {
+                        data: self.data.clone(),
+                        premium: self.premium.clone(),
+                    })),
+            _ => None
+        }
+    }
+}
+
+
 
 
 impl CanBeView<ContractViewEvent> for ContratEvents {

@@ -2,9 +2,7 @@ use crate::core::clients::data::ClientEvents;
 use crate::core::clients::data::ClientEvents::Created;
 use crate::core::clients::data::states::client_actif::ClientActif;
 use crate::core::clients::data::states::client_disable::ClientDisable;
-use crate::models::clients::shared::ClientData;
 use crate::models::clients::views::ClientViewState;
-use crate::models::shared::errors::ResultErr;
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 pub mod client_actif;
@@ -36,16 +34,6 @@ impl ClientStates {
                     )
                 ),
             _ => None
-        }
-    }
-}
-
-
-impl ClientStates {
-    pub fn data(&self) -> ResultErr<ClientData> {
-        match self {
-            ClientStates::ClientActif(client_data) => Ok(client_data.data.clone()),
-            ClientStates::ClientDisable(state) => Ok(state.data.clone()),
         }
     }
 }
