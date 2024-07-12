@@ -65,7 +65,7 @@ pub async fn insert_one_contrat(
     ("bearer_auth" = [])
     )
 )]
-#[post("/contracts/{entity_id}/commands/approve")]
+#[put("/contracts/{entity_id}/commands/approve")]
 pub async fn approve_one_contrat(
     path: web::Path<String>,
     req: HttpRequest,
