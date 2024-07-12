@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 
-use crate::models::contrats::shared::ContractData;
+use crate::models::contrats::shared::{ContractData, CurrencyValue};
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct ContratView {
@@ -28,6 +28,7 @@ pub enum ContractViewEvent {
 pub struct ContractView {
     #[serde(flatten)]
     pub data: ContractData,
+    pub premium: CurrencyValue,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

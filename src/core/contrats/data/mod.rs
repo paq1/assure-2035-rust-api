@@ -73,8 +73,8 @@ impl Contract {
 impl CanBeView<ContractViewEvent> for ContratEvents {
     fn to_view(&self) -> ContractViewEvent {
         match self {
-            ContratEvents::Created(c) => ContractViewEvent::Created(ContractView {data: c.data.clone()}),
-            ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView {data: c.data.clone()}),
+            ContratEvents::Created(c) => ContractViewEvent::Created(ContractView {data: c.data.clone(), premium: c.premium.clone()}),
+            ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView { data: c.data.clone() }),
         }
     }
 }
