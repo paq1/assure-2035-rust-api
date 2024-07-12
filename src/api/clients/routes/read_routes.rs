@@ -10,8 +10,9 @@ use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
 use crate::core::clients::data::ClientEvents;
+use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, ReadOnlyEventRepo};
+use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, ReadOnlyEventRepo, RepositoryEntity};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::clients::views::ClientViewEvent;
@@ -31,7 +32,7 @@ use crate::models::shared::views::get_view::{from_states_to_entity_view, from_st
 )]
 #[get("/clients")]
 pub async fn fetch_many_client(
-    store: web::Data<Arc<Mutex<ClientsMongoRepository>>>,
+    store: web::Data<Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ClientQuery>,
     req: HttpRequest,
@@ -73,7 +74,7 @@ pub async fn fetch_many_client(
 #[get("/clients/{entity_id}")]
 pub async fn fetch_one_client(
     path: web::Path<String>,
-    repo: web::Data<Arc<Mutex<ClientsMongoRepository>>>,
+    repo: web::Data<Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>>,
     http_error: web::Data<StandardHttpError>,
     req: HttpRequest,
 ) -> impl Responder {

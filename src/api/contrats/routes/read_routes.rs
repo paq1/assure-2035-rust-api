@@ -8,8 +8,9 @@ use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRep
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::query::ContratQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
+use crate::core::contrats::data::ContratStates;
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo};
+use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, RepositoryEntity};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;
@@ -27,7 +28,7 @@ use crate::models::shared::views::get_view::{from_states_to_entity_view, from_st
 )]
 #[get("/contracts")]
 pub async fn fetch_many_contrat(
-    store: web::Data<Arc<Mutex<ContratsMongoRepository>>>,
+    store: web::Data<Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ContratQuery>,
     req: HttpRequest,
@@ -69,7 +70,7 @@ pub async fn fetch_many_contrat(
 #[get("/contracts/{entity_id}")]
 pub async fn fetch_one_contrat(
     path: web::Path<String>,
-    repo: web::Data<Arc<Mutex<ContratsMongoRepository>>>,
+    repo: web::Data<Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>>,
     http_error: web::Data<StandardHttpError>,
     req: HttpRequest
 ) -> impl Responder {
