@@ -27,7 +27,7 @@ pub struct ClientData {
     pub birth_date: NaiveDate,
 
     #[serde(rename = "drivingLicenseDate", skip_serializing_if = "Option::is_none")]
-    pub driving_license_date: Option<DateTime<Utc>>,
+    pub driving_license_date: Option<NaiveDate>,
     #[serde(rename = "phoneNumber", skip_serializing_if = "Option::is_none")]
     pub phone_number: Option<PhoneNumber>,
     #[serde(skip_serializing_if = "Option::is_none")]
