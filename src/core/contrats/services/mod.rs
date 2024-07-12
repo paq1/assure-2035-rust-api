@@ -28,8 +28,11 @@ pub trait ContratService: Send + Sync {
 
         let prime_base = self.get_formule_from_code(&formule_code).await?;
 
+        let value = prime_base.value * facteur_pays * facteur_vehicle;
+        let value_sanitize = value.round();
+
         Ok(CurrencyValue {
-            value: prime_base.value * facteur_pays * facteur_vehicle,
+            value: value_sanitize,
             currency: command.data.vehicle.insured_value.currency
         })
 
