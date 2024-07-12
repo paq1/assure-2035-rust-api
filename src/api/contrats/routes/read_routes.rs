@@ -8,13 +8,15 @@ use futures::lock::Mutex;
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::query::ContratQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
-use crate::core::contrats::data::ContratStates;
+use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany, RepositoryEntity};
+use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEventRepo, RepositoryEntity};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
+use crate::models::contrats::views::ContractViewEvent;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::{CanBeView, ManyView};
+use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 use crate::models::shared::views::entities::EntityView;
 use crate::models::shared::views::get_view::{from_states_to_entity_view, from_states_to_view};
 
@@ -158,3 +160,47 @@ pub async fn fetch_events_contrat(
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
+
+#[utoipa::path(
+    responses(
+        (
+        status = 200,
+        description = "Get the current state.",
+        body = DataWrapperView < EventView < ContractViewEvent >>
+        )
+    )
+)]
+#[get("/contracts/{entity_id}/events/{event_id}")]
+pub async fn fetch_one_contract_event(
+    path: web::Path<(String, String)>,
+    journal: web::Data<Arc<Mutex<ContratsEventMongoRepository>>>,
+    http_error: web::Data<StandardHttpError>,
+    req: HttpRequest,
+) -> impl Responder {
+    let (_, event_id) = path.into_inner();
+    let journal_lock = journal.lock().await;
+
+    let ctx = Context::empty()
+        .decore_with_http_header(&req);
+
+    match journal_lock.fetch_one(event_id).await {
+        Ok(maybe_event) => {
+            match maybe_event {
+                Some(event) => {
+                    let view = from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                        event,
+                        "clients".to_string(),
+                        "org:example:insurance:client".to_string(),
+                        &ctx
+                    );
+                    HttpResponse::Ok().json(view)
+                },
+                None => {
+                    HttpResponse::InternalServerError().json(http_error.not_found.clone())
+                }
+            }
+        }
+        Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+    }
+}
+

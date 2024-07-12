@@ -7,6 +7,7 @@ use crate::api::clients::routes::read_routes::__path_fetch_one_client;
 use crate::api::clients::routes::write_routes::__path_insert_one_client;
 use crate::api::clients::routes::write_routes::__path_update_one_client;
 use crate::api::clients::routes::write_routes::__path_disable_one_client;
+use crate::api::contrats::routes::read_routes::__path_fetch_one_contract_event;
 use crate::api::contrats::routes::read_routes::__path_fetch_events_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_many_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_one_contrat;
@@ -37,7 +38,8 @@ use crate::models::shared::views::command_handler_view::ApiView;
         fetch_one_contrat,
         insert_one_contrat,
         update_one_contrat,
-        fetch_events_contrat
+        fetch_events_contrat,
+        fetch_one_contract_event
     ),
     components(
         schemas(
