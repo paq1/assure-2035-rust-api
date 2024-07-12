@@ -37,6 +37,9 @@ where
                     data: DataRS {
                         r#type: complete_ontology,
                         id: state_id.clone(),
+                    },
+                    links: RelatedLinks {
+                        related: format!("{external_url}/{ontology}/{state_id}")
                     }
                 }
             },
@@ -50,7 +53,6 @@ where
             },
         }
     }
-
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -84,7 +86,14 @@ pub struct Relationships {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct DataWrapper {
     pub data: DataRS,
+    pub links: RelatedLinks,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug)]
+pub struct RelatedLinks {
+    pub related: String,
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct DataRS {
