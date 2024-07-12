@@ -1,12 +1,12 @@
-use crate::api::contrats::contrats_dbo::{ContratDboEvent, ContratUpdatedDbo, CreatedDbo};
+use crate::api::contrats::contrats_dbo::{ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo};
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::core::contrats::data::{ContratEvents, CreatedEvent, UpdatedEvent};
+use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
 
 impl From<ContratDboEvent> for ContratEvents {
     fn from(value: ContratDboEvent) -> Self {
         match value {
-            ContratDboEvent::ContratCreatedDbo (event_dbo) => ContratEvents::Created(
+            ContratDboEvent::ContratCreatedDbo(event_dbo) => ContratEvents::Created(
                 CreatedEvent {
                     by: event_dbo.by,
                     at: event_dbo.at,
@@ -14,7 +14,10 @@ impl From<ContratDboEvent> for ContratEvents {
                     premium: event_dbo.premium,
                 }
             ),
-            ContratDboEvent::Updated(event_dbo) => ContratEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data })
+            ContratDboEvent::Updated(event_dbo) =>
+                ContratEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
+            ContratDboEvent::ApprovedDbo(event_dbo) =>
+                ContratEvents::Approved(ApprovedEvent { by: event_dbo.by, at: event_dbo.at })
         }
     }
 }
@@ -45,15 +48,16 @@ impl From<EntityEvent<ContratEvents, String>> for EventDBO<ContratDboEvent, Stri
 impl From<ContratEvents> for ContratDboEvent {
     fn from(value: ContratEvents) -> Self {
         match value {
-            ContratEvents::Created (event) => ContratDboEvent::ContratCreatedDbo (
+            ContratEvents::Created(event) => ContratDboEvent::ContratCreatedDbo(
                 CreatedDbo {
                     by: event.by,
                     at: event.at,
                     data: event.data,
-                    premium: event.premium
+                    premium: event.premium,
                 }
             ),
-            ContratEvents::Updated(updated) => ContratDboEvent::Updated(ContratUpdatedDbo { by: updated.by, at: updated.at, data: updated.data })
+            ContratEvents::Updated(updated) => ContratDboEvent::Updated(ContratUpdatedDbo { by: updated.by, at: updated.at, data: updated.data }),
+            ContratEvents::Approved(approved) => ContratDboEvent::ApprovedDbo(ApprovedDbo { by: approved.by, at: approved.at })
         }
     }
 }

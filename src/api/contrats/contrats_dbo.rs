@@ -19,7 +19,14 @@ pub struct ContractDbo {
 #[serde(tag = "type")]
 pub enum ContratDboEvent {
     ContratCreatedDbo(CreatedDbo),
+    ApprovedDbo(ApprovedDbo),
     Updated(ContratUpdatedDbo)
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ApprovedDbo {
+    pub by: String,
+    pub at: DateTime<Utc>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

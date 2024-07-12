@@ -3,7 +3,7 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
-use crate::models::contrats::views::{ContractUpdatedView, ContractView, ContractViewEvent, ContractViewState};
+use crate::models::contrats::views::{ContractApprovedView, ContractUpdatedView, BaseContractStateView, ContractViewEvent, ContractViewState, ContractCreatedView};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 pub mod shared;
@@ -17,8 +17,9 @@ impl CanGetTypee for ContratStates {
 impl CanBeView<ContractViewState> for ContratStates {
     fn to_view(&self) -> ContractViewState {
         match self {
-            ContratStates::Contract(c) => ContractViewState::Contract(ContractView {
-                data: c.data.clone(), premium: c.premium.clone()
+            ContratStates::Pending(c) => ContractViewState::Pending(BaseContractStateView {
+                data: c.data.clone(),
+                premium: c.premium.clone(),
             })
         }
     }
@@ -26,48 +27,46 @@ impl CanBeView<ContractViewState> for ContratStates {
 
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ContratStates {
-    Contract(Contract)
+    Pending(PendingContract)
 }
 
 impl ContratStates {
-
     pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
         match self {
-            ContratStates::Contract(c) => c.reduce_state(event)
+            ContratStates::Pending(c) => c.reduce_state(event)
         }
     }
 
     pub fn reduce_state_from_empty(event: &ContratEvents) -> Option<ContratStates> {
         match event {
             ContratEvents::Created(e) => Some(
-                ContratStates::Contract(
-                    Contract {
+                ContratStates::Pending(
+                    PendingContract {
                         data: e.data.clone(),
-                        premium: e.premium.clone()
+                        premium: e.premium.clone(),
                     }
                 )
             ),
             _ => None
         }
     }
-
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct Contract {
+pub struct PendingContract {
     #[serde(flatten)]
     pub data: ContractData,
     pub premium: CurrencyValue,
 }
 
-impl Contract {
+impl PendingContract {
     pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
         match event {
-            ContratEvents::Updated (e) => Some(
-                ContratStates::Contract (
-                    Contract {
+            ContratEvents::Updated(e) => Some(
+                ContratStates::Pending(
+                    PendingContract {
                         data: e.data.clone(),
-                        premium: self.premium.clone()
+                        premium: self.premium.clone(),
                     })),
             _ => None
         }
@@ -78,8 +77,9 @@ impl Contract {
 impl CanBeView<ContractViewEvent> for ContratEvents {
     fn to_view(&self) -> ContractViewEvent {
         match self {
-            ContratEvents::Created(c) => ContractViewEvent::Created(ContractView {data: c.data.clone(), premium: c.premium.clone()}),
+            ContratEvents::Created(c) => ContractViewEvent::Created(ContractCreatedView { data: c.data.clone(), premium: c.premium.clone() }),
             ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView { data: c.data.clone() }),
+            ContratEvents::Approved(_) => ContractViewEvent::Approved(ContractApprovedView {}),
         }
     }
 }
@@ -88,7 +88,8 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ContratEvents {
     Created(CreatedEvent),
-    Updated(UpdatedEvent)
+    Approved(ApprovedEvent),
+    Updated(UpdatedEvent),
 }
 
 #[derive(Serialize, Deserialize, Clone)]
@@ -102,10 +103,18 @@ pub struct CreatedEvent {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
+pub struct ApprovedEvent {
+    pub by: String,
+    #[serde(with = "ts_seconds")]
+    pub at: DateTime<Utc>,
+}
+
+
+#[derive(Serialize, Deserialize, Clone)]
 pub struct UpdatedEvent {
     pub by: String,
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,
     #[serde(flatten)]
-    pub data: ContractData
+    pub data: ContractData,
 }

@@ -13,20 +13,30 @@ pub struct ContratView {
 #[serde(tag = "statusType")]
 pub enum ContractViewState {
     #[serde(rename = "pending-subscription")]
-    Contract(ContractView)
+    Pending(BaseContractStateView)
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 #[serde(tag = "eventType")]
 pub enum ContractViewEvent {
     #[serde(rename = "created")]
-    Created(ContractView),
+    Created(ContractCreatedView),
     #[serde(rename = "updated")]
     Updated(ContractUpdatedView),
+    #[serde(rename = "approved")]
+    Approved(ContractApprovedView)
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct ContractView {
+pub struct ContractCreatedView {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+}
+
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct BaseContractStateView {
     #[serde(flatten)]
     pub data: ContractData,
     pub premium: CurrencyValue,
@@ -37,3 +47,6 @@ pub struct ContractUpdatedView {
     #[serde(flatten)]
     pub data: ContractData,
 }
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct ContractApprovedView {}
