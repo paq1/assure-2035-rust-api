@@ -5,14 +5,14 @@ use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
-use crate::api::shared::helpers::http_response::CanToHttpResponse;
+use crate::api::shared::helpers::http_response::{CanToHttpResponse, HttpKindResponse};
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::contrats::commands::{ContratsCommands, CreateContratCommand, UpdateContratCommand};
 use crate::models::contrats::views::ContractViewEvent;
-use crate::models::shared::errors::{Error, StandardHttpError};
+use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 
 #[utoipa::path(
@@ -48,7 +48,8 @@ pub async fn insert_one_contrat(
                     "org:example:insurance:contract".to_string(),
                     &ctx,
                 )
-            }).to_created()
+            })
+                .to_http_response_with_error_mapping(HttpKindResponse::Created)
         }
         Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
     }
