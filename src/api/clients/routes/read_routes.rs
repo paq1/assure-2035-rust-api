@@ -6,13 +6,12 @@ use actix_web::web::Query;
 use futures::lock::Mutex;
 
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
-use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
 use crate::core::clients::data::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, ReadOnlyEventRepo, RepositoryEntity};
+use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEventRepo, RepositoryEntity};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::clients::views::ClientViewEvent;

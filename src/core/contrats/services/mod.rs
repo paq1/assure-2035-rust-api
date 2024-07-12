@@ -15,11 +15,17 @@ pub trait ContratService: Send + Sync {
     async fn delete_contrat(&self, command: DeleteContratCommand, id: String, ctx: Context) -> ResultErr<String>;
     async fn calcul_premium(&self, command: CreateContratCommand) -> ResultErr<CurrencyValue> {
         let id_client = command.data.holder;
+
         let country_code = self.get_client_country_code(&id_client).await?;
+
         let facteur_pays = self.get_facteur_pays_from_code(&country_code).await?;
+
         let marque_vehicle = command.data.vehicle.brand;
+
         let facteur_vehicle = self.get_facteur_vehicule_from_code(&marque_vehicle).await?;
+
         let formule_code = command.data.formula;
+
         let prime_base = self.get_formule_from_code(&formule_code).await?;
 
         Ok(CurrencyValue {

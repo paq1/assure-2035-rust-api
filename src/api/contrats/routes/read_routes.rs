@@ -4,13 +4,13 @@ use std::sync::Arc;
 use actix_web::{get, HttpRequest, HttpResponse, Responder, web};
 use actix_web::web::Query;
 use futures::lock::Mutex;
+
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
-use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::query::ContratQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
 use crate::core::contrats::data::ContratStates;
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, RepositoryEntity};
+use crate::core::shared::repositories::{CanFetchMany, RepositoryEntity};
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::shared::errors::StandardHttpError;

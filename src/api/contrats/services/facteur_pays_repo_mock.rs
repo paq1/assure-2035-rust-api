@@ -1,7 +1,7 @@
 use async_trait::async_trait;
 
 use crate::core::contrats::services::facteur_pays_repo::FacteurPaysRepo;
-use crate::models::shared::errors::{Error, ResultErr};
+use crate::models::shared::errors::ResultErr;
 
 pub struct FacteurPaysRepoMock {}
 
@@ -19,7 +19,7 @@ impl FacteurPaysRepo for FacteurPaysRepoMock {
         self.fetch_all().await
             .into_iter()
             .find(|(current_code, _)| *current_code == *code)
-            .map(|(_, value)| value)
-            .ok_or(Error::Simple("not found".to_string()))
+            .map(|(_, value)| Ok(value))
+            .unwrap_or(Ok(1.0))
     }
 }
