@@ -3,7 +3,7 @@ use async_trait::async_trait;
 use crate::core::shared::context::Context;
 use crate::models::contrats::commands::*;
 use crate::models::contrats::shared::CurrencyValue;
-use crate::models::shared::errors::ResultErr;
+use crate::models::shared::errors::{Error, ErrorHttpCustom, ResultErr};
 
 pub mod formule_service;
 pub mod formule_repo;
@@ -16,7 +16,16 @@ pub trait ContratService: Send + Sync {
     async fn calcul_premium(&self, command: CreateContratCommand) -> ResultErr<CurrencyValue> {
         let id_client = command.data.holder;
 
-        let country_code = self.get_client_country_code(&id_client).await?;
+        let country_code = self.get_client_country_code(&id_client).await.map_err(|_| {
+            Error::Http(
+                ErrorHttpCustom {
+                    title: "todo".to_string(),
+                    code: "todo".to_string(),
+                    causes: vec![],
+                    status: Some(404),
+                }
+            )
+        })?;
 
         let facteur_pays = self.get_facteur_pays_from_code(&country_code).await?;
 

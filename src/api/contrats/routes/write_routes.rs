@@ -11,7 +11,7 @@ use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::contrats::commands::{ContratsCommands, CreateContratCommand, UpdateContratCommand};
 use crate::models::contrats::views::ContractViewEvent;
-use crate::models::shared::errors::StandardHttpError;
+use crate::models::shared::errors::{Error, StandardHttpError};
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 
 #[utoipa::path(
@@ -53,9 +53,20 @@ pub async fn insert_one_contrat(
                     )
                 }
                 Err(err) => {
-                    println!("creation impossible !");
-                    println!("reasons : {err:?}");
-                    HttpResponse::InternalServerError().json(err)
+
+                    match err {
+                        Error::Http(e) => {
+                            match e.status {
+                                Some(404) => HttpResponse::NotFound().json(e),
+                                _ => HttpResponse::InternalServerError().json(e)
+                            }
+                        },
+                        _ => {
+                            println!("creation impossible !");
+                            println!("reasons : {err:?}");
+                            HttpResponse::InternalServerError().json(err)
+                        }
+                    }
                 }
             }
         }
