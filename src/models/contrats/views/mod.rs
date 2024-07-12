@@ -12,6 +12,7 @@ pub struct ContratView {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "statusType")]
 pub enum ContractViewState {
+    #[serde(rename = "pending-subscription")]
     Contract(ContractView)
 }
 

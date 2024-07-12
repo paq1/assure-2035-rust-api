@@ -1,11 +1,12 @@
-pub mod shared;
-
 use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
+
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
-use crate::models::contrats::views::{ContractUpdatedView, ContractView, ContractViewEvent};
+use crate::models::contrats::views::{ContractUpdatedView, ContractView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
+
+pub mod shared;
 
 impl CanGetTypee for ContratStates {
     fn get_type(&self) -> String {
@@ -13,9 +14,13 @@ impl CanGetTypee for ContratStates {
     }
 }
 
-impl CanBeView<ContratStates> for ContratStates {
-    fn to_view(&self) -> ContratStates {
-        self.clone()
+impl CanBeView<ContractViewState> for ContratStates {
+    fn to_view(&self) -> ContractViewState {
+        match self {
+            ContratStates::Contract(c) => ContractViewState::Contract(ContractView {
+                data: c.data.clone(), premium: c.premium.clone()
+            })
+        }
     }
 }
 
