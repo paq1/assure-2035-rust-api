@@ -67,7 +67,7 @@ async fn main() -> std::io::Result<()> {
     let store_clients: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
         Mutex::new(
             ClientsMongoRepository {
-                dao: ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await
+                dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await))
             }
         )
     );
@@ -76,7 +76,7 @@ async fn main() -> std::io::Result<()> {
         Mutex::new(
             Box::new(
                 ClientsMongoRepository {
-                    dao: ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await
+                    dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await))
                 }
             )
         )

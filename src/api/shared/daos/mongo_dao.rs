@@ -6,7 +6,7 @@ use serde::de::DeserializeOwned;
 use serde::Serialize;
 
 use crate::core::shared::can_get_id::CanGetId;
-use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
+use crate::core::shared::daos::{DAO, ReadOnlyDAO, WriteOnlyDAO};
 use crate::core::shared::repositories::query::Query;
 use crate::models::shared::errors::{Error, ResultErr};
 
@@ -29,6 +29,12 @@ where
         Self { collection }
     }
 }
+
+#[async_trait]
+impl<DBO> DAO<DBO, String> for MongoDAO<DBO>
+where
+    DBO: CanGetId<String> + Serialize + DeserializeOwned + Send + Sync
+{}
 
 #[async_trait]
 impl<DBO> ReadOnlyDAO<DBO, String> for MongoDAO<DBO>
@@ -79,7 +85,6 @@ where
             .map_err(|err| Error::Simple(err.to_string()))
     }
 }
-
 
 impl<DBO> MongoDAO<DBO>
 where

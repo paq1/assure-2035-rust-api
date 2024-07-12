@@ -10,6 +10,9 @@ pub mod can_fetch_all;
 pub mod filter;
 
 #[async_trait]
+pub trait RepositoryEntity<DATA: Clone, ID: Clone>: ReadOnlyEntityRepo<DATA, ID> + WriteOnlyEntityRepo<DATA, ID> {}
+
+#[async_trait]
 pub trait ReadOnlyEntityRepo<DATA: Clone, ID: Clone>: CanFetchAll<Entity<DATA, ID>> + CanFetchMany<Entity<DATA, ID>> + Sync + Send {
     async fn fetch_one(&self, id: ID) -> ResultErr<Option<Entity<DATA, ID>>>;
 }

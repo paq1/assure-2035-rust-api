@@ -2,6 +2,8 @@ use async_trait::async_trait;
 use crate::core::shared::repositories::query::Query;
 use crate::models::shared::errors::ResultErr;
 
+pub trait DAO<DBO, ID>: ReadOnlyDAO<DBO, ID> + WriteOnlyDAO<DBO, ID> + Sync + Send {}
+
 #[async_trait]
 pub trait ReadOnlyDAO<DBO, ID> {
     async fn fetch_one(&self, id: ID) -> ResultErr<Option<DBO>>;
