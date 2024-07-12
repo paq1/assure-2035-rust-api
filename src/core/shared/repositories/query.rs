@@ -70,7 +70,7 @@ impl Default for PaginationDef {
     fn default() -> Self {
         Self {
             page_size: 10,
-            page_number: 1,
+            page_number: 0,
         }
     }
 }
