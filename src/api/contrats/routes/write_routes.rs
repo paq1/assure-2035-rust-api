@@ -5,6 +5,7 @@ use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
+use crate::api::shared::helpers::http_response::CanToHttpResponse;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
@@ -40,35 +41,14 @@ pub async fn insert_one_contrat(
             let event = engine.lock().await
                 .compute(command, entity_id.clone(), "create-contrat".to_string(), &ctx).await;
 
-            match event {
-                Ok((event, _state)) => {
-                    HttpResponse::Created().json(
-                        // fixme faire un view pour le contract
-                        from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
-                            event,
-                            "contracts".to_string(),
-                            "org:example:insurance:contract".to_string(),
-                            &ctx,
-                        )
-                    )
-                }
-                Err(err) => {
-
-                    match err {
-                        Error::Http(e) => {
-                            match e.status {
-                                Some(404) => HttpResponse::NotFound().json(e),
-                                _ => HttpResponse::InternalServerError().json(e)
-                            }
-                        },
-                        _ => {
-                            println!("creation impossible !");
-                            println!("reasons : {err:?}");
-                            HttpResponse::InternalServerError().json(err)
-                        }
-                    }
-                }
-            }
+            event.map(|(event, _)| {
+                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                    event,
+                    "contracts".to_string(),
+                    "org:example:insurance:contract".to_string(),
+                    &ctx,
+                )
+            }).to_created()
         }
         Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
     }
