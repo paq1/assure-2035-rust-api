@@ -190,7 +190,7 @@ pub async fn fetch_one_contract_event(
                     let view = from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
                         event,
                         "clients".to_string(),
-                        "org:example:insurance:client".to_string(),
+                        "org:example:insurance:contract".to_string(),
                         &ctx
                     );
                     HttpResponse::Ok().json(view)
