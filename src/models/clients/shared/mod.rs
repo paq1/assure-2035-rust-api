@@ -1,4 +1,4 @@
-use chrono::{DateTime, Utc};
+use chrono::{DateTime, NaiveDate, Utc};
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use crate::models::shared_business::Adresse;
@@ -24,7 +24,7 @@ pub struct ClientData {
     #[serde(rename = "lastName")]
     pub last_name: String,
     #[serde(rename = "birthDate")]
-    pub birth_date: DateTime<Utc>,
+    pub birth_date: NaiveDate,
 
     #[serde(rename = "drivingLicenseDate", skip_serializing_if = "Option::is_none")]
     pub driving_license_date: Option<DateTime<Utc>>,
