@@ -1,25 +1,31 @@
+use std::sync::Arc;
+
 use async_trait::async_trait;
+use futures::lock::Mutex;
 
 use crate::api::contrats::contrats_dbo::ContratDboState;
-use crate::api::contrats::contrats_mongo_dao::ContratsMongoDAO;
 use crate::api::shared::daos::dbos::EntityDBO;
 use crate::core::contrats::data::ContratStates;
 use crate::core::shared::can_get_id::CanGetId;
-use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
+use crate::core::shared::daos::DAO;
 use crate::core::shared::data::Entity;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, WriteOnlyEntityRepo};
+use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, RepositoryEntity, WriteOnlyEntityRepo};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::query::Query;
 use crate::models::shared::errors::ResultErr;
 
 pub struct ContratsMongoRepository {
-    pub dao: ContratsMongoDAO,
+    pub dao: Arc<Mutex<dyn DAO<EntityDBO<ContratDboState, String>, String>>>,
 }
+
+#[async_trait]
+impl RepositoryEntity<ContratStates, String> for ContratsMongoRepository {}
 
 #[async_trait]
 impl CanFetchAll<Entity<ContratStates, String>> for ContratsMongoRepository {
     async fn fetch_all(&self, query: Query) -> ResultErr<Vec<Entity<ContratStates, String>>> {
         self.dao
+            .lock().await
             .fetch_all(query)
             .await
             .map(|items| {
@@ -38,6 +44,7 @@ impl CanFetchMany<Entity<ContratStates, String>> for ContratsMongoRepository {}
 impl ReadOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
     async fn fetch_one(&self, id: String) -> ResultErr<Option<Entity<ContratStates, String>>> {
         self.dao
+            .lock().await
             .fetch_one(id).await
             .map(|maybedata| maybedata.map(|dbo| dbo.into()))
     }
@@ -59,7 +66,9 @@ impl WriteOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
             ..entity_dbo.clone()
         };
 
-        self.dao.insert(sanitize_version).await
+        self.dao
+            .lock().await
+            .insert(sanitize_version).await
     }
 
     async fn update(&self, id: String, contrat: Entity<ContratStates, String>) -> ResultErr<String> {
@@ -69,10 +78,14 @@ impl WriteOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
             ..entity_dbo.clone()
         };
 
-        self.dao.update(id, sanitize_version).await
+        self.dao
+            .lock().await
+            .update(id, sanitize_version).await
     }
 
     async fn delete(&self, id: String) -> ResultErr<String> {
-        self.dao.delete(id).await
+        self.dao
+            .lock().await
+            .delete(id).await
     }
 }

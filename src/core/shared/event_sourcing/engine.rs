@@ -5,31 +5,28 @@ use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::context::Context;
 use crate::core::shared::data::{Entity, EntityEvent};
 use crate::core::shared::reducer::Reducer;
-use crate::core::shared::repositories::{ReadOnlyEntityRepo, WriteOnlyEntityRepo, WriteOnlyEventRepo};
+use crate::core::shared::repositories::{RepositoryEntity, WriteOnlyEventRepo};
 use crate::models::shared::errors::{Error, ResultErr};
 
 pub struct Engine<
     STATE: Clone,
     COMMAND,
     EVENT,
-    STORE,
     JOURNAL
 >
 where
-    STORE: WriteOnlyEntityRepo<STATE, String> + ReadOnlyEntityRepo<STATE, String>,
     JOURNAL: WriteOnlyEventRepo<EVENT, String>,
 {
     pub handlers: Vec<CommandHandler<STATE, COMMAND, EVENT>>,
     pub reducer: Reducer<EVENT, STATE>,
-    pub store: Arc<Mutex<STORE>>,
+    pub store: Arc<Mutex<dyn RepositoryEntity<STATE, String>>>,
     pub journal: Arc<Mutex<JOURNAL>>
 }
 
-impl<STATE, COMMAND, EVENT, STORE, JOURNAL> Engine<STATE, COMMAND, EVENT, STORE, JOURNAL>
+impl<STATE, COMMAND, EVENT, JOURNAL> Engine<STATE, COMMAND, EVENT, JOURNAL>
 where
     STATE: Clone,
     EVENT: Clone,
-    STORE: WriteOnlyEntityRepo<STATE, String> + ReadOnlyEntityRepo<STATE, String>,
     JOURNAL: WriteOnlyEventRepo<EVENT, String>,
 {
     pub async fn compute(&self, command: COMMAND, entity_id: String, name: String, context: &Context) -> ResultErr<(EntityEvent<EVENT, String>, Entity<STATE, String>)> {

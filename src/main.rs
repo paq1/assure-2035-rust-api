@@ -44,7 +44,7 @@ use crate::core::contrats::services::formule_repo::FormuleRepo;
 use crate::core::contrats::services::formule_service::FormuleService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::core::shared::repositories::ReadOnlyEntityRepo;
+use crate::core::shared::repositories::RepositoryEntity;
 use crate::models::clients::commands::ClientsCommands;
 use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::StandardHttpError;
@@ -64,21 +64,11 @@ async fn main() -> std::io::Result<()> {
     let http_client = Arc::new(reqwest::Client::new());
 
     // client ontology
-    let store_clients: Arc<Mutex<ClientsMongoRepository>> = Arc::new(
+    let store_clients: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>> = Arc::new(
         Mutex::new(
             ClientsMongoRepository {
                 dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await))
             }
-        )
-    );
-
-    let store_clients_readonly: Arc<Mutex<Box<dyn ReadOnlyEntityRepo<ClientStates, String>>>> = Arc::new(
-        Mutex::new(
-            Box::new(
-                ClientsMongoRepository {
-                    dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await))
-                }
-            )
         )
     );
 
@@ -89,7 +79,7 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-    let clients_service: Arc<Mutex<ClientsServiceImpl<ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(
+    let clients_service: Arc<Mutex<ClientsServiceImpl<ClientsEventMongoRepository>>> = Arc::new(
         Mutex::new(
             ClientsServiceImpl {
                 store: Arc::clone(&store_clients),
@@ -97,7 +87,7 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-    let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
+    let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
             CommandHandler::Update(Box::new(UpdateClientHandler {})),
@@ -109,13 +99,14 @@ async fn main() -> std::io::Result<()> {
     }));
 
     // contrat ontology
-    let store_contrats: Arc<Mutex<ContratsMongoRepository>> = Arc::new(
+    let store_contrats: Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>> = Arc::new(
         Mutex::new(
             ContratsMongoRepository {
-                dao: ContratsMongoDAO::new(dbname.to_string(), "contrats_store_actix".to_string()).await
+                dao: Arc::new(Mutex::new(ContratsMongoDAO::new(dbname.to_string(), "contrats_store_actix".to_string()).await))
             }
         )
     );
+
     let journal_contrats: Arc<Mutex<ContratsEventMongoRepository>> = Arc::new(
         Mutex::new(
             ContratsEventMongoRepository {
@@ -151,7 +142,7 @@ async fn main() -> std::io::Result<()> {
                     store: Arc::clone(&store_contrats),
                     journal: Arc::clone(&journal_contrats),
                     formule_service: Arc::clone(&formule_service),
-                    store_personne: Arc::clone(&store_clients_readonly),
+                    store_personne: Arc::clone(&store_clients),
                     facteur_pays_repo: Arc::clone(&facteur_pays_repo),
                     facteur_vehicle_repo: Arc::clone(&facteur_vehicle_repo),
                 }
@@ -159,7 +150,7 @@ async fn main() -> std::io::Result<()> {
         )
     );
 
-    let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsMongoRepository, ContratsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
+    let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateContratHandler { contract_service: Arc::clone(&contrats_service) })),
             CommandHandler::Update(Box::new(UpdateContratHandler {})),

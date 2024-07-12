@@ -3,6 +3,7 @@ use std::sync::Arc;
 use async_trait::async_trait;
 use futures::lock::Mutex;
 use uuid::Uuid;
+
 use crate::core::clients::data::states::ClientStates;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::contrats::services::ContratService;
@@ -11,7 +12,7 @@ use crate::core::contrats::services::facteur_vehicle_repo::FacteurVehicleRepo;
 use crate::core::contrats::services::formule_service::FormuleService;
 use crate::core::shared::context::Context;
 use crate::core::shared::id_generator::IdGenerator;
-use crate::core::shared::repositories::{ReadOnlyEntityRepo, WriteOnlyEntityRepo, WriteOnlyEventRepo};
+use crate::core::shared::repositories::{RepositoryEntity, WriteOnlyEventRepo};
 use crate::models::contrats::commands::DeleteContratCommand;
 use crate::models::contrats::shared::CurrencyValue;
 use crate::models::shared::errors::{Error, ResultErr};
@@ -21,23 +22,21 @@ pub mod formule_repo_mock;
 pub mod facteur_vehicle_repo_mock;
 pub mod facteur_pays_repo_mock;
 
-pub struct ContratsServiceImpl<STORE, JOURNAL>
+pub struct ContratsServiceImpl<JOURNAL>
 where
-    STORE: WriteOnlyEntityRepo<ContratStates, String> + ReadOnlyEntityRepo<ContratStates, String>,
     JOURNAL: WriteOnlyEventRepo<ContratEvents, String>,
 {
-    pub store: Arc<Mutex<STORE>>,
+    pub store: Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>,
     pub journal: Arc<Mutex<JOURNAL>>,
     pub formule_service: Arc<Mutex<Box<dyn FormuleService>>>,
     pub facteur_vehicle_repo: Arc<Mutex<Box<dyn FacteurVehicleRepo>>>,
     pub facteur_pays_repo: Arc<Mutex<Box<dyn FacteurPaysRepo>>>,
-    pub store_personne: Arc<Mutex<Box<dyn ReadOnlyEntityRepo<ClientStates, String>>>>
+    pub store_personne: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>
 }
 
 #[async_trait]
-impl<STORE, JOURNAL> ContratService for ContratsServiceImpl<STORE, JOURNAL>
+impl<JOURNAL> ContratService for ContratsServiceImpl<JOURNAL>
 where
-    STORE: WriteOnlyEntityRepo<ContratStates, String> + ReadOnlyEntityRepo<ContratStates, String> + Send + Sync,
     JOURNAL: WriteOnlyEventRepo<ContratEvents, String> + Send + Sync,
 {
     async fn delete_contrat(&self, _command: DeleteContratCommand, _id: String, _ctx: Context) -> ResultErr<String> {
@@ -74,9 +73,8 @@ where
     }
 }
 
-impl<STORE, JOURNAL> IdGenerator for ContratsServiceImpl<STORE, JOURNAL>
+impl<JOURNAL> IdGenerator for ContratsServiceImpl<JOURNAL>
 where
-    STORE: WriteOnlyEntityRepo<ContratStates, String> + ReadOnlyEntityRepo<ContratStates, String>,
     JOURNAL: WriteOnlyEventRepo<ContratEvents, String>
 {
     fn generate_id() -> String {

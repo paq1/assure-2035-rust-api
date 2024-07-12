@@ -9,23 +9,21 @@ use crate::core::clients::data::states::ClientStates;
 use crate::core::clients::services::ClientService;
 use crate::core::shared::context::Context;
 use crate::core::shared::id_generator::IdGenerator;
-use crate::core::shared::repositories::{ReadOnlyEntityRepo, WriteOnlyEntityRepo, WriteOnlyEventRepo};
+use crate::core::shared::repositories::{RepositoryEntity, WriteOnlyEventRepo};
 use crate::models::clients::commands::*;
 use crate::models::shared::errors::ResultErr;
 
-pub struct ClientsServiceImpl<STORE, JOURNAL>
+pub struct ClientsServiceImpl<JOURNAL>
 where
-    STORE: WriteOnlyEntityRepo<ClientStates, String> + ReadOnlyEntityRepo<ClientStates, String>,
     JOURNAL: WriteOnlyEventRepo<ClientEvents, String>,
 {
-    pub store: Arc<Mutex<STORE>>,
+    pub store: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>,
     pub journal: Arc<Mutex<JOURNAL>>,
 }
 
 #[async_trait]
-impl<STORE, JOURNAL> ClientService for ClientsServiceImpl<STORE, JOURNAL>
+impl<JOURNAL> ClientService for ClientsServiceImpl<JOURNAL>
 where
-    STORE: WriteOnlyEntityRepo<ClientStates, String> + ReadOnlyEntityRepo<ClientStates, String> + Send,
     JOURNAL: WriteOnlyEventRepo<ClientEvents, String> + Send,
 {
     async fn delete_client(&self, _command: DisableClientCommand, _id: String, _ctx: Context) -> ResultErr<String> {
@@ -33,9 +31,8 @@ where
     }
 }
 
-impl<STORE, JOURNAL> IdGenerator for ClientsServiceImpl<STORE, JOURNAL>
+impl<JOURNAL> IdGenerator for ClientsServiceImpl<JOURNAL>
 where
-    STORE: WriteOnlyEntityRepo<ClientStates, String> + ReadOnlyEntityRepo<ClientStates, String>,
     JOURNAL: WriteOnlyEventRepo<ClientEvents, String>,
 {
     fn generate_id() -> String {

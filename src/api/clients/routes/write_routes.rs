@@ -5,7 +5,6 @@ use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
-use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::clients::data::ClientEvents;
@@ -31,7 +30,7 @@ pub async fn insert_one_client(
     body: web::Json<CreateClientCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>,
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsEventMongoRepository>>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -75,7 +74,7 @@ pub async fn update_one_client(
     body: web::Json<UpdateClientCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>,
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsEventMongoRepository>>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -118,7 +117,7 @@ pub async fn disable_one_client(
     body: web::Json<DisableClientCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsMongoRepository, ClientsEventMongoRepository>>>>,
+    engine: web::Data<Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsEventMongoRepository>>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
