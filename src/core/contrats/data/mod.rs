@@ -74,6 +74,14 @@ impl PendingContract {
                         data: e.data.clone(),
                         premium: self.premium.clone(),
                     })),
+            ContratEvents::Approved(_) => Some(
+                ContratStates::Actif(
+                    ActifContract {
+                        data: self.data.clone(),
+                        premium: self.premium.clone(),
+                    }
+                )
+            ),
             _ => None
         }
     }
@@ -100,8 +108,6 @@ impl ActifContract {
         }
     }
 }
-
-
 
 
 impl CanBeView<ContractViewEvent> for ContratEvents {

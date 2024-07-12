@@ -5,6 +5,7 @@ use crate::models::contrats::shared::ContractData;
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub enum ContratsCommands {
     Create (CreateContratCommand),
+    Approve (ApproveContractCommand),
     Update (UpdateContratCommand),
     Delete (DeleteContratCommand)
 }
@@ -20,6 +21,9 @@ pub struct UpdateContratCommand {
     #[serde(flatten)]
     pub data: ContractData
 }
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct ApproveContractCommand {}
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct DeleteContratCommand;

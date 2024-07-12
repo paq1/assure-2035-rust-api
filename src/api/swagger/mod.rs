@@ -12,6 +12,7 @@ use crate::api::contrats::routes::read_routes::__path_fetch_events_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_many_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_insert_one_contrat;
+use crate::api::contrats::routes::write_routes::__path_approve_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
 use crate::models::clients::views::*;
 use crate::core::contrats::data::ContratStates;
@@ -37,9 +38,10 @@ use crate::models::shared::views::command_handler_view::ApiView;
         fetch_many_contrat,
         fetch_one_contrat,
         insert_one_contrat,
+        approve_one_contrat,
         update_one_contrat,
         fetch_events_contrat,
-        fetch_one_contract_event
+        fetch_one_contract_event,
     ),
     components(
         schemas(
@@ -51,6 +53,7 @@ use crate::models::shared::views::command_handler_view::ApiView;
             ContratView,
             ManyView < ContratStates >,
             CreateContratCommand,
+            ApproveContractCommand,
             UpdateContratCommand,
             DeleteContratCommand,
             ClientData,
