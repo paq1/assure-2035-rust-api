@@ -1,7 +1,6 @@
 pub mod command_handler_view;
 pub mod states_views;
 pub mod entities;
-pub mod get_view;
 
 use std::collections::HashMap;
 use serde::{Deserialize, Serialize};

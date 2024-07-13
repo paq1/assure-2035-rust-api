@@ -7,6 +7,7 @@ use futures::lock::Mutex;
 
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
+use crate::api::shared::mappers::state_view::{from_states_to_entity_view, from_states_to_view};
 use crate::core::clients::data::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
@@ -19,7 +20,6 @@ use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::{CanBeView, ManyView};
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 use crate::models::shared::views::entities::EntityView;
-use crate::models::shared::views::get_view::{from_states_to_entity_view, from_states_to_view};
 
 #[utoipa::path(
     responses(
