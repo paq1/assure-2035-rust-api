@@ -29,7 +29,7 @@ pub struct ContratsServiceImpl {
     pub formule_service: Arc<Mutex<dyn FormuleService>>,
     pub facteur_vehicle_repo: Arc<Mutex<dyn FacteurVehicleRepo>>,
     pub facteur_pays_repo: Arc<Mutex<dyn FacteurPaysRepo>>,
-    pub store_personne: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>
+    pub store_personne: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>,
 }
 
 #[async_trait]
@@ -50,7 +50,7 @@ impl ContratService for ContratsServiceImpl {
                             .map(|address| address.country),
                     _ => Err(Error::Simple("le client n'est pas actif, il ne peut pas souscrire a un contract".to_string()))
                 }
-            },
+            }
             None => Err(Error::Simple("pas de client trouvée".to_string()))
         }
     }

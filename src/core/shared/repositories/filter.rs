@@ -1,7 +1,7 @@
 #[derive(Clone, Debug)]
 pub enum Filter {
     Expr(Expr),
-    None
+    None,
 }
 
 #[derive(Clone, Debug)]
@@ -13,7 +13,7 @@ pub enum Expr {
 pub struct ExprGeneric<T> {
     pub field: String,
     pub operation: Operation,
-    pub head: T
+    pub head: T,
 }
 
 #[derive(Clone, Debug)]

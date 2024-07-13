@@ -33,7 +33,7 @@ where
 #[async_trait]
 impl<DBO> DAO<DBO, String> for MongoDAO<DBO>
 where
-    DBO: CanGetId<String> + Serialize + DeserializeOwned + Send + Sync
+    DBO: CanGetId<String> + Serialize + DeserializeOwned + Send + Sync,
 {}
 
 #[async_trait]
@@ -70,7 +70,7 @@ where
     }
 
     async fn update(&self, id: String, entity: DBO) -> ResultErr<String> {
-        let filter =  doc! { "id": id.clone() };
+        let filter = doc! { "id": id.clone() };
         self.collection
             .replace_one(filter, entity)
             .await
@@ -79,7 +79,7 @@ where
     }
 
     async fn delete(&self, id: String) -> ResultErr<String> {
-        let filter =  doc! { "id": id.clone() };
+        let filter = doc! { "id": id.clone() };
         self.collection.delete_one(filter).await
             .map(|_| id)
             .map_err(|err| Error::Simple(err.to_string()))
@@ -91,7 +91,6 @@ where
     DBO: DeserializeOwned + Send + Sync,
 {
     async fn find_all(&self, query: Query) -> Result<Vec<DBO>, mongodb::error::Error> {
-
         Ok(
             self.collection
                 .find(query.into())
@@ -99,6 +98,5 @@ where
                 .try_collect::<Vec<DBO>>()
                 .await.unwrap()
         )
-
     }
 }

@@ -13,9 +13,8 @@ impl From<Query> for Document {
                 match e {
                     ExprStr(x) => doc! { x.field.as_str() : x.head.as_str() }
                 }
-            },
+            }
             Filter::None => doc! {}
-
         }
     }
 }

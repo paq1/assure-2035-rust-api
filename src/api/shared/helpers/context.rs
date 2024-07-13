@@ -51,7 +51,6 @@ impl CanDecoreFromHttpRequest for Context {
             meta,
             ..self.clone()
         }
-
     }
 }
 

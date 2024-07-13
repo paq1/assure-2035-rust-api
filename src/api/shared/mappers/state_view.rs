@@ -13,7 +13,7 @@ pub trait CanBeManyView<T: Serialize + Clone> {
         &self,
         ctx: &Context,
         ontology: String,
-        other_link: HashMap<String, String>
+        other_link: HashMap<String, String>,
     ) -> ManyView<T>;
 }
 
@@ -78,7 +78,6 @@ impl<T: Serialize + Clone> CanBeManyView<T> for Paged<T> {
             .collect::<HashMap<String, String>>();
 
 
-
         let links = LinkView {
             links: HashMap::from([
                 ("self".to_string(), format!("{external_url}/{ontology}")),
@@ -99,8 +98,8 @@ impl<T: Serialize + Clone> CanBeManyView<T> for Paged<T> {
                     total_records: self.meta.total_records.clone(),
                     page: PageView {
                         number: self.meta.page.number.clone(),
-                        size: self.meta.page.size.clone()
-                    }
+                        size: self.meta.page.size.clone(),
+                    },
                 }
             ),
             links: Some(links),
@@ -111,7 +110,7 @@ impl<T: Serialize + Clone> CanBeManyView<T> for Paged<T> {
 pub fn from_states_to_entity_view<DATA, VIEW>(
     entity: Entity<DATA, String>,
     ontology: String,
-    context: &Context
+    context: &Context,
 ) -> EntityView<VIEW>
 where
     VIEW: Serialize + Clone,
@@ -137,15 +136,14 @@ where
         attributes: entity.data.to_view(),
         links: Some(LinksEntityView {
             links: HashMap::from([link_event, link_self])
-        })
+        }),
     }
-
 }
 
 pub fn from_states_to_view<DATA, VIEW>(
     entity: Entity<DATA, String>,
     ontology: String,
-    context: &Context
+    context: &Context,
 ) -> DataWrapperView<EntityView<VIEW>>
 where
     VIEW: Serialize + Clone,

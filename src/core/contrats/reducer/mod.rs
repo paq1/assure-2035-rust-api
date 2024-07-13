@@ -2,12 +2,11 @@ use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::reducer::Reducer;
 
 pub struct ContratReducer {
-    pub underlying: Reducer<ContratEvents, ContratStates>
+    pub underlying: Reducer<ContratEvents, ContratStates>,
 }
 
 impl ContratReducer {
     pub fn new() -> Self {
-
         Self {
             underlying: Reducer {
                 compute_new_state: |current, event| {

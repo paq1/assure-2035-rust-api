@@ -25,10 +25,10 @@ impl From<Link> for LinkView {
 impl<T: Clone> Paged<T> {
     pub fn map<R, F>(
         &self,
-        f: F
+        f: F,
     ) -> Paged<R>
     where
-        F: Fn(T) -> R
+        F: Fn(T) -> R,
     {
         Paged {
             data: self

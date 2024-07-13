@@ -6,7 +6,7 @@ use crate::models::shared::errors::{Error, ResultErr};
 
 pub enum HttpKindResponse {
     Created,
-    Ok
+    Ok,
 }
 
 impl HttpKindResponse {

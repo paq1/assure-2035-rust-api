@@ -15,7 +15,7 @@ pub struct Engine<STATE: Clone, COMMAND, EVENT> {
     pub handlers: Vec<CommandHandler<STATE, COMMAND, EVENT>>,
     pub reducer: Reducer<EVENT, STATE>,
     pub store: Arc<Mutex<dyn RepositoryEntity<STATE, String>>>,
-    pub journal: Arc<Mutex<dyn RepositoryEvents<EVENT, String>>>
+    pub journal: Arc<Mutex<dyn RepositoryEvents<EVENT, String>>>,
 }
 
 impl<STATE, COMMAND, EVENT> Engine<STATE, COMMAND, EVENT>
@@ -24,7 +24,6 @@ where
     EVENT: Clone,
 {
     pub async fn compute(&self, command: COMMAND, entity_id: String, name: String, context: &Context) -> ResultErr<(EntityEvent<EVENT, String>, Entity<STATE, String>)> {
-
         let command_handler_found = self.handlers
             .iter().find(|handler| {
             match handler {
@@ -53,7 +52,7 @@ where
         let new_entity = Entity {
             entity_id: entity_id.clone(),
             data: new_state.clone(),
-            version
+            version,
         };
 
         if maybe_entity.is_none() {
@@ -64,8 +63,8 @@ where
 
         let event_entity = EntityEvent {
             entity_id: entity_id.clone(),
-            event_id:  Self::generate_id(),
-            data: event.clone()
+            event_id: Self::generate_id(),
+            data: event.clone(),
         };
         self.journal.lock().await.insert(event_entity.clone()).await?;
         Ok((event_entity, new_entity))

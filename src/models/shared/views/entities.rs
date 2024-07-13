@@ -6,7 +6,7 @@ use utoipa::ToSchema;
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct EntityView<T>
 where
-    T: Serialize + Clone
+    T: Serialize + Clone,
 {
     pub r#type: String,
     pub id: String,

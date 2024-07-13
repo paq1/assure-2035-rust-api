@@ -12,7 +12,7 @@ where
     pub data: Vec<T>,
     pub meta: Option<PaginationView>,
     #[serde(skip_serializing_if = "Option::is_none")]
-    pub links: Option<LinkView>
+    pub links: Option<LinkView>,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
@@ -21,7 +21,7 @@ pub struct PaginationView {
     pub total_pages: usize,
     #[serde(rename = "totalRecords")]
     pub total_records: usize,
-    pub page: PageView
+    pub page: PageView,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]

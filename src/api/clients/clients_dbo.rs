@@ -19,7 +19,7 @@ pub enum ClientDboState {
 
         #[serde(flatten)]
         data: ClientData,
-        
+
         reason: DisableReason,
     },
 }

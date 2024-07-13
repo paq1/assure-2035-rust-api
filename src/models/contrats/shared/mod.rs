@@ -20,5 +20,5 @@ pub struct Vehicle {
 #[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
 pub struct CurrencyValue {
     pub value: f32,
-    pub currency: String
+    pub currency: String,
 }

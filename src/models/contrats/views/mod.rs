@@ -6,7 +6,7 @@ use crate::models::contrats::shared::{ContractData, CurrencyValue};
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct ContratView {
     #[serde(flatten)]
-    pub data: ContractData
+    pub data: ContractData,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -15,7 +15,7 @@ pub enum ContractViewState {
     #[serde(rename = "pending-subscription")]
     Pending(BaseContractStateView),
     #[serde(rename = "actif")]
-    Actif(BaseContractStateView)
+    Actif(BaseContractStateView),
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
@@ -26,7 +26,7 @@ pub enum ContractViewEvent {
     #[serde(rename = "updated")]
     Updated(ContractUpdatedView),
     #[serde(rename = "approved")]
-    Approved(ContractApprovedView)
+    Approved(ContractApprovedView),
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

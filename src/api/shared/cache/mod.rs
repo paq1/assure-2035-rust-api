@@ -2,7 +2,7 @@ use moka::future::Cache;
 
 #[derive(Clone)]
 pub struct CacheAsync {
-    pub underlying: Cache<String, String>
+    pub underlying: Cache<String, String>,
 }
 
 impl CacheAsync {

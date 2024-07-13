@@ -43,5 +43,5 @@ pub struct UpdatedEvent {
 pub struct DisabledEvent {
     pub by: String,
     pub at: DateTime<Utc>,
-    pub reason: DisableReason
+    pub reason: DisableReason,
 }

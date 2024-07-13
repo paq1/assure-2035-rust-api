@@ -41,7 +41,7 @@ where
                     },
                     links: RelatedLinks {
                         related: format!("{external_url}/{ontology}/{state_id}")
-                    }
+                    },
                 }
             },
             links: LinkView {

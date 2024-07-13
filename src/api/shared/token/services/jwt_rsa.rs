@@ -14,7 +14,7 @@ use crate::models::shared::errors::{Error, ResultErr};
 pub struct JwtRSATokenService {
     pub cache: Arc<CacheAsync>,
     pub http_client: Arc<Client>,
-    pub auth_back_url: String
+    pub auth_back_url: String,
 }
 
 impl JwtRSATokenService {
@@ -22,14 +22,13 @@ impl JwtRSATokenService {
         Self {
             cache,
             http_client,
-            auth_back_url
+            auth_back_url,
         }
     }
 }
 
 #[async_trait]
 impl TokenService for JwtRSATokenService {
-
     async fn decode<CLAIMS: Debug + Serialize + DeserializeOwned>(&self, token: &str) -> ResultErr<CLAIMS> {
         let header = decode_header(token).map_err(|err| {
             let message = err.to_string();
@@ -44,7 +43,7 @@ impl TokenService for JwtRSATokenService {
                 let jwk = serde_json::from_str::<JWK>(data.as_str())
                     .map_err(|err| Error::Simple(err.to_string()))?;
                 Ok(jwk)
-            },
+            }
             None => {
                 let url = format!("{}/v1/jwks/{kid}/public", self.auth_back_url);
                 let response = self.http_client
@@ -65,7 +64,7 @@ impl TokenService for JwtRSATokenService {
 
         let decoding_key = DecodingKey::from_rsa_components(
             jwk.n.as_str(),
-            jwk.e.as_str()
+            jwk.e.as_str(),
         ).map_err(|err| Error::Simple({
             let error_message = err.to_string();
             format!("decoding key : {error_message}")
@@ -84,5 +83,5 @@ impl TokenService for JwtRSATokenService {
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct JWK {
     n: String,
-    e: String
+    e: String,
 }

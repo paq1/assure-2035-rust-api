@@ -44,7 +44,7 @@ pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {
                         number: query.pagination.page_number,
                         size: query.pagination.page_size,
                     },
-                }
+                },
             }
         )
     }

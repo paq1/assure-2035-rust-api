@@ -42,9 +42,8 @@ pub trait ContratService: Send + Sync {
 
         Ok(CurrencyValue {
             value: value_sanitize,
-            currency: command.data.vehicle.insured_value.currency
+            currency: command.data.vehicle.insured_value.currency,
         })
-
     }
 
     async fn get_client_country_code(&self, id_client: &String) -> ResultErr<String>;

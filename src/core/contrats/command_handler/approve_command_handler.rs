@@ -14,10 +14,9 @@ impl CommandHandlerUpdate<ContratStates, ContratsCommands, ContratEvents> for Ap
     }
 
     async fn on_command(&self, _id: String, _state: ContratStates, command: ContratsCommands, context: &Context) -> ResultErr<ContratEvents> {
-
         match command {
             ContratsCommands::Approve(_) => Ok(
-                ContratEvents::Approved (ApprovedEvent { by: context.subject.clone(), at: context.now })
+                ContratEvents::Approved(ApprovedEvent { by: context.subject.clone(), at: context.now })
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }
@@ -28,5 +27,4 @@ impl<'a> ApproveContractHandler {
     pub fn get_name() -> &'a str {
         "approve-contract"
     }
-
 }

@@ -46,7 +46,7 @@ pub async fn insert_one_client(
                             event,
                             "clients".to_string(),
                             "org:example:insurance:client".to_string(),
-                            &ctx
+                            &ctx,
                         )
                     ),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
@@ -89,7 +89,7 @@ pub async fn update_one_client(
                             event,
                             "clients".to_string(),
                             "org:example:insurance:client".to_string(),
-                            &ctx
+                            &ctx,
                         )
                     ),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
@@ -131,7 +131,7 @@ pub async fn disable_one_client(
                         event,
                         "clients".to_string(),
                         "org:example:insurance:client".to_string(),
-                        &ctx
+                        &ctx,
                     )),
                 Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
             }

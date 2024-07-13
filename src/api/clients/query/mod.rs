@@ -6,10 +6,10 @@ use crate::core::shared::repositories::query::PaginationDef;
 
 #[derive(Serialize, Deserialize, IntoParams, Debug, Clone)]
 pub struct ClientQuery {
-    #[serde(rename="page[number]")]
+    #[serde(rename = "page[number]")]
     pub number: Option<usize>,
-    #[serde(rename="page[size]")]
-    pub size: Option<usize>
+    #[serde(rename = "page[size]")]
+    pub size: Option<usize>,
 }
 
 impl From<Query<ClientQuery>> for crate::core::shared::repositories::query::Query {
@@ -20,9 +20,9 @@ impl From<Query<ClientQuery>> for crate::core::shared::repositories::query::Quer
         Self {
             pagination: PaginationDef {
                 page_number: number,
-                page_size: size
+                page_size: size,
             },
-            filter: Filter::None
+            filter: Filter::None,
         }
     }
 }

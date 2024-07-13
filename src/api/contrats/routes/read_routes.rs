@@ -35,7 +35,6 @@ pub async fn fetch_many_contrat(
     query: Query<ContratQuery>,
     req: HttpRequest,
 ) -> impl Responder {
-
     let ctx: Context = Context::empty()
         .decore_with_http_header(&req)
         .clone_with_filter(
@@ -55,7 +54,7 @@ pub async fn fetch_many_contrat(
             });
 
             HttpResponse::Ok().json(paged_view.to_many_view(&ctx, "contracts".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))
-        },
+        }
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
@@ -74,7 +73,7 @@ pub async fn fetch_one_contrat(
     path: web::Path<String>,
     repo: web::Data<Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>>,
     http_error: web::Data<StandardHttpError>,
-    req: HttpRequest
+    req: HttpRequest,
 ) -> impl Responder {
     let id = path.into_inner();
 
@@ -89,7 +88,7 @@ pub async fn fetch_one_contrat(
             let view = from_states_to_view(entity, "contracts".to_string(), &ctx);
 
             HttpResponse::Ok().json(view)
-        },
+        }
         Ok(_) => HttpResponse::NotFound().json(http_error.not_found.clone()),
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
@@ -115,7 +114,6 @@ pub async fn fetch_events_contrat(
     query: Query<ContratQuery>,
     req: HttpRequest,
 ) -> impl Responder {
-
     let ctx: Context = Context::empty()
         .decore_with_http_header(&req)
         .clone_with_filter(
@@ -151,12 +149,12 @@ pub async fn fetch_events_contrat(
                     r#type: "org:example:insurance:contract".to_string(), // fixme passer le client ontology
                     id: x.entity_id,
                     attributes: x.data.to_view(),
-                    links: None
+                    links: None,
                 }
             });
 
             HttpResponse::Ok().json(paged_view.to_many_view(&ctx, "clients".to_string(), HashMap::new()))
-        },
+        }
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
 }
@@ -191,10 +189,10 @@ pub async fn fetch_one_contract_event(
                         event,
                         "contracts".to_string(),
                         "org:example:insurance:contract".to_string(),
-                        &ctx
+                        &ctx,
                     );
                     HttpResponse::Ok().json(view)
-                },
+                }
                 None => {
                     HttpResponse::InternalServerError().json(http_error.not_found.clone())
                 }
