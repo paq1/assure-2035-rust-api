@@ -4,7 +4,6 @@ use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use futures::lock::Mutex;
 use uuid::Uuid;
 
-use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::shared::helpers::http_response::{CanToHttpResponse, HttpKindResponse};
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
@@ -31,7 +30,7 @@ pub async fn insert_one_contrat(
     body: web::Json<CreateContratCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsEventMongoRepository>>>>,
+    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -72,7 +71,7 @@ pub async fn approve_one_contrat(
     body: web::Json<ApproveContractCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsEventMongoRepository>>>>,
+    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -113,7 +112,7 @@ pub async fn update_one_contrat(
     body: web::Json<UpdateContratCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsEventMongoRepository>>>>,
+    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {

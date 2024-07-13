@@ -9,7 +9,7 @@ use crate::models::shared::errors::ResultErr;
 pub trait RepositoryEvents<DATA: Clone, ID: Clone>: ReadOnlyEventRepo<DATA, ID> + WriteOnlyEventRepo<DATA, ID> {}
 
 #[async_trait]
-pub trait ReadOnlyEventRepo<DATA: Clone, ID: Clone>: CanFetchAll<EntityEvent<DATA, ID>> + CanFetchMany<EntityEvent<DATA, ID>> {
+pub trait ReadOnlyEventRepo<DATA: Clone, ID: Clone>: CanFetchAll<EntityEvent<DATA, ID>> + CanFetchMany<EntityEvent<DATA, ID>> + Sync + Send {
     async fn fetch_one(&self, id: ID) -> ResultErr<Option<EntityEvent<DATA, ID>>>;
 }
 

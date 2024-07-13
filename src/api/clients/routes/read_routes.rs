@@ -5,15 +5,13 @@ use actix_web::{get, HttpRequest, HttpResponse, Responder, web};
 use actix_web::web::Query;
 use futures::lock::Mutex;
 
-use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
 use crate::core::clients::data::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany};
 use crate::core::shared::repositories::entities::RepositoryEntity;
-use crate::core::shared::repositories::events::ReadOnlyEventRepo;
+use crate::core::shared::repositories::events::RepositoryEvents;
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::clients::views::ClientViewEvent;
@@ -112,7 +110,7 @@ pub async fn fetch_one_client(
 #[get("/clients/{entity_id}/events")]
 pub async fn fetch_events_client(
     path: web::Path<String>,
-    journal: web::Data<Arc<Mutex<ClientsEventMongoRepository>>>,
+    journal: web::Data<Arc<Mutex<dyn RepositoryEvents<ClientEvents, String>>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ClientQuery>,
     req: HttpRequest,
@@ -174,7 +172,7 @@ pub async fn fetch_events_client(
 #[get("/clients/{entity_id}/events/{event_id}")]
 pub async fn fetch_one_client_event(
     path: web::Path<(String, String)>,
-    journal: web::Data<Arc<Mutex<ClientsEventMongoRepository>>>,
+    journal: web::Data<Arc<Mutex<dyn RepositoryEvents<ClientEvents, String>>>>,
     http_error: web::Data<StandardHttpError>,
     req: HttpRequest,
 ) -> impl Responder {

@@ -49,6 +49,7 @@ use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::StandardHttpError;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
 use crate::core::shared::repositories::entities::RepositoryEntity;
+use crate::core::shared::repositories::events::RepositoryEvents;
 
 mod core;
 mod api;
@@ -73,14 +74,14 @@ async fn main() -> std::io::Result<()> {
         )
     );
 
-    let journal_clients: Arc<Mutex<ClientsEventMongoRepository>> = Arc::new(
+    let journal_clients: Arc<Mutex<dyn RepositoryEvents<ClientEvents, String>>> = Arc::new(
         Mutex::new(
             ClientsEventMongoRepository {
                 dao: ClientsEventMongoDAO::new(dbname.to_string(), "clients_journal_actix".to_string()).await
             }
         )
     );
-    let clients_service: Arc<Mutex<ClientsServiceImpl<ClientsEventMongoRepository>>> = Arc::new(
+    let clients_service: Arc<Mutex<ClientsServiceImpl>> = Arc::new(
         Mutex::new(
             ClientsServiceImpl {
                 store: Arc::clone(&store_clients),
@@ -88,7 +89,7 @@ async fn main() -> std::io::Result<()> {
             }
         )
     );
-    let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents, ClientsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
+    let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
             CommandHandler::Update(Box::new(UpdateClientHandler {})),
@@ -108,7 +109,7 @@ async fn main() -> std::io::Result<()> {
         )
     );
 
-    let journal_contrats: Arc<Mutex<ContratsEventMongoRepository>> = Arc::new(
+    let journal_contrats: Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>> = Arc::new(
         Mutex::new(
             ContratsEventMongoRepository {
                 dao: ContratsEventMongoDAO::new(dbname.to_string(), "contrats_journal_actix".to_string()).await
@@ -145,7 +146,7 @@ async fn main() -> std::io::Result<()> {
         )
     );
 
-    let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents, ContratsEventMongoRepository>>> = Arc::new(Mutex::new(Engine {
+    let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateContratHandler { contract_service: Arc::clone(&contrats_service) })),
             CommandHandler::Update(Box::new(UpdateContratHandler {})),

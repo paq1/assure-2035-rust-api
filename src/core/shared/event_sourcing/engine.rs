@@ -1,34 +1,27 @@
 use std::sync::Arc;
+
 use futures::lock::Mutex;
 use uuid::Uuid;
-use crate::core::shared::event_sourcing::CommandHandler;
+
 use crate::core::shared::context::Context;
 use crate::core::shared::data::{Entity, EntityEvent};
+use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::reducer::Reducer;
 use crate::core::shared::repositories::entities::RepositoryEntity;
-use crate::core::shared::repositories::events::WriteOnlyEventRepo;
+use crate::core::shared::repositories::events::RepositoryEvents;
 use crate::models::shared::errors::{Error, ResultErr};
 
-pub struct Engine<
-    STATE: Clone,
-    COMMAND,
-    EVENT,
-    JOURNAL
->
-where
-    JOURNAL: WriteOnlyEventRepo<EVENT, String>,
-{
+pub struct Engine<STATE: Clone, COMMAND, EVENT> {
     pub handlers: Vec<CommandHandler<STATE, COMMAND, EVENT>>,
     pub reducer: Reducer<EVENT, STATE>,
     pub store: Arc<Mutex<dyn RepositoryEntity<STATE, String>>>,
-    pub journal: Arc<Mutex<JOURNAL>>
+    pub journal: Arc<Mutex<dyn RepositoryEvents<EVENT, String>>>
 }
 
-impl<STATE, COMMAND, EVENT, JOURNAL> Engine<STATE, COMMAND, EVENT, JOURNAL>
+impl<STATE, COMMAND, EVENT> Engine<STATE, COMMAND, EVENT>
 where
     STATE: Clone,
     EVENT: Clone,
-    JOURNAL: WriteOnlyEventRepo<EVENT, String>,
 {
     pub async fn compute(&self, command: COMMAND, entity_id: String, name: String, context: &Context) -> ResultErr<(EntityEvent<EVENT, String>, Entity<STATE, String>)> {
 

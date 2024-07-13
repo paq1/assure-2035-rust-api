@@ -5,14 +5,12 @@ use actix_web::{get, HttpRequest, HttpResponse, Responder, web};
 use actix_web::web::Query;
 use futures::lock::Mutex;
 
-use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRepository;
 use crate::api::contrats::query::ContratQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::context::Context;
-use crate::core::shared::repositories::{CanFetchMany};
 use crate::core::shared::repositories::entities::RepositoryEntity;
-use crate::core::shared::repositories::events::ReadOnlyEventRepo;
+use crate::core::shared::repositories::events::RepositoryEvents;
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::contrats::views::ContractViewEvent;
@@ -112,7 +110,7 @@ pub async fn fetch_one_contrat(
 #[get("/contracts/{entity_id}/events")]
 pub async fn fetch_events_contrat(
     path: web::Path<String>,
-    journal: web::Data<Arc<Mutex<ContratsEventMongoRepository>>>,
+    journal: web::Data<Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ContratQuery>,
     req: HttpRequest,
@@ -175,7 +173,7 @@ pub async fn fetch_events_contrat(
 #[get("/contracts/{entity_id}/events/{event_id}")]
 pub async fn fetch_one_contract_event(
     path: web::Path<(String, String)>,
-    journal: web::Data<Arc<Mutex<ContratsEventMongoRepository>>>,
+    journal: web::Data<Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>>>,
     http_error: web::Data<StandardHttpError>,
     req: HttpRequest,
 ) -> impl Responder {

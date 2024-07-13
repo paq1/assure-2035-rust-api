@@ -13,7 +13,7 @@ use crate::core::contrats::services::formule_service::FormuleService;
 use crate::core::shared::context::Context;
 use crate::core::shared::id_generator::IdGenerator;
 use crate::core::shared::repositories::entities::RepositoryEntity;
-use crate::core::shared::repositories::events::WriteOnlyEventRepo;
+use crate::core::shared::repositories::events::RepositoryEvents;
 use crate::models::contrats::commands::DeleteContratCommand;
 use crate::models::contrats::shared::CurrencyValue;
 use crate::models::shared::errors::{Error, ResultErr};
@@ -23,12 +23,9 @@ pub mod formule_repo_mock;
 pub mod facteur_vehicle_repo_mock;
 pub mod facteur_pays_repo_mock;
 
-pub struct ContratsServiceImpl<JOURNAL>
-where
-    JOURNAL: WriteOnlyEventRepo<ContratEvents, String>,
-{
+pub struct ContratsServiceImpl {
     pub store: Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>,
-    pub journal: Arc<Mutex<JOURNAL>>,
+    pub journal: Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>>,
     pub formule_service: Arc<Mutex<dyn FormuleService>>,
     pub facteur_vehicle_repo: Arc<Mutex<dyn FacteurVehicleRepo>>,
     pub facteur_pays_repo: Arc<Mutex<dyn FacteurPaysRepo>>,
@@ -36,10 +33,7 @@ where
 }
 
 #[async_trait]
-impl<JOURNAL> ContratService for ContratsServiceImpl<JOURNAL>
-where
-    JOURNAL: WriteOnlyEventRepo<ContratEvents, String> + Send + Sync,
-{
+impl ContratService for ContratsServiceImpl {
     async fn delete_contrat(&self, _command: DeleteContratCommand, _id: String, _ctx: Context) -> ResultErr<String> {
         todo!()
     }
@@ -74,10 +68,7 @@ where
     }
 }
 
-impl<JOURNAL> IdGenerator for ContratsServiceImpl<JOURNAL>
-where
-    JOURNAL: WriteOnlyEventRepo<ContratEvents, String>
-{
+impl IdGenerator for ContratsServiceImpl {
     fn generate_id() -> String {
         Uuid::new_v4().to_string()
     }

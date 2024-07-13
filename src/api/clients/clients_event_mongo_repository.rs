@@ -9,13 +9,16 @@ use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
 use crate::core::shared::data::EntityEvent;
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::CanFetchMany;
-use crate::core::shared::repositories::events::{ReadOnlyEventRepo, WriteOnlyEventRepo};
+use crate::core::shared::repositories::events::{ReadOnlyEventRepo, RepositoryEvents, WriteOnlyEventRepo};
 use crate::core::shared::repositories::query::Query;
 use crate::models::shared::errors::ResultErr;
 
 pub struct ClientsEventMongoRepository {
     pub dao: ClientsEventMongoDAO,
 }
+
+#[async_trait]
+impl RepositoryEvents<ClientEvents, String> for ClientsEventMongoRepository {}
 
 #[async_trait]
 impl CanFetchAll<EntityEvent<ClientEvents, String>> for ClientsEventMongoRepository {
