@@ -4,7 +4,7 @@ use serde::{Deserialize, Serialize};
 use crate::core::shared::context::Context;
 use crate::core::shared::data::EntityEvent;
 use crate::models::shared::jsonapi::CanBeView;
-use crate::models::shared::views::DataWrapperView;
+use crate::models::shared::views::{DataWrapperView, LinkView};
 
 pub fn from_output_command_handler_to_view<DATA, VIEW>(
     event: EntityEvent<DATA, String>,
@@ -61,15 +61,15 @@ where
     T: Serialize + Clone,
 {
     #[serde(rename = "type")]
-    pub r#type: String,
-    pub id: String,
-    pub attributes: AttributesEvent<T>,
-    pub relationships: Relationships,
-    pub links: LinkView,
+    r#type: String,
+    id: String,
+    attributes: AttributesEvent<T>,
+    relationships: Relationships,
+    links: LinkView,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct AttributesEvent<T>
+struct AttributesEvent<T>
 where
     T: Serialize + Clone,
 {
@@ -78,33 +78,28 @@ where
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct Relationships {
+struct Relationships {
     #[serde(rename = "_entity")]
     pub entity: DataWrapper,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct DataWrapper {
+struct DataWrapper {
     pub data: DataRS,
     pub links: RelatedLinks,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct RelatedLinks {
+struct RelatedLinks {
     pub related: String,
 }
 
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct DataRS {
+struct DataRS {
     #[serde(rename = "type")]
     pub r#type: String,
     pub id: String,
 }
 
-#[derive(Serialize, Deserialize, Clone, Debug)]
-pub struct LinkView {
-    #[serde(flatten)]
-    pub links: HashMap<String, String>,
-}
 

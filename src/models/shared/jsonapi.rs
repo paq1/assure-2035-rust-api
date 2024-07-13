@@ -6,7 +6,7 @@ use utoipa::ToSchema;
 
 use crate::core::shared::context::Context;
 use crate::core::shared::repositories::query::Paged;
-use crate::models::shared::views::command_handler_view::LinkView;
+use crate::models::shared::views::LinkView;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema)]
 pub struct ManyView<T>

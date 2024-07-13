@@ -1,7 +1,7 @@
 use std::collections::HashMap;
 
 use crate::core::shared::repositories::filter::Filter;
-use crate::models::shared::views::command_handler_view::LinkView;
+use crate::models::shared::views::LinkView;
 
 #[derive(Clone)]
 pub struct Paged<T> {
