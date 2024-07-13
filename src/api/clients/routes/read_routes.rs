@@ -7,7 +7,7 @@ use futures::lock::Mutex;
 
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
-use crate::api::shared::mappers::state_view::{from_states_to_entity_view, from_states_to_view};
+use crate::api::shared::mappers::state_view::{CanBeManyView, from_states_to_entity_view, from_states_to_view};
 use crate::core::clients::data::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
@@ -17,7 +17,7 @@ use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Opera
 use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::clients::views::ClientViewEvent;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::shared::jsonapi::{CanBeView, ManyView};
+use crate::models::shared::jsonapi::CanBeView;
 use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 use crate::models::shared::views::entities::EntityView;
 
@@ -55,7 +55,7 @@ pub async fn fetch_many_client(
                 from_states_to_entity_view(entity, "clients".to_string(), &ctx)
             });
 
-            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))
+            HttpResponse::Ok().json(paged_view.to_many_view(&ctx, "clients".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))
         },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
@@ -153,7 +153,7 @@ pub async fn fetch_events_client(
                 }
             });
 
-            HttpResponse::Ok().json(ManyView::new(paged_view, &ctx, "clients".to_string(), HashMap::new()))
+            HttpResponse::Ok().json(paged_view.to_many_view(&ctx, "clients".to_string(), HashMap::new()))
         },
         Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
     }
