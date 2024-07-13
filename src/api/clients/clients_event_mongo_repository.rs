@@ -1,15 +1,16 @@
 use async_trait::async_trait;
 
-use crate::api::shared::daos::dbos::EventDBO;
 use crate::api::clients::clients_dbo::ClientDboEvent;
 use crate::api::clients::clients_mongo_dao::ClientsEventMongoDAO;
+use crate::api::shared::daos::dbos::EventDBO;
+use crate::core::clients::data::ClientEvents;
 use crate::core::shared::can_get_id::CanGetId;
 use crate::core::shared::daos::{ReadOnlyDAO, WriteOnlyDAO};
 use crate::core::shared::data::EntityEvent;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEventRepo, WriteOnlyEventRepo};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
+use crate::core::shared::repositories::CanFetchMany;
+use crate::core::shared::repositories::events::{ReadOnlyEventRepo, WriteOnlyEventRepo};
 use crate::core::shared::repositories::query::Query;
-use crate::core::clients::data::ClientEvents;
 use crate::models::shared::errors::ResultErr;
 
 pub struct ClientsEventMongoRepository {

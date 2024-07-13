@@ -1,6 +1,5 @@
 use async_trait::async_trait;
 
-use crate::core::shared::data::{Entity, EntityEvent};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::query::{InfoPaged, Page, Paged, Query};
 use crate::models::shared::errors::ResultErr;
@@ -8,31 +7,8 @@ use crate::models::shared::errors::ResultErr;
 pub mod query;
 pub mod can_fetch_all;
 pub mod filter;
-
-#[async_trait]
-pub trait RepositoryEntity<DATA: Clone, ID: Clone>: ReadOnlyEntityRepo<DATA, ID> + WriteOnlyEntityRepo<DATA, ID> {}
-
-#[async_trait]
-pub trait ReadOnlyEntityRepo<DATA: Clone, ID: Clone>: CanFetchAll<Entity<DATA, ID>> + CanFetchMany<Entity<DATA, ID>> + Sync + Send {
-    async fn fetch_one(&self, id: ID) -> ResultErr<Option<Entity<DATA, ID>>>;
-}
-
-#[async_trait]
-pub trait WriteOnlyEntityRepo<DATA: Clone, ID: Clone> {
-    async fn insert(&self, entity: Entity<DATA, ID>) -> ResultErr<ID>;
-    async fn update(&self, id: ID, entity: Entity<DATA, ID>) -> ResultErr<ID>;
-    async fn delete(&self, id: ID) -> ResultErr<ID>;
-}
-
-#[async_trait]
-pub trait ReadOnlyEventRepo<DATA: Clone, ID: Clone>: CanFetchAll<EntityEvent<DATA, ID>> + CanFetchMany<EntityEvent<DATA, ID>> {
-    async fn fetch_one(&self, id: ID) -> ResultErr<Option<EntityEvent<DATA, ID>>>;
-}
-
-#[async_trait]
-pub trait WriteOnlyEventRepo<DATA, ID> {
-    async fn insert(&self, entity: EntityEvent<DATA, ID>) -> ResultErr<ID>;
-}
+pub mod entities;
+pub mod events;
 
 #[async_trait]
 pub trait CanFetchMany<ENTITY: Clone>: CanFetchAll<ENTITY> {

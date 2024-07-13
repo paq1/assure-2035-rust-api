@@ -9,8 +9,9 @@ use crate::core::contrats::data::ContratStates;
 use crate::core::shared::can_get_id::CanGetId;
 use crate::core::shared::daos::DAO;
 use crate::core::shared::data::Entity;
-use crate::core::shared::repositories::{CanFetchMany, ReadOnlyEntityRepo, RepositoryEntity, WriteOnlyEntityRepo};
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
+use crate::core::shared::repositories::CanFetchMany;
+use crate::core::shared::repositories::entities::{ReadOnlyEntityRepo, RepositoryEntity, WriteOnlyEntityRepo};
 use crate::core::shared::repositories::query::Query;
 use crate::models::shared::errors::ResultErr;
 

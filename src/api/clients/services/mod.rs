@@ -9,7 +9,8 @@ use crate::core::clients::data::states::ClientStates;
 use crate::core::clients::services::ClientService;
 use crate::core::shared::context::Context;
 use crate::core::shared::id_generator::IdGenerator;
-use crate::core::shared::repositories::{RepositoryEntity, WriteOnlyEventRepo};
+use crate::core::shared::repositories::entities::RepositoryEntity;
+use crate::core::shared::repositories::events::WriteOnlyEventRepo;
 use crate::models::clients::commands::*;
 use crate::models::shared::errors::ResultErr;
 

@@ -44,11 +44,11 @@ use crate::core::contrats::services::formule_repo::FormuleRepo;
 use crate::core::contrats::services::formule_service::FormuleService;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::core::shared::repositories::RepositoryEntity;
 use crate::models::clients::commands::ClientsCommands;
 use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::StandardHttpError;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
+use crate::core::shared::repositories::entities::RepositoryEntity;
 
 mod core;
 mod api;

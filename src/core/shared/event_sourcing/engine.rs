@@ -5,7 +5,8 @@ use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::context::Context;
 use crate::core::shared::data::{Entity, EntityEvent};
 use crate::core::shared::reducer::Reducer;
-use crate::core::shared::repositories::{RepositoryEntity, WriteOnlyEventRepo};
+use crate::core::shared::repositories::entities::RepositoryEntity;
+use crate::core::shared::repositories::events::WriteOnlyEventRepo;
 use crate::models::shared::errors::{Error, ResultErr};
 
 pub struct Engine<
