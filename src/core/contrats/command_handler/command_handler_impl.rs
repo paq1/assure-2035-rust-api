@@ -11,7 +11,7 @@ use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::{Error, ResultErr};
 
 pub struct CreateContratHandler {
-    pub contract_service: Arc<Mutex<Box<dyn ContratService>>>
+    pub contract_service: Arc<Mutex<dyn ContratService>>
 }
 
 #[async_trait]

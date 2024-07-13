@@ -28,9 +28,9 @@ where
 {
     pub store: Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>,
     pub journal: Arc<Mutex<JOURNAL>>,
-    pub formule_service: Arc<Mutex<Box<dyn FormuleService>>>,
-    pub facteur_vehicle_repo: Arc<Mutex<Box<dyn FacteurVehicleRepo>>>,
-    pub facteur_pays_repo: Arc<Mutex<Box<dyn FacteurPaysRepo>>>,
+    pub formule_service: Arc<Mutex<dyn FormuleService>>,
+    pub facteur_vehicle_repo: Arc<Mutex<dyn FacteurVehicleRepo>>,
+    pub facteur_pays_repo: Arc<Mutex<dyn FacteurPaysRepo>>,
     pub store_personne: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>
 }
 

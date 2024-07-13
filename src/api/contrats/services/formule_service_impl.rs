@@ -6,7 +6,7 @@ use crate::core::contrats::services::formule_service::FormuleService;
 use crate::models::contrats::shared::CurrencyValue;
 use crate::models::shared::errors::ResultErr;
 pub struct FormuleServiceImpl {
-    pub formule_repo: Arc<Mutex<Box<dyn FormuleRepo>>>
+    pub formule_repo: Arc<Mutex<dyn FormuleRepo>>,
 }
 
 #[async_trait]

@@ -116,38 +116,32 @@ async fn main() -> std::io::Result<()> {
         )
     );
 
-    let formume_repo: Arc<Mutex<Box<dyn FormuleRepo>>> = Arc::new(Mutex::new(Box::new(FormuleRepoMock {})));
+    let formume_repo: Arc<Mutex<dyn FormuleRepo>> = Arc::new(Mutex::new(FormuleRepoMock {}));
 
-    let formule_service: Arc<Mutex<Box<dyn FormuleService>>> = Arc::new(Mutex::new(Box::new(FormuleServiceImpl { formule_repo: Arc::clone(&formume_repo) })));
+    let formule_service: Arc<Mutex<dyn FormuleService>> = Arc::new(Mutex::new(FormuleServiceImpl { formule_repo: Arc::clone(&formume_repo) }));
 
-    let facteur_vehicle_repo: Arc<Mutex<Box<dyn FacteurVehicleRepo>>> = Arc::new(
+    let facteur_vehicle_repo: Arc<Mutex<dyn FacteurVehicleRepo>> = Arc::new(
         Mutex::new(
-            Box::new(
-                FacteurVehicleRepoMock {}
-            )
+            FacteurVehicleRepoMock {}
         )
     );
 
-    let facteur_pays_repo: Arc<Mutex<Box<dyn FacteurPaysRepo>>> = Arc::new(
+    let facteur_pays_repo: Arc<Mutex<dyn FacteurPaysRepo>> = Arc::new(
         Mutex::new(
-            Box::new(
-                FacteurPaysRepoMock {}
-            )
+            FacteurPaysRepoMock {}
         )
     );
 
-    let contrats_service: Arc<Mutex<Box<dyn ContratService>>> = Arc::new(
+    let contrats_service: Arc<Mutex<dyn ContratService>> = Arc::new(
         Mutex::new(
-            Box::new(
-                ContratsServiceImpl {
-                    store: Arc::clone(&store_contrats),
-                    journal: Arc::clone(&journal_contrats),
-                    formule_service: Arc::clone(&formule_service),
-                    store_personne: Arc::clone(&store_clients),
-                    facteur_pays_repo: Arc::clone(&facteur_pays_repo),
-                    facteur_vehicle_repo: Arc::clone(&facteur_vehicle_repo),
-                }
-            )
+            ContratsServiceImpl {
+                store: Arc::clone(&store_contrats),
+                journal: Arc::clone(&journal_contrats),
+                formule_service: Arc::clone(&formule_service),
+                store_personne: Arc::clone(&store_clients),
+                facteur_pays_repo: Arc::clone(&facteur_pays_repo),
+                facteur_vehicle_repo: Arc::clone(&facteur_vehicle_repo),
+            }
         )
     );
 
