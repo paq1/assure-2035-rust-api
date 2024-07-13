@@ -1,4 +1,5 @@
 use async_trait::async_trait;
+
 use crate::core::shared::data::Entity;
 use crate::core::shared::repositories::can_fetch_all::CanFetchAll;
 use crate::core::shared::repositories::CanFetchMany;

@@ -9,7 +9,7 @@ use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
 use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
 use crate::api::shared::mappers::state_view::{CanBeManyView, from_states_to_entity_view, from_states_to_view};
-use crate::core::clients::data::ClientEvents;
+use crate::core::clients::data::events::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
 use crate::core::shared::repositories::entities::RepositoryEntity;

@@ -32,7 +32,8 @@ C'est pourquoi ces libs sont les bienvenues dans mon héxagone ^^
 En raison des specs métier proposé par plateforme, l'architecture event sourcing était toute indiquée.
 <br>
 Je vous ai proposé (équipe plateforme) un code dans les module "core::shared", étant générique et n'ayant
-aucune dépendance hors de l'hexagone (ni métier bien évidememnt). Des ports (notion port-adaptor) sont mit en place pour la partie
+aucune dépendance hors de l'hexagone (ni métier bien évidememnt). Des ports (notion port-adaptor) sont mit en place pour
+la partie
 persistance des données.
 <br>
 Cette brique technique peut sans aucun problème etre sorti dans une lib (exemple apiLibsRust 😋) et publié.
@@ -66,19 +67,21 @@ Cette brique technique peut sans aucun problème etre sorti dans une lib (exempl
 # 3 - ce que j'aurai voulu faire avec plus de temps
 
 ## 3-1 architecture
+
 <ul>
     <li>kafka: utiliser kafka pour pour persister les messages ainsi que tendre vers de l'event storming</li>
     <li>sortir utoipa de mon héxagone</li>
 </ul>
 
 ## 3-2 non fini :p
+
 <ul>
     <li>swagger plus propre et documenté</li>
 </ul>
 
 # 4 - Conclusion
 
-Pour moi rust est un langage que j'apprécie beaucoup et que j'utilise pour mes apis a la maison, 
+Pour moi rust est un langage que j'apprécie beaucoup et que j'utilise pour mes apis a la maison,
 faire des concours de jeux vidéo et bientot de l'arduino ^^.<br>
 <br>
 En fait, ca fait maintenant plus de deux ans je suis sorti d'école, et j'ai pratiqué plusieurs langages dans
@@ -88,15 +91,17 @@ le cadre pro et perso.
 
 ### java spring
 
-Tout d'abord le langage java avec la stack spring que j'ai pratiqué chez Lombard ou j'ai appris les bases (une api c'est quoi ? xD),
+Tout d'abord le langage java avec la stack spring que j'ai pratiqué chez Lombard ou j'ai appris les bases (une api c'est
+quoi ? xD),
 j'ai peut d'expérience sur cette stack mais je pense que les gens y restent uniquement pour l'employabilité
-luxembourgeoise ... ce qui est domage pour un dev de pratiquer une stack pour cette unique raison. 
-Malgrès tout la stack java spring reste très simple, accessible aux junior, "contenerisable" 
+luxembourgeoise ... ce qui est domage pour un dev de pratiquer une stack pour cette unique raison.
+Malgrès tout la stack java spring reste très simple, accessible aux junior, "contenerisable"
 (la jvm c'est un steak quand même 😂).
 
 ### scala play
 
-Puis vient mon coup de coeur, la stack scala play. C'est pour moi le langage idéale pour les équipes business et technique.
+Puis vient mon coup de coeur, la stack scala play. C'est pour moi le langage idéale pour les équipes business et
+technique.
 <br>
 En effet la vision fonctionnelle, le sucre syntaxique, pouvoir utiliser des lib compilé JVM en fait un choix sur
 lequel je me positionne car j'ai l'impression de savoir coder avec ce langage 😂.
@@ -105,7 +110,7 @@ Seul bémol pour moi, la taille de la jvm pour un vision cloud. j'espere un jour
 ### rust actix
 
 C'est ma premiere Api avec actix car j'utilise le framework rocket pour le perso, mais je me suis tres vite habitué
-au framework. 
+au framework.
 <br>
 Une des raisons pour laquel le rust n'est pas necessairement apprécié, c'est la courbe d'apprentissage du langage.
 En effet, j'ai appris le rust à la dur (die and retry) + documentation.

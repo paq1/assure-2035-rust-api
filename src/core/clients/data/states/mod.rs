@@ -1,5 +1,5 @@
-use crate::core::clients::data::ClientEvents;
-use crate::core::clients::data::ClientEvents::Created;
+use crate::core::clients::data::events::ClientEvents;
+use crate::core::clients::data::events::ClientEvents::Created;
 use crate::core::clients::data::states::client_actif::ClientActif;
 use crate::core::clients::data::states::client_disable::ClientDisable;
 use crate::models::clients::views::ClientViewState;

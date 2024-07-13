@@ -1,8 +1,9 @@
-pub mod engine;
-
 use async_trait::async_trait;
+
 use crate::core::shared::context::Context;
 use crate::models::shared::errors::ResultErr;
+
+pub mod engine;
 
 pub enum CommandHandler<STATE, COMMAND, EVT> {
     Create(Box<dyn CommandHandlerCreate<STATE, COMMAND, EVT>>),

@@ -1,5 +1,6 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
+
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

@@ -1,4 +1,4 @@
-use crate::core::clients::data::ClientEvents;
+use crate::core::clients::data::events::ClientEvents;
 use crate::core::clients::data::states::client_disable::ClientDisable;
 use crate::core::clients::data::states::ClientStates;
 use crate::models::clients::shared::ClientData;

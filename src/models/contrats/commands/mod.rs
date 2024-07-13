@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
 use crate::models::contrats::shared::ContractData;
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

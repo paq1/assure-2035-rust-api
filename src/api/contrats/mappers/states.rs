@@ -1,6 +1,6 @@
 use crate::api::contrats::contrats_dbo::{ContractActifDbo, ContractPendingDbo, ContratDboState};
 use crate::api::shared::daos::dbos::EntityDBO;
-use crate::core::contrats::data::{PendingContract, ContratStates, ActifContract};
+use crate::core::contrats::data::{ActifContract, ContratStates, PendingContract};
 use crate::core::shared::data::Entity;
 
 impl From<ContratDboState> for ContratStates {

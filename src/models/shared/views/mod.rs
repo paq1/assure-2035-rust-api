@@ -1,9 +1,10 @@
-pub mod command_handler_view;
-pub mod entities;
-
 use std::collections::HashMap;
+
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
+pub mod command_handler_view;
+pub mod entities;
 
 #[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
 pub struct DataWrapperView<T>

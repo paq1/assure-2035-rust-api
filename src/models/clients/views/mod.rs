@@ -1,5 +1,6 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
+
 use crate::models::clients::shared::{ClientData, DisableReason};
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

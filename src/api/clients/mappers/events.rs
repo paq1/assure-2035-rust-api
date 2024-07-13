@@ -1,6 +1,6 @@
 use crate::api::clients::clients_dbo::{ClientCreatedDbo, ClientDboEvent, ClientDisabledDbo, ClientUpdatedDbo};
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::core::clients::data::{ClientEvents, CreatedEvent, DisabledEvent, UpdatedEvent};
+use crate::core::clients::data::events::{ClientEvents, CreatedEvent, DisabledEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
 
 impl From<ClientDboEvent> for ClientEvents {

@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::core::clients::data::{ClientEvents, CreatedEvent, DisabledEvent, UpdatedEvent};
+use crate::core::clients::data::events::{ClientEvents, CreatedEvent, DisabledEvent, UpdatedEvent};
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::{CommandHandlerCreate, CommandHandlerUpdate};

@@ -4,7 +4,7 @@ use async_trait::async_trait;
 use futures::lock::Mutex;
 use uuid::Uuid;
 
-use crate::core::clients::data::ClientEvents;
+use crate::core::clients::data::events::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::clients::services::ClientService;
 use crate::core::shared::context::Context;

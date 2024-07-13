@@ -3,10 +3,11 @@ use std::sync::Arc;
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use futures::lock::Mutex;
 use uuid::Uuid;
+
 use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
-use crate::core::clients::data::ClientEvents;
+use crate::core::clients::data::events::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::clients::commands::{ClientsCommands, CreateClientCommand, DisableClientCommand, UpdateClientCommand};
