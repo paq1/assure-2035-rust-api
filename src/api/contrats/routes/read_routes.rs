@@ -7,6 +7,7 @@ use futures::lock::Mutex;
 
 use crate::api::contrats::query::ContratQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
+use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
 use crate::api::shared::mappers::state_view::{CanBeManyView, from_states_to_entity_view, from_states_to_view};
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::context::Context;
@@ -17,7 +18,6 @@ use crate::core::shared::repositories::query::Query as QueryCore;
 use crate::models::contrats::views::ContractViewEvent;
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::CanBeView;
-use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 use crate::models::shared::views::entities::EntityView;
 
 #[utoipa::path(

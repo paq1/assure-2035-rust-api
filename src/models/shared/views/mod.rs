@@ -1,5 +1,4 @@
 pub mod command_handler_view;
-pub mod states_views;
 pub mod entities;
 
 use std::collections::HashMap;

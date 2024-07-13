@@ -5,6 +5,7 @@ use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::api::shared::helpers::http_response::{CanToHttpResponse, HttpKindResponse};
+use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
@@ -13,7 +14,6 @@ use crate::core::shared::event_sourcing::engine::Engine;
 use crate::models::contrats::commands::{ApproveContractCommand, ContratsCommands, CreateContratCommand, UpdateContratCommand};
 use crate::models::contrats::views::ContractViewEvent;
 use crate::models::shared::errors::StandardHttpError;
-use crate::models::shared::views::command_handler_view::from_output_command_handler_to_view;
 
 #[utoipa::path(
     request_body = CreateContratCommand,
