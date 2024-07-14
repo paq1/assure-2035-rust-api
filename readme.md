@@ -83,7 +83,7 @@ sortir ces parties du code.
 ## 3-2 Non fini :p
 
 <ul>
-    <li>swagger plus propre et documenté</li>
+    <li>swagger: finir la doc pour les GET (fini pour post et put)</li>
 </ul>
 
 # 4 - Conclusion
