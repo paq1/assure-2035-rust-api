@@ -10,6 +10,7 @@ use utoipa_swagger_ui::SwaggerUi;
 use api::clients::routes::read_routes::{fetch_many_client, fetch_one_client};
 use api::clients::routes::write_routes::{insert_one_client, update_one_client};
 
+use crate::api::clients::clients_dbo::{ClientDboEvent, ClientDboState};
 use crate::api::clients::clients_event_mongo_repository::ClientsEventMongoRepository;
 use crate::api::clients::clients_mongo_dao::{ClientsEventMongoDAO, ClientsMongoDAO};
 use crate::api::clients::clients_mongo_repository::ClientsMongoRepository;
@@ -27,15 +28,17 @@ use crate::api::contrats::services::facteur_vehicle_repo_mock::FacteurVehicleRep
 use crate::api::contrats::services::formule_repo_mock::FormuleRepoMock;
 use crate::api::contrats::services::formule_service_impl::FormuleServiceImpl;
 use crate::api::shared::cache::CacheAsync;
+use crate::api::shared::daos::dbos::{EntityDBO, EventDBO};
 use crate::api::shared::token::services::jwt_hmac::JwtHMACTokenService;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::api::swagger::ApiDoc;
-use crate::core::clients::command_handler::update_handler::UpdateClientHandler;
 use crate::core::clients::command_handler::create_handler::CreateClientHandler;
 use crate::core::clients::command_handler::disable_handler::DisableClientHandler;
+use crate::core::clients::command_handler::update_handler::UpdateClientHandler;
 use crate::core::clients::data::events::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
 use crate::core::clients::reducer::ClientReducer;
+use crate::core::clients::services::ClientService;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
 use crate::core::contrats::command_handler::command_handler_impl::{CreateContratHandler, UpdateContratHandler};
 use crate::core::contrats::data::{ContratEvents, ContratStates};
@@ -45,6 +48,7 @@ use crate::core::contrats::services::facteur_pays_repo::FacteurPaysRepo;
 use crate::core::contrats::services::facteur_vehicle_repo::FacteurVehicleRepo;
 use crate::core::contrats::services::formule_repo::FormuleRepo;
 use crate::core::contrats::services::formule_service::FormuleService;
+use crate::core::shared::daos::DAO;
 use crate::core::shared::event_sourcing::CommandHandler;
 use crate::core::shared::event_sourcing::engine::Engine;
 use crate::core::shared::repositories::entities::RepositoryEntity;
@@ -67,30 +71,32 @@ async fn main() -> std::io::Result<()> {
     let cache = Arc::new(CacheAsync { underlying: Cache::new(10_000) });
     let http_client = Arc::new(reqwest::Client::new());
 
-    // client ontology
-    let store_clients: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>> = Arc::new(
-        Mutex::new(
-            ClientsMongoRepository {
-                dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname, "clients_store_actix").await))
-            }
-        )
-    );
 
-    let journal_clients: Arc<Mutex<dyn RepositoryEvents<ClientEvents, String>>> = Arc::new(
-        Mutex::new(
-            ClientsEventMongoRepository {
-                dao: ClientsEventMongoDAO::new(dbname, "clients_journal_actix").await
-            }
-        )
+    // client ontology
+    // dao
+    let dao_store_client: Arc<Mutex<dyn DAO<EntityDBO<ClientDboState, String>, String>>> =
+        Arc::new(Mutex::new(ClientsMongoDAO::new(dbname, "clients_store_actix").await));
+    let dao_journal_client: Arc<Mutex<dyn DAO<EventDBO<ClientDboEvent, String>, String>>> =
+        Arc::new(Mutex::new(ClientsEventMongoDAO::new(dbname, "clients_journal_actix").await));
+    // repo
+    let store_clients: Arc<dyn RepositoryEntity<ClientStates, String>> = Arc::new(
+        ClientsMongoRepository {
+            dao: Arc::clone(&dao_store_client)
+        }
     );
-    let clients_service: Arc<Mutex<ClientsServiceImpl>> = Arc::new(
-        Mutex::new(
-            ClientsServiceImpl {
-                store: Arc::clone(&store_clients),
-                journal: Arc::clone(&journal_clients),
-            }
-        )
+    let journal_clients: Arc<dyn RepositoryEvents<ClientEvents, String>> = Arc::new(
+        ClientsEventMongoRepository {
+            dao: Arc::clone(&dao_journal_client)
+        }
     );
+    // services
+    let clients_service: Arc<dyn ClientService> = Arc::new(
+        ClientsServiceImpl {
+            store: Arc::clone(&store_clients),
+            journal: Arc::clone(&journal_clients),
+        }
+    );
+    // event sourcing
     let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents>>> = Arc::new(Mutex::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
@@ -103,20 +109,15 @@ async fn main() -> std::io::Result<()> {
     }));
 
     // contrat ontology
-    let store_contrats: Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>> = Arc::new(
-        Mutex::new(
-            ContratsMongoRepository {
-                dao: Arc::new(Mutex::new(ContratsMongoDAO::new(dbname, "contrats_store_actix").await))
-            }
-        )
+    let store_contrats: Arc<dyn RepositoryEntity<ContratStates, String>> = Arc::new(
+        ContratsMongoRepository {
+            dao: Arc::new(Mutex::new(ContratsMongoDAO::new(dbname, "contrats_store_actix").await))
+        }
     );
-
-    let journal_contrats: Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>> = Arc::new(
-        Mutex::new(
-            ContratsEventMongoRepository {
-                dao: ContratsEventMongoDAO::new(dbname, "contrats_journal_actix").await
-            }
-        )
+    let journal_contrats: Arc<dyn RepositoryEvents<ContratEvents, String>> = Arc::new(
+        ContratsEventMongoRepository {
+            dao: ContratsEventMongoDAO::new(dbname, "contrats_journal_actix").await
+        }
     );
 
     let formume_repo: Arc<Mutex<dyn FormuleRepo>> = Arc::new(Mutex::new(FormuleRepoMock {}));

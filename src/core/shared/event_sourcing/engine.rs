@@ -1,6 +1,5 @@
 use std::sync::Arc;
 
-use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::core::shared::context::Context;
@@ -14,8 +13,8 @@ use crate::models::shared::errors::{Error, ResultErr};
 pub struct Engine<STATE: Clone, COMMAND, EVENT> {
     pub handlers: Vec<CommandHandler<STATE, COMMAND, EVENT>>,
     pub reducer: Reducer<EVENT, STATE>,
-    pub store: Arc<Mutex<dyn RepositoryEntity<STATE, String>>>,
-    pub journal: Arc<Mutex<dyn RepositoryEvents<EVENT, String>>>,
+    pub store: Arc<dyn RepositoryEntity<STATE, String>>,
+    pub journal: Arc<dyn RepositoryEvents<EVENT, String>>,
 }
 
 impl<STATE, COMMAND, EVENT> Engine<STATE, COMMAND, EVENT>
@@ -33,7 +32,7 @@ where
         })
             .ok_or(Error::Simple("pas de handler pour cette commande".to_string()))?; // fixme changer l'erreur
 
-        let maybe_entity = self.store.lock().await.fetch_one(entity_id.clone()).await?;
+        let maybe_entity = self.store.fetch_one(entity_id.clone()).await?;
         let maybe_state = maybe_entity.clone().map(|entity| entity.data);
 
         let event = match command_handler_found {
@@ -56,9 +55,9 @@ where
         };
 
         if maybe_entity.is_none() {
-            self.store.lock().await.insert(new_entity.clone()).await?;
+            self.store.insert(new_entity.clone()).await?;
         } else {
-            self.store.lock().await.update(entity_id.clone(), new_entity.clone()).await?;
+            self.store.update(entity_id.clone(), new_entity.clone()).await?;
         }
 
         let event_entity = EntityEvent {
@@ -66,7 +65,7 @@ where
             event_id: Self::generate_id(),
             data: event.clone(),
         };
-        self.journal.lock().await.insert(event_entity.clone()).await?;
+        self.journal.insert(event_entity.clone()).await?;
         Ok((event_entity, new_entity))
     }
 

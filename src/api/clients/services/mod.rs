@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::core::clients::data::events::ClientEvents;
@@ -15,8 +14,8 @@ use crate::models::clients::commands::*;
 use crate::models::shared::errors::ResultErr;
 
 pub struct ClientsServiceImpl {
-    pub store: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>>,
-    pub journal: Arc<Mutex<dyn RepositoryEvents<ClientEvents, String>>>,
+    pub store: Arc<dyn RepositoryEntity<ClientStates, String>>,
+    pub journal: Arc<dyn RepositoryEvents<ClientEvents, String>>,
 }
 
 #[async_trait]

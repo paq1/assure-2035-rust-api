@@ -3,7 +3,6 @@ use std::sync::Arc;
 
 use actix_web::{get, HttpRequest, HttpResponse, Responder, web};
 use actix_web::web::Query;
-use futures::lock::Mutex;
 
 use crate::api::contrats::query::ContratQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
@@ -30,7 +29,7 @@ use crate::models::shared::views::entities::EntityView;
 )]
 #[get("/contracts")]
 pub async fn fetch_many_contrat(
-    store: web::Data<Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>>,
+    store: web::Data<Arc<dyn RepositoryEntity<ContratStates, String>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ContratQuery>,
     req: HttpRequest,
@@ -44,8 +43,8 @@ pub async fn fetch_many_contrat(
             ])
         );
 
-    let store_lock = store.lock().await;
-    match store_lock.fetch_many(
+
+    match store.fetch_many(
         query.into()
     ).await {
         Ok(items) => {
@@ -71,19 +70,16 @@ pub async fn fetch_many_contrat(
 #[get("/contracts/{entity_id}")]
 pub async fn fetch_one_contrat(
     path: web::Path<String>,
-    repo: web::Data<Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>>>,
+    store: web::Data<Arc<dyn RepositoryEntity<ContratStates, String>>>,
     http_error: web::Data<StandardHttpError>,
     req: HttpRequest,
 ) -> impl Responder {
     let id = path.into_inner();
 
-    let repo_lock = repo.lock().await;
-
-
     let ctx = Context::empty().decore_with_http_header(&req);
 
 
-    match repo_lock.fetch_one(id).await {
+    match store.fetch_one(id).await {
         Ok(Some(entity)) => {
             let view = from_states_to_view(entity, "contracts".to_string(), &ctx);
 
@@ -109,7 +105,7 @@ pub async fn fetch_one_contrat(
 #[get("/contracts/{entity_id}/events")]
 pub async fn fetch_events_contrat(
     path: web::Path<String>,
-    journal: web::Data<Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>>>,
+    journal: web::Data<Arc<dyn RepositoryEvents<ContratEvents, String>>>,
     http_error: web::Data<StandardHttpError>,
     query: Query<ContratQuery>,
     req: HttpRequest,
@@ -140,9 +136,7 @@ pub async fn fetch_events_contrat(
         ..query_core.clone()
     };
 
-
-    let journal_lock = journal.lock().await;
-    match journal_lock.fetch_many(query_core_with_filter).await {
+    match journal.fetch_many(query_core_with_filter).await {
         Ok(items) => {
             let paged_view = items.map(|x| {
                 EntityView { // todo entity event view ici ? (a voir avec les specs s'il faut un différence entre la vu event / state
@@ -171,17 +165,16 @@ pub async fn fetch_events_contrat(
 #[get("/contracts/{entity_id}/events/{event_id}")]
 pub async fn fetch_one_contract_event(
     path: web::Path<(String, String)>,
-    journal: web::Data<Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>>>,
+    journal: web::Data<Arc<dyn RepositoryEvents<ContratEvents, String>>>,
     http_error: web::Data<StandardHttpError>,
     req: HttpRequest,
 ) -> impl Responder {
     let (_, event_id) = path.into_inner();
-    let journal_lock = journal.lock().await;
 
     let ctx = Context::empty()
         .decore_with_http_header(&req);
 
-    match journal_lock.fetch_one(event_id).await {
+    match journal.fetch_one(event_id).await {
         Ok(maybe_event) => {
             match maybe_event {
                 Some(event) => {
