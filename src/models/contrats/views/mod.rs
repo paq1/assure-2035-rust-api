@@ -3,12 +3,6 @@ use utoipa::ToSchema;
 
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
 
-#[derive(Serialize, Deserialize, Clone, ToSchema)]
-pub struct ContratView {
-    #[serde(flatten)]
-    pub data: ContractData,
-}
-
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "statusType")]
 pub enum ContractViewState {
@@ -16,6 +10,8 @@ pub enum ContractViewState {
     Pending(BaseContractStateView),
     #[serde(rename = "actif")]
     Actif(BaseContractStateView),
+    #[serde(rename = "inactif")]
+    Inactif(BaseContractStateView),
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
@@ -27,6 +23,8 @@ pub enum ContractViewEvent {
     Updated(ContractUpdatedView),
     #[serde(rename = "approved")]
     Approved(ContractApprovedView),
+    #[serde(rename = "refused")]
+    Refused(ContractRefusedView),
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
@@ -51,4 +49,7 @@ pub struct ContractUpdatedView {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct ContractApprovedView {}
+pub struct ContractApprovedView;
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct ContractRefusedView;

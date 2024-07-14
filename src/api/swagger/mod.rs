@@ -12,6 +12,7 @@ use crate::api::contrats::routes::read_routes::__path_fetch_many_contrat;
 use crate::api::contrats::routes::read_routes::__path_fetch_one_contract_event;
 use crate::api::contrats::routes::read_routes::__path_fetch_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_approve_one_contrat;
+use crate::api::contrats::routes::write_routes::__path_refuse_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_insert_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
 use crate::core::contrats::data::ContratStates;
@@ -23,7 +24,7 @@ use crate::models::clients::views::ClientView;
 use crate::models::clients::views::ClientViewEvent;
 use crate::models::contrats::commands::*;
 use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
-use crate::models::contrats::views::ContratView;
+use crate::models::contrats::views::ContractViewEvent;
 use crate::models::shared::jsonapi::ManyView;
 use crate::models::shared::views::command_handler_view::ApiView;
 use crate::models::shared::views::DataWrapperView;
@@ -43,6 +44,7 @@ use crate::models::shared_business::Adresse;
         fetch_one_contrat,
         insert_one_contrat,
         approve_one_contrat,
+        refuse_one_contrat,
         update_one_contrat,
         fetch_events_contrat,
         fetch_one_contract_event,
@@ -54,10 +56,12 @@ use crate::models::shared_business::Adresse;
             CreateClientCommand,
             UpdateClientCommand,
             DisableClientCommand,
-            ContratView,
+            ContractViewEvent,
+            DataWrapperView < ApiView < ContractViewEvent > >,
             ManyView < ContratStates >,
             CreateContratCommand,
             ApproveContractCommand,
+            RefuseContractCommand,
             UpdateContratCommand,
             DeleteContratCommand,
             ClientData,

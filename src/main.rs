@@ -21,7 +21,7 @@ use crate::api::contrats::contrats_event_mongo_repository::ContratsEventMongoRep
 use crate::api::contrats::contrats_mongo_dao::{ContratsEventMongoDAO, ContratsMongoDAO};
 use crate::api::contrats::contrats_mongo_repository::ContratsMongoRepository;
 use crate::api::contrats::routes::read_routes::{fetch_events_contrat, fetch_many_contrat, fetch_one_contract_event, fetch_one_contrat};
-use crate::api::contrats::routes::write_routes::{approve_one_contrat, insert_one_contrat, update_one_contrat};
+use crate::api::contrats::routes::write_routes::{approve_one_contrat, insert_one_contrat, refuse_one_contrat, update_one_contrat};
 use crate::api::contrats::services::ContratsServiceImpl;
 use crate::api::contrats::services::facteur_pays_repo_mock::FacteurPaysRepoMock;
 use crate::api::contrats::services::facteur_vehicle_repo_mock::FacteurVehicleRepoMock;
@@ -40,6 +40,7 @@ use crate::core::clients::data::states::ClientStates;
 use crate::core::clients::reducer::ClientReducer;
 use crate::core::clients::services::ClientService;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
+use crate::core::contrats::command_handler::refuse_command_handler::RefuseContractHandler;
 use crate::core::contrats::command_handler::command_handler_impl::{CreateContratHandler, UpdateContratHandler};
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::contrats::reducer::ContratReducer;
@@ -148,6 +149,7 @@ async fn main() -> std::io::Result<()> {
             CommandHandler::Create(Box::new(CreateContratHandler { contract_service: Arc::clone(&contrats_service) })),
             CommandHandler::Update(Box::new(UpdateContratHandler {})),
             CommandHandler::Update(Box::new(ApproveContractHandler {})),
+            CommandHandler::Update(Box::new(RefuseContractHandler {})),
         ],
         reducer: ContratReducer::new().underlying,
         store: Arc::clone(&store_contrats),
@@ -215,6 +217,7 @@ async fn main() -> std::io::Result<()> {
             .service(fetch_events_contrat)
             .service(insert_one_contrat)
             .service(approve_one_contrat)
+            .service(refuse_one_contrat)
             .service(update_one_contrat)
     })
         .workers(2)

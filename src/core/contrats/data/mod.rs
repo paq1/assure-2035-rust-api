@@ -3,7 +3,7 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
-use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
+use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractRefusedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 pub mod shared;
@@ -24,7 +24,11 @@ impl CanBeView<ContractViewState> for ContratStates {
             ContratStates::Actif(c) => ContractViewState::Actif(BaseContractStateView {
                 data: c.data.clone(),
                 premium: c.premium.clone(),
-            })
+            }),
+            ContratStates::Inactif(c) => ContractViewState::Inactif(BaseContractStateView {
+                data: c.data.clone(),
+                premium: c.premium.clone(),
+            }),
         }
     }
 }
@@ -33,6 +37,7 @@ impl CanBeView<ContractViewState> for ContratStates {
 pub enum ContratStates {
     Pending(PendingContract),
     Actif(ActifContract),
+    Inactif(InactifContract),
 }
 
 impl ContratStates {
@@ -40,6 +45,7 @@ impl ContratStates {
         match self {
             ContratStates::Pending(c) => c.reduce_state(event),
             ContratStates::Actif(c) => c.reduce_state(event),
+            ContratStates::Inactif(c) => c.reduce_state(event),
         }
     }
 
@@ -82,6 +88,14 @@ impl PendingContract {
                     }
                 )
             ),
+            ContratEvents::Refused(_) => Some(
+                ContratStates::Inactif(
+                    InactifContract {
+                        data: self.data.clone(),
+                        premium: self.premium.clone(),
+                    }
+                )
+            ),
             _ => None
         }
     }
@@ -96,16 +110,21 @@ pub struct ActifContract {
 }
 
 impl ActifContract {
-    pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
-        match event {
-            ContratEvents::Approved(_) => Some(
-                ContratStates::Actif(
-                    ActifContract {
-                        data: self.data.clone(),
-                        premium: self.premium.clone(),
-                    })),
-            _ => None
-        }
+    pub fn reduce_state(&self, _event: &ContratEvents) -> Option<ContratStates> {
+        None
+    }
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct InactifContract {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+}
+
+impl InactifContract {
+    pub fn reduce_state(&self, _event: &ContratEvents) -> Option<ContratStates> {
+        None
     }
 }
 
@@ -116,6 +135,7 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
             ContratEvents::Created(c) => ContractViewEvent::Created(ContractCreatedView { data: c.data.clone(), premium: c.premium.clone() }),
             ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView { data: c.data.clone() }),
             ContratEvents::Approved(_) => ContractViewEvent::Approved(ContractApprovedView {}),
+            ContratEvents::Refused(_) => ContractViewEvent::Refused(ContractRefusedView {}),
         }
     }
 }
@@ -125,6 +145,7 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
 pub enum ContratEvents {
     Created(CreatedEvent),
     Approved(ApprovedEvent),
+    Refused(RefusedEvent),
     Updated(UpdatedEvent),
 }
 
@@ -142,6 +163,15 @@ pub struct CreatedEvent {
 pub struct ApprovedEvent {
     #[serde(rename = "approvedBy")]
     pub approved_by: UserInfo,
+    pub by: String,
+    #[serde(with = "ts_seconds")]
+    pub at: DateTime<Utc>,
+}
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct RefusedEvent {
+    #[serde(rename = "approvedBy")]
+    pub refused_by: UserInfo,
     pub by: String,
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,

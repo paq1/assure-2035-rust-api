@@ -1,6 +1,6 @@
-use crate::api::contrats::contrats_dbo::{ContractActifDbo, ContractPendingDbo, ContratDboState};
+use crate::api::contrats::contrats_dbo::{ContractActifDbo, ContractInactifDbo, ContractPendingDbo, ContratDboState};
 use crate::api::shared::daos::dbos::EntityDBO;
-use crate::core::contrats::data::{ActifContract, ContratStates, PendingContract};
+use crate::core::contrats::data::{ActifContract, ContratStates, InactifContract, PendingContract};
 use crate::core::shared::data::Entity;
 
 impl From<ContratDboState> for ContratStates {
@@ -11,6 +11,10 @@ impl From<ContratDboState> for ContratStates {
                 premium: dbo.premium,
             }),
             ContratDboState::ContratActifDbo(dbo) => ContratStates::Actif(ActifContract {
+                data: dbo.data,
+                premium: dbo.premium,
+            }),
+            ContratDboState::ContratInactifDbo(dbo) => ContratStates::Inactif(InactifContract {
                 data: dbo.data,
                 premium: dbo.premium,
             })
@@ -43,6 +47,12 @@ impl From<ContratStates> for ContratDboState {
                 ContractActifDbo {
                     data: contract.data,
                     premium: contract.premium,
+                }
+            ),
+            ContratStates::Inactif(contract) => ContratDboState::ContratInactifDbo(
+                ContractInactifDbo {
+                    data: contract.data,
+                    premium: contract.premium
                 }
             )
         }

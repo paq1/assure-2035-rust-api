@@ -8,6 +8,7 @@ use crate::models::contrats::shared::{ContractData, CurrencyValue};
 pub enum ContratDboState {
     ContratPendingDbo(ContractPendingDbo),
     ContratActifDbo(ContractActifDbo),
+    ContratInactifDbo(ContractInactifDbo),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -25,16 +26,31 @@ pub struct ContractActifDbo {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ContractInactifDbo {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
 pub enum ContratDboEvent {
     ContratCreatedDbo(CreatedDbo),
     ApprovedDbo(ApprovedDbo),
+    RefusedDbo(RefusedDbo),
     Updated(ContratUpdatedDbo),
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApprovedDbo {
     pub approved_by: UserInfoDbo,
+    pub by: String,
+    pub at: DateTime<Utc>,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct RefusedDbo {
+    pub refused_by: UserInfoDbo,
     pub by: String,
     pub at: DateTime<Utc>,
 }
