@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::core::contrats::data::{ApprovedBy, ApprovedEvent, ContratEvents, ContratStates};
+use crate::core::contrats::data::{UserInfo, ApprovedEvent, ContratEvents, ContratStates};
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::CommandHandlerUpdate;
 use crate::models::contrats::commands::ContratsCommands;
@@ -18,7 +18,7 @@ impl CommandHandlerUpdate<ContratStates, ContratsCommands, ContratEvents> for Ap
             ContratsCommands::Approve(_) => Ok(
                 ContratEvents::Approved(
                     ApprovedEvent {
-                        approved_by: ApprovedBy {
+                        approved_by: UserInfo {
                             uid: context.subject.clone(),
                             display_name: context.name.clone(),
                             email: context.email.clone(),

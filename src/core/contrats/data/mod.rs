@@ -141,14 +141,14 @@ pub struct CreatedEvent {
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ApprovedEvent {
     #[serde(rename = "approvedBy")]
-    pub approved_by: ApprovedBy,
+    pub approved_by: UserInfo,
     pub by: String,
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct ApprovedBy {
+pub struct UserInfo {
     pub uid: String,
     #[serde(rename = "displayName")]
     pub display_name: String,

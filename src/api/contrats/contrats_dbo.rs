@@ -34,13 +34,13 @@ pub enum ContratDboEvent {
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ApprovedDbo {
-    pub approved_by: ApprovedByDbo,
+    pub approved_by: UserInfoDbo,
     pub by: String,
     pub at: DateTime<Utc>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
-pub struct ApprovedByDbo {
+pub struct UserInfoDbo {
     pub uid: String,
     pub display_name: String,
     pub email: String,

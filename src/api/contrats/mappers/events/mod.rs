@@ -3,7 +3,7 @@ use crate::api::shared::daos::dbos::EventDBO;
 use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
 
-pub mod approved_by;
+pub mod user_info;
 
 impl From<ContratDboEvent> for ContratEvents {
     fn from(value: ContratDboEvent) -> Self {
