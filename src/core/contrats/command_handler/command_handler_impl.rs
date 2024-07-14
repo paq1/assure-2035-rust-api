@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use futures::lock::Mutex;
 
 use crate::core::contrats::data::{ContratEvents, ContratStates, CreatedEvent, UpdatedEvent};
 use crate::core::contrats::services::ContratService;
@@ -11,7 +10,7 @@ use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::{Error, ResultErr};
 
 pub struct CreateContratHandler {
-    pub contract_service: Arc<Mutex<dyn ContratService>>,
+    pub contract_service: Arc<dyn ContratService>,
 }
 
 #[async_trait]
@@ -28,7 +27,7 @@ impl CommandHandlerCreate<ContratStates, ContratsCommands, ContratEvents> for Cr
                         by: context.subject.clone(),
                         at: context.now,
                         data: c.data.clone(),
-                        premium: self.contract_service.lock().await.calcul_premium(c).await?,
+                        premium: self.contract_service.calcul_premium(c).await?,
                     }
                 )
             ),

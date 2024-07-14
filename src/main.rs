@@ -120,33 +120,27 @@ async fn main() -> std::io::Result<()> {
         }
     );
 
-    let formume_repo: Arc<Mutex<dyn FormuleRepo>> = Arc::new(Mutex::new(FormuleRepoMock {}));
+    let formume_repo: Arc<dyn FormuleRepo> = Arc::new(FormuleRepoMock {});
 
-    let formule_service: Arc<Mutex<dyn FormuleService>> = Arc::new(Mutex::new(FormuleServiceImpl { formule_repo: Arc::clone(&formume_repo) }));
+    let formule_service: Arc<dyn FormuleService> = Arc::new(FormuleServiceImpl { formule_repo: Arc::clone(&formume_repo) });
 
-    let facteur_vehicle_repo: Arc<Mutex<dyn FacteurVehicleRepo>> = Arc::new(
-        Mutex::new(
-            FacteurVehicleRepoMock {}
-        )
+    let facteur_vehicle_repo: Arc<dyn FacteurVehicleRepo> = Arc::new(
+        FacteurVehicleRepoMock {}
     );
 
-    let facteur_pays_repo: Arc<Mutex<dyn FacteurPaysRepo>> = Arc::new(
-        Mutex::new(
-            FacteurPaysRepoMock {}
-        )
+    let facteur_pays_repo: Arc<dyn FacteurPaysRepo> = Arc::new(
+        FacteurPaysRepoMock {}
     );
 
-    let contrats_service: Arc<Mutex<dyn ContratService>> = Arc::new(
-        Mutex::new(
-            ContratsServiceImpl {
-                store: Arc::clone(&store_contrats),
-                journal: Arc::clone(&journal_contrats),
-                formule_service: Arc::clone(&formule_service),
-                store_personne: Arc::clone(&store_clients),
-                facteur_pays_repo: Arc::clone(&facteur_pays_repo),
-                facteur_vehicle_repo: Arc::clone(&facteur_vehicle_repo),
-            }
-        )
+    let contrats_service: Arc<dyn ContratService> = Arc::new(
+        ContratsServiceImpl {
+            store: Arc::clone(&store_contrats),
+            journal: Arc::clone(&journal_contrats),
+            formule_service: Arc::clone(&formule_service),
+            store_personne: Arc::clone(&store_clients),
+            facteur_pays_repo: Arc::clone(&facteur_pays_repo),
+            facteur_vehicle_repo: Arc::clone(&facteur_vehicle_repo),
+        }
     );
 
     let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>> = Arc::new(Mutex::new(Engine {

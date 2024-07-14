@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use async_trait::async_trait;
-use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::core::clients::data::states::ClientStates;
@@ -26,9 +25,9 @@ pub mod facteur_pays_repo_mock;
 pub struct ContratsServiceImpl {
     pub store: Arc<dyn RepositoryEntity<ContratStates, String>>,
     pub journal: Arc<dyn RepositoryEvents<ContratEvents, String>>,
-    pub formule_service: Arc<Mutex<dyn FormuleService>>,
-    pub facteur_vehicle_repo: Arc<Mutex<dyn FacteurVehicleRepo>>,
-    pub facteur_pays_repo: Arc<Mutex<dyn FacteurPaysRepo>>,
+    pub formule_service: Arc<dyn FormuleService>,
+    pub facteur_vehicle_repo: Arc<dyn FacteurVehicleRepo>,
+    pub facteur_pays_repo: Arc<dyn FacteurPaysRepo>,
     pub store_personne: Arc<dyn RepositoryEntity<ClientStates, String>>,
 }
 
@@ -56,15 +55,15 @@ impl ContratService for ContratsServiceImpl {
     }
 
     async fn get_formule_from_code(&self, code: &String) -> ResultErr<CurrencyValue> {
-        self.formule_service.lock().await.get_formule_from_code(code).await
+        self.formule_service.get_formule_from_code(code).await
     }
 
     async fn get_facteur_vehicule_from_code(&self, code: &String) -> ResultErr<f32> {
-        self.facteur_vehicle_repo.lock().await.fetch_one(code).await
+        self.facteur_vehicle_repo.fetch_one(code).await
     }
 
     async fn get_facteur_pays_from_code(&self, code: &String) -> ResultErr<f32> {
-        self.facteur_pays_repo.lock().await.fetch_one(code).await
+        self.facteur_pays_repo.fetch_one(code).await
     }
 }
 
