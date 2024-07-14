@@ -97,7 +97,7 @@ async fn main() -> std::io::Result<()> {
         }
     );
     // event sourcing
-    let engine_client: Arc<Mutex<Engine<ClientStates, ClientsCommands, ClientEvents>>> = Arc::new(Mutex::new(Engine {
+    let engine_client: Arc<Engine<ClientStates, ClientsCommands, ClientEvents>> = Arc::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateClientHandler {})),
             CommandHandler::Update(Box::new(UpdateClientHandler {})),
@@ -106,7 +106,7 @@ async fn main() -> std::io::Result<()> {
         reducer: ClientReducer::new().underlying,
         store: Arc::clone(&store_clients),
         journal: Arc::clone(&journal_clients),
-    }));
+    });
 
     // contrat ontology
     let store_contrats: Arc<dyn RepositoryEntity<ContratStates, String>> = Arc::new(
@@ -143,7 +143,7 @@ async fn main() -> std::io::Result<()> {
         }
     );
 
-    let engine_contrat: Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>> = Arc::new(Mutex::new(Engine {
+    let engine_contrat: Arc<Engine<ContratStates, ContratsCommands, ContratEvents>> = Arc::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateContratHandler { contract_service: Arc::clone(&contrats_service) })),
             CommandHandler::Update(Box::new(UpdateContratHandler {})),
@@ -152,7 +152,7 @@ async fn main() -> std::io::Result<()> {
         reducer: ContratReducer::new().underlying,
         store: Arc::clone(&store_contrats),
         journal: Arc::clone(&journal_contrats),
-    }));
+    });
 
     let openapi = ApiDoc::openapi();
     let api_address = std::env::var("API_ADDRESS").unwrap();

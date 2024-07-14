@@ -1,7 +1,6 @@
 use std::sync::Arc;
 
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
-use futures::lock::Mutex;
 use uuid::Uuid;
 
 use crate::api::shared::helpers::http_response::{CanToHttpResponse, HttpKindResponse};
@@ -30,7 +29,7 @@ pub async fn insert_one_contrat(
     body: web::Json<CreateContratCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>>>,
+    engine: web::Data<Arc<Engine<ContratStates, ContratsCommands, ContratEvents>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -38,7 +37,7 @@ pub async fn insert_one_contrat(
 
             let entity_id = Uuid::new_v4().to_string();
 
-            let event = engine.lock().await
+            let event = engine
                 .compute(command, entity_id.clone(), "create-contrat".to_string(), &ctx).await;
 
             event.map(|(event, _)| {
@@ -71,7 +70,7 @@ pub async fn approve_one_contrat(
     body: web::Json<ApproveContractCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>>>,
+    engine: web::Data<Arc<Engine<ContratStates, ContratsCommands, ContratEvents>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
@@ -79,7 +78,7 @@ pub async fn approve_one_contrat(
 
             let entity_id = path.into_inner();
 
-            let event = engine.lock().await
+            let event = engine
                 .compute(command, entity_id.clone(), ApproveContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
@@ -112,14 +111,14 @@ pub async fn update_one_contrat(
     body: web::Json<UpdateContratCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
-    engine: web::Data<Arc<Mutex<Engine<ContratStates, ContratsCommands, ContratEvents>>>>,
+    engine: web::Data<Arc<Engine<ContratStates, ContratsCommands, ContratEvents>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
             let id = path.into_inner();
             let command = ContratsCommands::Update(body.into_inner());
 
-            let event = engine.lock().await
+            let event = engine
                 .compute(command, id, "update-contrat".to_string(), &ctx).await;
 
             match event {
