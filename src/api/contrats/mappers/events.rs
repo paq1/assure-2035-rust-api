@@ -1,6 +1,6 @@
-use crate::api::contrats::contrats_dbo::{ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo};
+use crate::api::contrats::contrats_dbo::{ApprovedByDbo, ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo};
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, UpdatedEvent};
+use crate::core::contrats::data::{ApprovedBy, ApprovedEvent, ContratEvents, CreatedEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
 
 impl From<ContratDboEvent> for ContratEvents {
@@ -17,7 +17,11 @@ impl From<ContratDboEvent> for ContratEvents {
             ContratDboEvent::Updated(event_dbo) =>
                 ContratEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
             ContratDboEvent::ApprovedDbo(event_dbo) =>
-                ContratEvents::Approved(ApprovedEvent { by: event_dbo.by, at: event_dbo.at })
+                ContratEvents::Approved(ApprovedEvent {
+                    approved_by: event_dbo.approved_by.into(),
+                    by: event_dbo.by,
+                    at: event_dbo.at
+                })
         }
     }
 }
@@ -56,9 +60,38 @@ impl From<ContratEvents> for ContratDboEvent {
                     premium: event.premium,
                 }
             ),
-            ContratEvents::Updated(updated) => ContratDboEvent::Updated(ContratUpdatedDbo { by: updated.by, at: updated.at, data: updated.data }),
-            ContratEvents::Approved(approved) => ContratDboEvent::ApprovedDbo(ApprovedDbo { by: approved.by, at: approved.at })
+            ContratEvents::Updated(updated) => ContratDboEvent::Updated(
+                ContratUpdatedDbo {
+                    by: updated.by,
+                    at: updated.at,
+                    data: updated.data
+                }),
+            ContratEvents::Approved(approved) => ContratDboEvent::ApprovedDbo(
+                ApprovedDbo {
+                    by: approved.by,
+                    at: approved.at,
+                    approved_by: approved.approved_by.into()
+                })
         }
     }
 }
 
+impl From<ApprovedByDbo> for ApprovedBy {
+    fn from(value: ApprovedByDbo) -> Self {
+        Self {
+            uid: value.uid,
+            display_name: value.display_name,
+            email: value.email,
+        }
+    }
+}
+
+impl From<ApprovedBy> for ApprovedByDbo {
+    fn from(value: ApprovedBy) -> Self {
+        Self {
+            uid: value.uid,
+            display_name: value.display_name,
+            email: value.email,
+        }
+    }
+}

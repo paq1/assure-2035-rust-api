@@ -1,6 +1,6 @@
 use async_trait::async_trait;
 
-use crate::core::contrats::data::{ApprovedEvent, ContratEvents, ContratStates};
+use crate::core::contrats::data::{ApprovedBy, ApprovedEvent, ContratEvents, ContratStates};
 use crate::core::shared::context::Context;
 use crate::core::shared::event_sourcing::CommandHandlerUpdate;
 use crate::models::contrats::commands::ContratsCommands;
@@ -16,7 +16,17 @@ impl CommandHandlerUpdate<ContratStates, ContratsCommands, ContratEvents> for Ap
     async fn on_command(&self, _id: String, _state: ContratStates, command: ContratsCommands, context: &Context) -> ResultErr<ContratEvents> {
         match command {
             ContratsCommands::Approve(_) => Ok(
-                ContratEvents::Approved(ApprovedEvent { by: context.subject.clone(), at: context.now })
+                ContratEvents::Approved(
+                    ApprovedEvent {
+                        approved_by: ApprovedBy {
+                            uid: context.subject.clone(),
+                            display_name: context.name.clone(),
+                            email: context.email.clone(),
+                        },
+                        by: context.subject.clone(),
+                        at: context.now
+                    }
+                )
             ),
             _ => Err(Error::Simple("bad request".to_string()))
         }
