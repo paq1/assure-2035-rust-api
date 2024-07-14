@@ -15,7 +15,7 @@ use crate::api::contrats::routes::write_routes::__path_approve_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_insert_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
 use crate::core::contrats::data::ContratStates;
-use crate::core::shared::repositories::query::Paged;
+use crate::core::shared::repositories::query::{InfoPaged, Page, Paged};
 use crate::models::clients::commands::*;
 use crate::models::clients::shared::{ClientData, DisableReason, Phone, PhoneNumber};
 use crate::models::clients::views::*;
@@ -71,6 +71,8 @@ use crate::models::shared_business::Adresse;
             DataWrapperView < ApiView < ClientViewEvent > >,
             EntityView<ClientViewState>,
             Paged<EntityView<ClientViewState>>,
+            InfoPaged,
+            Page,
         )
     ),
     modifiers(& SecurityAddon)
