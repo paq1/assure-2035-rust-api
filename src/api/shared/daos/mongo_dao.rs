@@ -21,11 +21,11 @@ impl<DBO> MongoDAO<DBO>
 where
     DBO: Send + Sync,
 {
-    pub async fn new(dbname: String, name: String) -> Self {
+    pub async fn new(dbname: &str, name: &str) -> Self {
         let uri = std::env::var("MONGO_URI").unwrap();
         let client: Client = Client::with_uri_str(uri).await.unwrap();
-        let db = client.database(dbname.as_str());
-        let collection: Collection<DBO> = db.collection(name.as_str());
+        let db = client.database(dbname);
+        let collection: Collection<DBO> = db.collection(name);
         Self { collection }
     }
 }

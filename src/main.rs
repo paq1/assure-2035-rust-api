@@ -71,7 +71,7 @@ async fn main() -> std::io::Result<()> {
     let store_clients: Arc<Mutex<dyn RepositoryEntity<ClientStates, String>>> = Arc::new(
         Mutex::new(
             ClientsMongoRepository {
-                dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname.to_string(), "clients_store_actix".to_string()).await))
+                dao: Arc::new(Mutex::new(ClientsMongoDAO::new(dbname, "clients_store_actix").await))
             }
         )
     );
@@ -79,7 +79,7 @@ async fn main() -> std::io::Result<()> {
     let journal_clients: Arc<Mutex<dyn RepositoryEvents<ClientEvents, String>>> = Arc::new(
         Mutex::new(
             ClientsEventMongoRepository {
-                dao: ClientsEventMongoDAO::new(dbname.to_string(), "clients_journal_actix".to_string()).await
+                dao: ClientsEventMongoDAO::new(dbname, "clients_journal_actix").await
             }
         )
     );
@@ -106,7 +106,7 @@ async fn main() -> std::io::Result<()> {
     let store_contrats: Arc<Mutex<dyn RepositoryEntity<ContratStates, String>>> = Arc::new(
         Mutex::new(
             ContratsMongoRepository {
-                dao: Arc::new(Mutex::new(ContratsMongoDAO::new(dbname.to_string(), "contrats_store_actix".to_string()).await))
+                dao: Arc::new(Mutex::new(ContratsMongoDAO::new(dbname, "contrats_store_actix").await))
             }
         )
     );
@@ -114,7 +114,7 @@ async fn main() -> std::io::Result<()> {
     let journal_contrats: Arc<Mutex<dyn RepositoryEvents<ContratEvents, String>>> = Arc::new(
         Mutex::new(
             ContratsEventMongoRepository {
-                dao: ContratsEventMongoDAO::new(dbname.to_string(), "contrats_journal_actix".to_string()).await
+                dao: ContratsEventMongoDAO::new(dbname, "contrats_journal_actix").await
             }
         )
     );
