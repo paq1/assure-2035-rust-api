@@ -15,6 +15,7 @@ use crate::api::contrats::routes::write_routes::__path_approve_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_insert_one_contrat;
 use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
 use crate::core::contrats::data::ContratStates;
+use crate::core::shared::repositories::query::Paged;
 use crate::models::clients::commands::*;
 use crate::models::clients::shared::ClientData;
 use crate::models::clients::views::*;
@@ -25,6 +26,7 @@ use crate::models::contrats::views::ContratView;
 use crate::models::shared::jsonapi::ManyView;
 use crate::models::shared::views::command_handler_view::ApiView;
 use crate::models::shared::views::DataWrapperView;
+use crate::models::shared::views::entities::EntityView;
 
 #[derive(utoipa::OpenApi)]
 #[openapi(
@@ -57,8 +59,9 @@ use crate::models::shared::views::DataWrapperView;
             UpdateContratCommand,
             DeleteContratCommand,
             ClientData,
-            DataWrapperView < ApiView < ClientViewEvent > >
-
+            DataWrapperView < ApiView < ClientViewEvent > >,
+            EntityView<ClientViewState>,
+            Paged<EntityView<ClientViewState>>,
         )
     ),
     modifiers(& SecurityAddon)

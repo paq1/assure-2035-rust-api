@@ -14,15 +14,15 @@ use crate::core::shared::context::Context;
 use crate::core::shared::repositories::entities::RepositoryEntity;
 use crate::core::shared::repositories::events::RepositoryEvents;
 use crate::core::shared::repositories::filter::{Expr, ExprGeneric, Filter, Operation};
-use crate::core::shared::repositories::query::Query as QueryCore;
-use crate::models::clients::views::ClientViewEvent;
+use crate::core::shared::repositories::query::{Paged, Query as QueryCore};
+use crate::models::clients::views::{ClientViewEvent, ClientViewState};
 use crate::models::shared::errors::StandardHttpError;
 use crate::models::shared::jsonapi::CanBeView;
 use crate::models::shared::views::entities::EntityView;
 
 #[utoipa::path(
     responses(
-        (status = 200, description = "fait ca", body = Many < ClientStates >)
+        (status = 200, description = "fait ca", body = Paged<EntityView<ClientViewState>>)
     ),
     params(
         ClientQuery
@@ -48,7 +48,7 @@ pub async fn fetch_many_client(
         query.into()
     ).await {
         Ok(items) => {
-            let paged_view = items.map(|entity| {
+            let paged_view: Paged<EntityView<ClientViewState>> = items.map(|entity| {
                 from_states_to_entity_view(entity, "clients".to_string(), &ctx)
             });
 
