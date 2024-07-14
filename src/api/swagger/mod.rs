@@ -17,16 +17,18 @@ use crate::api::contrats::routes::write_routes::__path_update_one_contrat;
 use crate::core::contrats::data::ContratStates;
 use crate::core::shared::repositories::query::Paged;
 use crate::models::clients::commands::*;
-use crate::models::clients::shared::ClientData;
+use crate::models::clients::shared::{ClientData, DisableReason, Phone, PhoneNumber};
 use crate::models::clients::views::*;
 use crate::models::clients::views::ClientView;
 use crate::models::clients::views::ClientViewEvent;
 use crate::models::contrats::commands::*;
+use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
 use crate::models::contrats::views::ContratView;
 use crate::models::shared::jsonapi::ManyView;
 use crate::models::shared::views::command_handler_view::ApiView;
 use crate::models::shared::views::DataWrapperView;
 use crate::models::shared::views::entities::EntityView;
+use crate::models::shared_business::Adresse;
 
 #[derive(utoipa::OpenApi)]
 #[openapi(
@@ -59,6 +61,13 @@ use crate::models::shared::views::entities::EntityView;
             UpdateContratCommand,
             DeleteContratCommand,
             ClientData,
+            Adresse,
+            PhoneNumber,
+            Phone,
+            ContractData,
+            Vehicle,
+            CurrencyValue,
+            DisableReason,
             DataWrapperView < ApiView < ClientViewEvent > >,
             EntityView<ClientViewState>,
             Paged<EntityView<ClientViewState>>,
