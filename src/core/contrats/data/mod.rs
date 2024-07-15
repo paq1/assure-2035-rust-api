@@ -3,7 +3,7 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::{ContractData, CurrencyValue, PendingAmend, Vehicle};
-use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractPendingAmendStateView, ContractRefusedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
+use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractPendingAmendStateView, ContractRejectedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 pub mod shared;
@@ -100,7 +100,7 @@ impl PendingContract {
                     }
                 )
             ),
-            ContratEvents::Refused(_) => Some(
+            ContratEvents::Rejected(_) => Some(
                 ContratStates::Inactif(
                     InactifContract {
                         data: self.data.clone(),
@@ -137,9 +137,9 @@ impl PendingAmendContract {
                     }
                 )
             ),
-            ContratEvents::Refused(_) => Some(
-                ContratStates::Inactif(
-                    InactifContract {
+            ContratEvents::Rejected(_) => Some(
+                ContratStates::Actif(
+                    ActifContract {
                         data: self.data.clone(),
                         premium: self.premium.clone(),
                     }
@@ -207,8 +207,9 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
             ContratEvents::Approved(c) => ContractViewEvent::Approved(ContractApprovedView {
                 approved_by: c.approved_by.clone()
             }),
-            ContratEvents::Refused(c) => ContractViewEvent::Refused(ContractRefusedView {
-                refused_by: c.refused_by.clone()
+            ContratEvents::Rejected(c) => ContractViewEvent::Rejected(ContractRejectedView {
+                rejected_by: c.reject_by.clone(),
+                comment: c.comment.clone(),
             }),
         }
     }
@@ -219,7 +220,7 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
 pub enum ContratEvents {
     Created(CreatedEvent),
     Approved(ApprovedEvent),
-    Refused(RefusedEvent),
+    Rejected(RejectEvent),
     Updated(UpdatedEvent),
 }
 
@@ -243,12 +244,13 @@ pub struct ApprovedEvent {
 }
 
 #[derive(Serialize, Deserialize, Clone)]
-pub struct RefusedEvent {
-    #[serde(rename = "approvedBy")]
-    pub refused_by: UserInfo,
+pub struct RejectEvent {
+    #[serde(rename = "rejectBy")]
+    pub reject_by: UserInfo,
     pub by: String,
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,
+    pub comment: String,
 }
 
 #[derive(Serialize, Deserialize, Clone, Debug)]

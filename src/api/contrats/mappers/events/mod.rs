@@ -1,6 +1,6 @@
-use crate::api::contrats::contrats_dbo::{ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo, RefusedDbo};
+use crate::api::contrats::contrats_dbo::{ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo, RejectedDbo};
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, RefusedEvent, UpdatedEvent};
+use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, RejectEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
 
 pub mod user_info;
@@ -31,9 +31,10 @@ impl From<ContratDboEvent> for ContratEvents {
                     by: event_dbo.by,
                     at: event_dbo.at,
                 }),
-            ContratDboEvent::RefusedDbo(event_dbo) =>
-                ContratEvents::Refused(RefusedEvent {
-                    refused_by: event_dbo.refused_by.into(),
+            ContratDboEvent::RejectedDbo(event_dbo) =>
+                ContratEvents::Rejected(RejectEvent {
+                    reject_by: event_dbo.rejected_by.into(),
+                    comment: event_dbo.comment,
                     by: event_dbo.by,
                     at: event_dbo.at,
                 })
@@ -90,11 +91,12 @@ impl From<ContratEvents> for ContratDboEvent {
                     at: approved.at,
                     approved_by: approved.approved_by.into(),
                 }),
-            ContratEvents::Refused(refused) => ContratDboEvent::RefusedDbo(
-                RefusedDbo {
-                    by: refused.by,
-                    at: refused.at,
-                    refused_by: refused.refused_by.into(),
+            ContratEvents::Rejected(rejected) => ContratDboEvent::RejectedDbo(
+                RejectedDbo {
+                    by: rejected.by,
+                    at: rejected.at,
+                    comment: rejected.comment,
+                    rejected_by: rejected.reject_by.into(),
                 }
             )
         }

@@ -25,8 +25,8 @@ pub enum ContractViewEvent {
     Updated(ContractUpdatedView),
     #[serde(rename = "approved")]
     Approved(ContractApprovedView),
-    #[serde(rename = "refused")]
-    Refused(ContractRefusedView),
+    #[serde(rename = "rejected")]
+    Rejected(ContractRejectedView),
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
@@ -68,7 +68,8 @@ pub struct ContractApprovedView {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct ContractRefusedView {
-    #[serde(rename = "refusedBy")]
-    pub refused_by: UserInfo,
+pub struct ContractRejectedView {
+    #[serde(rename = "rejectedBy")]
+    pub rejected_by: UserInfo,
+    pub comment: String,
 }

@@ -7,7 +7,7 @@ use crate::models::contrats::shared::{ContractData, Vehicle};
 pub enum ContratsCommands {
     Create(CreateContratCommand),
     Approve(ApproveContractCommand),
-    Refuse(RefuseContractCommand),
+    Reject(RejectContractCommand),
     Update(UpdateContratCommand),
     Delete(DeleteContratCommand),
 }
@@ -29,7 +29,9 @@ pub struct UpdateContratCommand {
 pub struct ApproveContractCommand {}
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct RefuseContractCommand {}
+pub struct RejectContractCommand {
+    pub comment: String
+}
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct DeleteContratCommand {}

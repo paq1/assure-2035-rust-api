@@ -8,10 +8,10 @@ use crate::api::shared::mappers::reponse_handler_view::from_output_command_handl
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
-use crate::core::contrats::command_handler::refuse_command_handler::RefuseContractHandler;
+use crate::core::contrats::command_handler::reject_command_handler::RejectContractHandler;
 use crate::core::contrats::data::{ContratEvents, ContratStates};
 use crate::core::shared::event_sourcing::engine::Engine;
-use crate::models::contrats::commands::{ApproveContractCommand, ContratsCommands, CreateContratCommand, RefuseContractCommand, UpdateContratCommand};
+use crate::models::contrats::commands::{ApproveContractCommand, ContratsCommands, CreateContratCommand, RejectContractCommand, UpdateContratCommand};
 use crate::models::contrats::views::ContractViewEvent;
 use crate::models::shared::errors::StandardHttpError;
 
@@ -97,7 +97,7 @@ pub async fn approve_one_contrat(
 }
 
 #[utoipa::path(
-    request_body = RefuseContractCommand,
+    request_body = RejectContractCommand,
     responses(
     (status = 200, description = "refuse un contract", body = DataWrapperView<ApiView<ContractViewEvent>>),
     ),
@@ -105,23 +105,23 @@ pub async fn approve_one_contrat(
     ("bearer_auth" = [])
     )
 )]
-#[put("/contracts/{entity_id}/commands/refuse")]
-pub async fn refuse_one_contrat(
+#[put("/contracts/{entity_id}/commands/reject")]
+pub async fn reject_one_contrat(
     path: web::Path<String>,
     req: HttpRequest,
-    body: web::Json<RefuseContractCommand>,
+    body: web::Json<RejectContractCommand>,
     jwt_token_service: web::Data<JwtRSATokenService>,
     http_error: web::Data<StandardHttpError>,
     engine: web::Data<Arc<Engine<ContratStates, ContratsCommands, ContratEvents>>>,
 ) -> impl Responder {
     match authenticated(&req, jwt_token_service.get_ref()).await {
         Ok(ctx) => {
-            let command = ContratsCommands::Refuse(body.into_inner());
+            let command = ContratsCommands::Reject(body.into_inner());
 
             let entity_id = path.into_inner();
 
             let event = engine
-                .compute(command, entity_id.clone(), RefuseContractHandler::get_name().to_string(), &ctx).await;
+                .compute(command, entity_id.clone(), RejectContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
                 from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
