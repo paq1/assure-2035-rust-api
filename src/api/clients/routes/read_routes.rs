@@ -6,7 +6,7 @@ use actix_web::web::Query;
 
 use crate::api::clients::query::ClientQuery;
 use crate::api::shared::helpers::context::CanDecoreFromHttpRequest;
-use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
+use crate::api::shared::mappers::event_api_view::from_entity_event_to_view;
 use crate::api::shared::mappers::state_view::{CanBeManyView, from_states_to_entity_view, from_states_to_view};
 use crate::core::clients::data::events::ClientEvents;
 use crate::core::clients::data::states::ClientStates;
@@ -137,8 +137,8 @@ pub async fn fetch_events_client(
     match journal.fetch_many(query_core_with_filter).await {
         Ok(items) => {
             let paged_view = items.map(|x| {
-                EntityView { // todo entity event view ici ? (a voir avec les specs s'il faut un différence entre la vu event / state
-                    r#type: "org:example:insurance:client".to_string(), // fixme passer le client ontology
+                EntityView {
+                    r#type: "org:example:insurance:client".to_string(),
                     id: x.entity_id,
                     attributes: x.data.to_view(),
                     links: None,
@@ -177,7 +177,7 @@ pub async fn fetch_one_client_event(
         Ok(maybe_event) => {
             match maybe_event {
                 Some(event) => {
-                    let view = from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                    let view = from_entity_event_to_view::<ClientEvents, ClientViewEvent>(
                         event,
                         "clients".to_string(),
                         "org:example:insurance:client".to_string(),

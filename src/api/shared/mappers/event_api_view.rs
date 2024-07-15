@@ -8,8 +8,7 @@ use crate::models::shared::jsonapi::CanBeView;
 use crate::models::shared::views::{DataWrapperView, LinkView};
 use crate::models::shared::views::command_handler_view::{ApiView, AttributesEvent, DataRS, DataWrapper, RelatedLinks, Relationships};
 
-// fixme renommer ca sert a la vue des evenements en vrai
-pub fn from_output_command_handler_to_view<DATA, VIEW>(
+pub fn from_entity_event_to_view<DATA, VIEW>(
     event: EntityEvent<DATA, String>,
     ontology: String,
     complete_ontology: String,

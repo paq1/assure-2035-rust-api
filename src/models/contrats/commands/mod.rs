@@ -36,7 +36,7 @@ pub struct RejectContractCommand {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct TerminateContractCommand {
-    pub reason: String // fixme mettre un enum
+    pub reason: String // fixme mettre un enum ici
 }
 
 

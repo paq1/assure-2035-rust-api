@@ -4,7 +4,7 @@ use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use uuid::Uuid;
 
 use crate::api::shared::helpers::http_response::{CanToHttpResponse, HttpKindResponse};
-use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
+use crate::api::shared::mappers::event_api_view::from_entity_event_to_view;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::contrats::command_handler::approve_command_handler::ApproveContractHandler;
@@ -43,7 +43,7 @@ pub async fn insert_one_contrat(
                 .compute(command, entity_id, "create-contrat".to_string(), &ctx).await;
 
             event.map(|(event, _)| {
-                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                from_entity_event_to_view::<ContratEvents, ContractViewEvent>(
                     event,
                     "contracts".to_string(),
                     "org:example:insurance:contract".to_string(),
@@ -84,7 +84,7 @@ pub async fn approve_one_contrat(
                 .compute(command, entity_id, ApproveContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
-                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                from_entity_event_to_view::<ContratEvents, ContractViewEvent>(
                     event,
                     "contracts".to_string(),
                     "org:example:insurance:contract".to_string(),
@@ -125,7 +125,7 @@ pub async fn reject_one_contrat(
                 .compute(command, entity_id, RejectContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
-                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                from_entity_event_to_view::<ContratEvents, ContractViewEvent>(
                     event,
                     "contracts".to_string(),
                     "org:example:insurance:contract".to_string(),
@@ -166,7 +166,7 @@ pub async fn terminate_one_contrat(
                 .compute(command, entity_id, TerminateContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
-                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                from_entity_event_to_view::<ContratEvents, ContractViewEvent>(
                     event,
                     "contracts".to_string(),
                     "org:example:insurance:contract".to_string(),
@@ -206,7 +206,7 @@ pub async fn update_one_contrat(
                 .compute(command, id, "update-contrat".to_string(), &ctx).await;
 
             event.map(|(event, _)| {
-                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                from_entity_event_to_view::<ContratEvents, ContractViewEvent>(
                     event,
                     "contracts".to_string(),
                     "org:example:insurance:contract".to_string(),

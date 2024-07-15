@@ -3,7 +3,7 @@ use std::sync::Arc;
 use actix_web::{HttpRequest, HttpResponse, post, put, Responder, web};
 use uuid::Uuid;
 
-use crate::api::shared::mappers::reponse_handler_view::from_output_command_handler_to_view;
+use crate::api::shared::mappers::event_api_view::from_entity_event_to_view;
 use crate::api::shared::token::authenticated::authenticated;
 use crate::api::shared::token::services::jwt_rsa::JwtRSATokenService;
 use crate::core::clients::data::events::ClientEvents;
@@ -42,7 +42,7 @@ pub async fn insert_one_client(
             match event {
                 Ok((event, _state)) =>
                     HttpResponse::Created().json(
-                        from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                        from_entity_event_to_view::<ClientEvents, ClientViewEvent>(
                             event,
                             "clients".to_string(),
                             "org:example:insurance:client".to_string(),
@@ -85,7 +85,7 @@ pub async fn update_one_client(
             match event {
                 Ok((event, _state)) => HttpResponse::Ok()
                     .json(
-                        from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                        from_entity_event_to_view::<ClientEvents, ClientViewEvent>(
                             event,
                             "clients".to_string(),
                             "org:example:insurance:client".to_string(),
@@ -127,7 +127,7 @@ pub async fn disable_one_client(
 
             match event {
                 Ok((event, _state)) => HttpResponse::Ok().json(
-                    from_output_command_handler_to_view::<ClientEvents, ClientViewEvent>(
+                    from_entity_event_to_view::<ClientEvents, ClientViewEvent>(
                         event,
                         "clients".to_string(),
                         "org:example:insurance:client".to_string(),
