@@ -49,11 +49,11 @@ impl CanGetTypee for ClientStates {
 
 impl CanBeView<ClientViewState> for ClientStates {
     fn to_view(&self) -> ClientViewState {
-        match self {
+        match self.clone() {
             ClientStates::ClientActif(state) =>
-                ClientViewState::Client(state.clone().into()),
+                ClientViewState::Client(state.into()),
             ClientStates::ClientDisable(state) =>
-                ClientViewState::ClientDisable(state.clone().into())
+                ClientViewState::ClientDisable(state.into())
         }
     }
 }

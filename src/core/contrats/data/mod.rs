@@ -16,23 +16,23 @@ impl CanGetTypee for ContratStates {
 
 impl CanBeView<ContractViewState> for ContratStates {
     fn to_view(&self) -> ContractViewState {
-        match self {
+        match self.clone() {
             ContratStates::Pending(c) => ContractViewState::Pending(BaseContractStateView {
-                data: c.data.clone(),
-                premium: c.premium.clone(),
+                data: c.data,
+                premium: c.premium,
             }),
             ContratStates::PendingAmendment(c) => ContractViewState::PendingAmendment(ContractPendingAmendStateView {
-                data: c.data.clone(),
-                premium: c.premium.clone(),
-                pending_changes: c.pending_change.clone(),
+                data: c.data,
+                premium: c.premium,
+                pending_changes: c.pending_change,
             }),
             ContratStates::Actif(c) => ContractViewState::Actif(BaseContractStateView {
-                data: c.data.clone(),
-                premium: c.premium.clone(),
+                data: c.data,
+                premium: c.premium,
             }),
             ContratStates::Inactif(c) => ContractViewState::Inactif(BaseContractStateView {
-                data: c.data.clone(),
-                premium: c.premium.clone(),
+                data: c.data,
+                premium: c.premium,
             }),
         }
     }

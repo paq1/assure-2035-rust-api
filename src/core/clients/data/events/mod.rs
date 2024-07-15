@@ -6,10 +6,10 @@ use crate::models::shared::jsonapi::CanBeView;
 
 impl CanBeView<ClientViewEvent> for ClientEvents {
     fn to_view(&self) -> ClientViewEvent {
-        match self {
-            ClientEvents::Created(c) => ClientViewEvent::Created(ClientView { data: c.data.clone() }),
-            ClientEvents::Updated(u) => ClientViewEvent::Updated(ClientUpdatedView { data: u.data.clone() }),
-            ClientEvents::Disabled(disabled) => ClientViewEvent::Disabled(ClientDisabledView { reason: disabled.reason.clone() }),
+        match self.clone() {
+            ClientEvents::Created(c) => ClientViewEvent::Created(ClientView { data: c.data }),
+            ClientEvents::Updated(u) => ClientViewEvent::Updated(ClientUpdatedView { data: u.data }),
+            ClientEvents::Disabled(disabled) => ClientViewEvent::Disabled(ClientDisabledView { reason: disabled.reason }),
         }
     }
 }
