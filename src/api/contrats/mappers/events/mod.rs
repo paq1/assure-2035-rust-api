@@ -1,6 +1,6 @@
-use crate::api::contrats::contrats_dbo::{ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo, RejectedDbo};
+use crate::api::contrats::contrats_dbo::{ApprovedDbo, ContratDboEvent, ContratUpdatedDbo, CreatedDbo, RejectedDbo, TerminatedDbo};
 use crate::api::shared::daos::dbos::EventDBO;
-use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, RejectEvent, UpdatedEvent};
+use crate::core::contrats::data::{ApprovedEvent, ContratEvents, CreatedEvent, RejectEvent, TerminatedEvent, UpdatedEvent};
 use crate::core::shared::data::EntityEvent;
 
 pub mod user_info;
@@ -37,6 +37,12 @@ impl From<ContratDboEvent> for ContratEvents {
                     comment: event_dbo.comment,
                     by: event_dbo.by,
                     at: event_dbo.at,
+                }),
+            ContratDboEvent::TerminatedDbo(event_dbo) =>
+                ContratEvents::Terminated(TerminatedEvent {
+                    by: event_dbo.by,
+                    at: event_dbo.at,
+                    reason: event_dbo.reason,
                 })
         }
     }
@@ -97,6 +103,13 @@ impl From<ContratEvents> for ContratDboEvent {
                     at: rejected.at,
                     comment: rejected.comment,
                     rejected_by: rejected.reject_by.into(),
+                }
+            ),
+            ContratEvents::Terminated(terminated) => ContratDboEvent::TerminatedDbo(
+                TerminatedDbo {
+                    by: terminated.by,
+                    at: terminated.at,
+                    reason: terminated.reason,
                 }
             )
         }

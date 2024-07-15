@@ -3,7 +3,7 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::{ContractData, CurrencyValue, PendingAmend, Vehicle};
-use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractPendingAmendStateView, ContractRejectedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
+use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractPendingAmendStateView, ContractRejectedView, ContractTerminatedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 pub mod shared;
@@ -108,6 +108,14 @@ impl PendingContract {
                     }
                 )
             ),
+            ContratEvents::Terminated(_) => Some(
+                ContratStates::Inactif(
+                    InactifContract {
+                        data: self.data.clone(),
+                        premium: self.premium.clone(),
+                    }
+                )
+            ),
             _ => None
         }
     }
@@ -195,22 +203,25 @@ impl InactifContract {
 
 impl CanBeView<ContractViewEvent> for ContratEvents {
     fn to_view(&self) -> ContractViewEvent {
-        match self {
-            ContratEvents::Created(c) => ContractViewEvent::Created(ContractCreatedView { data: c.data.clone(), premium: c.premium.clone() }),
+        match self.clone() {
+            ContratEvents::Created(c) => ContractViewEvent::Created(ContractCreatedView { data: c.data, premium: c.premium }),
             ContratEvents::Updated(c) => ContractViewEvent::Updated(
                 ContractUpdatedView {
-                    formula: c.formula.clone(),
-                    product: c.product.clone(),
-                    vehicle: c.vehicle.clone(),
-                    premium: c.premium.clone(),
+                    formula: c.formula,
+                    product: c.product,
+                    vehicle: c.vehicle,
+                    premium: c.premium,
                 }),
             ContratEvents::Approved(c) => ContractViewEvent::Approved(ContractApprovedView {
-                approved_by: c.approved_by.clone()
+                approved_by: c.approved_by
             }),
             ContratEvents::Rejected(c) => ContractViewEvent::Rejected(ContractRejectedView {
-                rejected_by: c.reject_by.clone(),
-                comment: c.comment.clone(),
+                rejected_by: c.reject_by,
+                comment: c.comment,
             }),
+            ContratEvents::Terminated(c) => ContractViewEvent::Terminated(ContractTerminatedView {
+                reason: c.reason
+            })
         }
     }
 }
@@ -221,6 +232,7 @@ pub enum ContratEvents {
     Created(CreatedEvent),
     Approved(ApprovedEvent),
     Rejected(RejectEvent),
+    Terminated(TerminatedEvent),
     Updated(UpdatedEvent),
 }
 
@@ -252,6 +264,15 @@ pub struct RejectEvent {
     pub at: DateTime<Utc>,
     pub comment: String,
 }
+
+#[derive(Serialize, Deserialize, Clone)]
+pub struct TerminatedEvent {
+    pub by: String,
+    #[serde(with = "ts_seconds")]
+    pub at: DateTime<Utc>,
+    pub reason: String,
+}
+
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct UserInfo {

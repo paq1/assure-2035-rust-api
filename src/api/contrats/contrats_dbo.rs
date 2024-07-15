@@ -48,6 +48,7 @@ pub enum ContratDboEvent {
     ContratCreatedDbo(CreatedDbo),
     ApprovedDbo(ApprovedDbo),
     RejectedDbo(RejectedDbo),
+    TerminatedDbo(TerminatedDbo),
     Updated(ContratUpdatedDbo),
 }
 
@@ -64,6 +65,13 @@ pub struct RejectedDbo {
     pub by: String,
     pub at: DateTime<Utc>,
     pub comment: String,
+}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct TerminatedDbo {
+    pub by: String,
+    pub at: DateTime<Utc>,
+    pub reason: String,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]

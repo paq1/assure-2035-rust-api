@@ -8,6 +8,7 @@ pub enum ContratsCommands {
     Create(CreateContratCommand),
     Approve(ApproveContractCommand),
     Reject(RejectContractCommand),
+    Terminate(TerminateContractCommand),
     Update(UpdateContratCommand),
     Delete(DeleteContratCommand),
 }
@@ -32,6 +33,12 @@ pub struct ApproveContractCommand {}
 pub struct RejectContractCommand {
     pub comment: String
 }
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct TerminateContractCommand {
+    pub reason: String // fixme mettre un enum
+}
+
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct DeleteContratCommand {}
