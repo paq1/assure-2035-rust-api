@@ -23,7 +23,7 @@ use crate::core::clients::reducer::ClientReducer;
 pub struct ClientComponent {
     pub store: Arc<dyn RepositoryEntity<ClientStates, String>>,
     pub journal: Arc<dyn RepositoryEvents<ClientEvents, String>>,
-    pub client_service: Arc<dyn ClientService>,
+    pub service: Arc<dyn ClientService>,
     pub engine: Arc<Engine<ClientStates, ClientsCommands, ClientEvents>>,
 }
 
@@ -39,40 +39,40 @@ impl ClientComponent {
             Arc::new(Mutex::new(ClientsEventMongoDAO::new(dbname, "clients_journal_actix").await));
 
         // repo
-        let store_clients: Arc<dyn RepositoryEntity<ClientStates, String>> = Arc::new(
+        let store: Arc<dyn RepositoryEntity<ClientStates, String>> = Arc::new(
             ClientsMongoRepository {
                 dao: Arc::clone(&dao_store_client)
             }
         );
-        let journal_clients: Arc<dyn RepositoryEvents<ClientEvents, String>> = Arc::new(
+        let journal: Arc<dyn RepositoryEvents<ClientEvents, String>> = Arc::new(
             ClientsEventMongoRepository {
                 dao: Arc::clone(&dao_journal_client)
             }
         );
         // services
-        let clients_service: Arc<dyn ClientService> = Arc::new(
+        let service: Arc<dyn ClientService> = Arc::new(
             ClientsServiceImpl {
-                store: Arc::clone(&store_clients),
-                journal: Arc::clone(&journal_clients),
+                store: Arc::clone(&store),
+                journal: Arc::clone(&journal),
             }
         );
 
-        let engine_client: Arc<Engine<ClientStates, ClientsCommands, ClientEvents>> = Arc::new(Engine {
+        let engine: Arc<Engine<ClientStates, ClientsCommands, ClientEvents>> = Arc::new(Engine {
             handlers: vec![
                 CommandHandler::Create(Box::new(CreateClientHandler {})),
                 CommandHandler::Update(Box::new(UpdateClientHandler {})),
                 CommandHandler::Update(Box::new(DisableClientHandler {})),
             ],
             reducer: ClientReducer::new().underlying,
-            store: Arc::clone(&store_clients),
-            journal: Arc::clone(&journal_clients),
+            store: Arc::clone(&store),
+            journal: Arc::clone(&journal),
         });
 
         Self {
-            store: store_clients,
-            journal: journal_clients,
-            client_service: clients_service,
-            engine: engine_client,
+            store,
+            journal,
+            service,
+            engine,
         }
     }
 }

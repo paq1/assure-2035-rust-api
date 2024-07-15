@@ -6,7 +6,7 @@ use crate::core::shared::event_sourcing::CommandHandlerUpdate;
 use crate::models::contrats::commands::ContratsCommands;
 use crate::models::shared::errors::{Error, ResultErr};
 
-pub struct ApproveContractHandler;
+pub struct ApproveContractHandler {}
 #[async_trait]
 impl CommandHandlerUpdate<ContratStates, ContratsCommands, ContratEvents> for ApproveContractHandler {
     fn name(&self) -> String {
