@@ -12,7 +12,7 @@ pub enum ContractViewState {
     PendingAmendment(ContractPendingAmendStateView),
     #[serde(rename = "actif")]
     Actif(BaseContractStateView),
-    #[serde(rename = "inactif")]
+    #[serde(rename = "terminated")]
     Inactif(BaseContractStateView),
 }
 
