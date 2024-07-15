@@ -40,7 +40,7 @@ pub async fn insert_one_contrat(
             let entity_id = Uuid::new_v4().to_string();
 
             let event = engine
-                .compute(command, entity_id.clone(), "create-contrat".to_string(), &ctx).await;
+                .compute(command, entity_id, "create-contrat".to_string(), &ctx).await;
 
             event.map(|(event, _)| {
                 from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
@@ -81,7 +81,7 @@ pub async fn approve_one_contrat(
             let entity_id = path.into_inner();
 
             let event = engine
-                .compute(command, entity_id.clone(), ApproveContractHandler::get_name().to_string(), &ctx).await;
+                .compute(command, entity_id, ApproveContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
                 from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
@@ -122,7 +122,7 @@ pub async fn reject_one_contrat(
             let entity_id = path.into_inner();
 
             let event = engine
-                .compute(command, entity_id.clone(), RejectContractHandler::get_name().to_string(), &ctx).await;
+                .compute(command, entity_id, RejectContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
                 from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
@@ -163,7 +163,7 @@ pub async fn terminate_one_contrat(
             let entity_id = path.into_inner();
 
             let event = engine
-                .compute(command, entity_id.clone(), TerminateContractHandler::get_name().to_string(), &ctx).await;
+                .compute(command, entity_id, TerminateContractHandler::get_name().to_string(), &ctx).await;
 
             event.map(|(event, _)| {
                 from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(

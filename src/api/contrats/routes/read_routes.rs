@@ -133,7 +133,7 @@ pub async fn fetch_events_contrat(
                 }
             )
         ),
-        ..query_core.clone()
+        ..query_core
     };
 
     match journal.fetch_many(query_core_with_filter).await {

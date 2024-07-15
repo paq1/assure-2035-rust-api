@@ -37,7 +37,7 @@ pub async fn insert_one_client(
             let entity_id = Uuid::new_v4().to_string();
 
             let event = engine
-                .compute(command, entity_id.clone(), "create-client".to_string(), &ctx).await;
+                .compute(command, entity_id, "create-client".to_string(), &ctx).await;
 
             match event {
                 Ok((event, _state)) =>
