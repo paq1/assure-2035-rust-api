@@ -161,7 +161,7 @@ impl ActifContract {
                 ContratStates::PendingAmendment(
                     PendingAmendContract {
                         data: self.data.clone(),
-                        premium: e.premium.clone(),
+                        premium: self.premium.clone(),
                         pending_change: PendingAmend {
                             product: e.product.clone(),
                             formula: e.formula.clone(),
