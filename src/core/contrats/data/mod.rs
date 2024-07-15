@@ -127,8 +127,13 @@ impl PendingAmendContract {
             ContratEvents::Approved(_) => Some(
                 ContratStates::Actif(
                     ActifContract {
-                        data: self.data.clone(),
-                        premium: self.premium.clone(),
+                        data: ContractData {
+                            holder: self.data.holder.clone(),
+                            product: self.pending_change.product.clone(),
+                            formula: self.pending_change.formula.clone(),
+                            vehicle: self.pending_change.vehicle.clone()
+                        },
+                        premium: self.pending_change.premium.clone(),
                     }
                 )
             ),
