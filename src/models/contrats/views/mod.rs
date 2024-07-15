@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use crate::core::contrats::data::UserInfo;
-use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
+use crate::models::contrats::shared::{ContractData, CurrencyValue, PendingAmend, Vehicle};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "statusType")]
@@ -9,7 +9,7 @@ pub enum ContractViewState {
     #[serde(rename = "pending-subscription")]
     Pending(BaseContractStateView),
     #[serde(rename = "pending-amendment")]
-    PendingAmendment(BaseContractStateView),
+    PendingAmendment(ContractPendingAmendStateView),
     #[serde(rename = "actif")]
     Actif(BaseContractStateView),
     #[serde(rename = "inactif")]
@@ -42,6 +42,15 @@ pub struct BaseContractStateView {
     #[serde(flatten)]
     pub data: ContractData,
     pub premium: CurrencyValue,
+}
+
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
+pub struct ContractPendingAmendStateView {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+    #[serde(rename = "pendingChanges")]
+    pub pending_changes: PendingAmend,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

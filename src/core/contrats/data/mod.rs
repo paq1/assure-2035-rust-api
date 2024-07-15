@@ -3,7 +3,7 @@ use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
 use crate::models::contrats::shared::{ContractData, CurrencyValue, PendingAmend, Vehicle};
-use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractRefusedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
+use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractPendingAmendStateView, ContractRefusedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
 pub mod shared;
@@ -21,9 +21,10 @@ impl CanBeView<ContractViewState> for ContratStates {
                 data: c.data.clone(),
                 premium: c.premium.clone(),
             }),
-            ContratStates::PendingAmendment(c) => ContractViewState::PendingAmendment(BaseContractStateView {
+            ContratStates::PendingAmendment(c) => ContractViewState::PendingAmendment(ContractPendingAmendStateView {
                 data: c.data.clone(),
                 premium: c.premium.clone(),
+                pending_changes: c.pending_change.clone(),
             }),
             ContratStates::Actif(c) => ContractViewState::Actif(BaseContractStateView {
                 data: c.data.clone(),

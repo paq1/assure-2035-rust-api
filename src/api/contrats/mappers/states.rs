@@ -2,7 +2,6 @@ use crate::api::contrats::contrats_dbo::{ContractActifDbo, ContractInactifDbo, C
 use crate::api::shared::daos::dbos::EntityDBO;
 use crate::core::contrats::data::{ActifContract, ContratStates, InactifContract, PendingAmendContract, PendingContract};
 use crate::core::shared::data::Entity;
-use crate::models::contrats::shared::PendingAmend;
 
 impl From<ContratDboState> for ContratStates {
     fn from(value: ContratDboState) -> Self {
