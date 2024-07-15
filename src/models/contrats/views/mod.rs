@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
-
+use crate::core::contrats::data::UserInfo;
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
@@ -49,7 +49,13 @@ pub struct ContractUpdatedView {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct ContractApprovedView;
+pub struct ContractApprovedView {
+    #[serde(rename = "approvedBy")]
+    pub approved_by: UserInfo,
+}
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct ContractRefusedView;
+pub struct ContractRefusedView {
+    #[serde(rename = "refusedBy")]
+    pub refused_by: UserInfo,
+}

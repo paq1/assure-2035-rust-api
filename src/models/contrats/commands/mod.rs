@@ -25,10 +25,10 @@ pub struct UpdateContratCommand {
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct ApproveContractCommand;
+pub struct ApproveContractCommand {}
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct RefuseContractCommand;
+pub struct RefuseContractCommand {}
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
-pub struct DeleteContratCommand;
+pub struct DeleteContratCommand {}

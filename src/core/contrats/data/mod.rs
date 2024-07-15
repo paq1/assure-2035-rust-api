@@ -134,8 +134,12 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
         match self {
             ContratEvents::Created(c) => ContractViewEvent::Created(ContractCreatedView { data: c.data.clone(), premium: c.premium.clone() }),
             ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView { data: c.data.clone() }),
-            ContratEvents::Approved(_) => ContractViewEvent::Approved(ContractApprovedView {}),
-            ContratEvents::Refused(_) => ContractViewEvent::Refused(ContractRefusedView {}),
+            ContratEvents::Approved(c) => ContractViewEvent::Approved(ContractApprovedView {
+                approved_by: c.approved_by.clone()
+            }),
+            ContratEvents::Refused(c) => ContractViewEvent::Refused(ContractRefusedView {
+                refused_by: c.refused_by.clone()
+            }),
         }
     }
 }
@@ -177,7 +181,7 @@ pub struct RefusedEvent {
     pub at: DateTime<Utc>,
 }
 
-#[derive(Serialize, Deserialize, Clone)]
+#[derive(Serialize, Deserialize, Clone, Debug)]
 pub struct UserInfo {
     pub uid: String,
     #[serde(rename = "displayName")]
