@@ -76,14 +76,14 @@ sortir ces parties du code.
 ## 3-1 architecture
 
 <ul>
-    <li>kafka: utiliser kafka pour pour persister les messages ainsi que tendre vers de l'event storming</li>
+    <li>kafka: utiliser kafka pour pour persister les messages ainsi que tendre vers de l'event sourcing</li>
     <li>sortir utoipa de mon héxagone en ajoutant un couche de mapping pour la documentation</li>
 </ul>
 
 ## 3-2 Non fini :p
 
 <ul>
-    <li>swagger plus propre et documenté</li>
+    <li>swagger: finir la doc pour les GET (fini pour post et put)</li>
 </ul>
 
 # 4 - Conclusion

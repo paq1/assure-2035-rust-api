@@ -22,3 +22,11 @@ pub struct CurrencyValue {
     pub value: f32,
     pub currency: String,
 }
+
+#[derive(Serialize, Deserialize, Clone, Debug, ToSchema)]
+pub struct PendingAmend {
+    pub product: String,
+    pub formula: String,
+    pub vehicle: Vehicle,
+    pub premium: CurrencyValue,
+}

@@ -1,9 +1,10 @@
 use std::collections::HashMap;
-
+use serde::{Deserialize, Serialize};
+use utoipa::ToSchema;
 use crate::core::shared::repositories::filter::Filter;
 use crate::models::shared::views::LinkView;
 
-#[derive(Clone)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct Paged<T> {
     pub data: Vec<T>,
     pub meta: InfoPaged,
@@ -41,14 +42,14 @@ impl<T: Clone> Paged<T> {
     }
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct InfoPaged {
     pub total_pages: usize,
     pub total_records: usize,
     pub page: Page,
 }
 
-#[derive(Clone, Debug)]
+#[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct Page {
     pub number: usize,
     pub size: usize,
