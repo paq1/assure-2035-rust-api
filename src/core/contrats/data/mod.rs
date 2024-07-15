@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
-use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
+use crate::models::contrats::shared::{ContractData, CurrencyValue, PendingAmend, Vehicle};
 use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractRefusedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
@@ -40,7 +40,7 @@ impl CanBeView<ContractViewState> for ContratStates {
 #[derive(Serialize, Deserialize, Clone)]
 pub enum ContratStates {
     Pending(PendingContract),
-    PendingAmendment(PendingContract),
+    PendingAmendment(PendingAmendContract),
     Actif(ActifContract),
     Inactif(InactifContract),
 }
@@ -112,6 +112,39 @@ impl PendingContract {
     }
 }
 
+#[derive(Serialize, Deserialize, Clone)]
+pub struct PendingAmendContract {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+    pub pending_change: PendingAmend,
+}
+
+impl PendingAmendContract {
+    pub fn reduce_state(&self, event: &ContratEvents) -> Option<ContratStates> {
+        match event {
+            ContratEvents::Approved(_) => Some(
+                ContratStates::Actif(
+                    ActifContract {
+                        data: self.data.clone(),
+                        premium: self.premium.clone(),
+                    }
+                )
+            ),
+            ContratEvents::Refused(_) => Some(
+                ContratStates::Inactif(
+                    InactifContract {
+                        data: self.data.clone(),
+                        premium: self.premium.clone(),
+                    }
+                )
+            ),
+            _ => None
+        }
+    }
+}
+
+
 
 #[derive(Serialize, Deserialize, Clone)]
 pub struct ActifContract {
@@ -125,14 +158,15 @@ impl ActifContract {
         match event {
             ContratEvents::Updated(e) => Some(
                 ContratStates::PendingAmendment(
-                    PendingContract {
-                        data: ContractData {
-                            holder: self.data.holder.clone(),
+                    PendingAmendContract {
+                        data: self.data.clone(),
+                        premium: e.premium.clone(),
+                        pending_change: PendingAmend {
                             product: e.product.clone(),
                             formula: e.formula.clone(),
                             vehicle: e.vehicle.clone(),
-                        },
-                        premium: e.premium.clone(),
+                            premium: e.premium.clone()
+                        }
                     })),
             _ => None
         }

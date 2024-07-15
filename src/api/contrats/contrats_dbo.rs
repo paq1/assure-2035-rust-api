@@ -1,16 +1,25 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
+use crate::models::contrats::shared::{ContractData, CurrencyValue, PendingAmend, Vehicle};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
 pub enum ContratDboState {
     ContratPendingDbo(ContractPendingDbo),
-    ContratPendingAmendmentDbo(ContractPendingDbo),
+    ContratPendingAmendmentDbo(ContractPendingAmendmentDbo),
     ContratActifDbo(ContractActifDbo),
     ContratInactifDbo(ContractInactifDbo),
 }
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct ContractPendingAmendmentDbo {
+    #[serde(flatten)]
+    pub data: ContractData,
+    pub premium: CurrencyValue,
+    pub pending_change: PendingAmend,
+}
+
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct ContractPendingDbo {
