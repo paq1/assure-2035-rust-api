@@ -1,7 +1,5 @@
 use async_trait::async_trait;
 
-use crate::core::shared::context::Context;
-use crate::models::contrats::commands::*;
 use crate::models::contrats::shared::{ContractData, CurrencyValue};
 use crate::models::shared::errors::{Error, ErrorHttpCustom, ResultErr};
 
@@ -12,7 +10,6 @@ pub mod facteur_pays_repo;
 
 #[async_trait]
 pub trait ContratService: Send + Sync {
-    async fn delete_contrat(&self, command: DeleteContratCommand, id: String, ctx: Context) -> ResultErr<String>;
     async fn calcul_premium(&self, command: &ContractData) -> ResultErr<CurrencyValue> {
         let id_client = command.holder.clone();
 

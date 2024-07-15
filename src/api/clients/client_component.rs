@@ -51,10 +51,7 @@ impl ClientComponent {
         );
         // services
         let service: Arc<dyn ClientService> = Arc::new(
-            ClientsServiceImpl {
-                store: Arc::clone(&store),
-                journal: Arc::clone(&journal),
-            }
+            ClientsServiceImpl{}
         );
 
         let engine: Arc<Engine<ClientStates, ClientsCommands, ClientEvents>> = Arc::new(Engine {

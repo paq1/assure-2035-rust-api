@@ -10,8 +10,8 @@ impl From<JwtClaims> for Context {
         Self {
             subject: value.sub,
             name: value.name,
-            given_name: value.given_name,
-            family_name: value.family_name,
+            // given_name: value.given_name, pas utilisé dans les spec metier :)
+            // family_name: value.family_name, pas utilisé dans les spec metier :)
             email: value.email,
             now: Utc::now(),
             meta: HashMap::new(),

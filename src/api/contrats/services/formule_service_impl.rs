@@ -13,9 +13,6 @@ pub struct FormuleServiceImpl {
 
 #[async_trait]
 impl FormuleService for FormuleServiceImpl {
-    async fn get_all(&self) -> Vec<(String, CurrencyValue)> {
-        self.formule_repo.fetch_all().await
-    }
 
     async fn get_formule_from_code(&self, name: &String) -> ResultErr<CurrencyValue> {
         self.formule_repo.fetch_one(name).await

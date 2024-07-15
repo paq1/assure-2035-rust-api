@@ -66,8 +66,6 @@ impl ContractComponent {
 
         let service: Arc<dyn ContratService> = Arc::new(
             ContratsServiceImpl {
-                store: Arc::clone(&store),
-                journal: Arc::clone(&journal),
                 formule_service: Arc::clone(&formule_service),
                 store_personne: Arc::clone(&client_store),
                 facteur_pays_repo: Arc::clone(&facteur_pays_repo),
