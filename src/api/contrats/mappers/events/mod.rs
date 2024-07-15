@@ -17,7 +17,14 @@ impl From<ContratDboEvent> for ContratEvents {
                 }
             ),
             ContratDboEvent::Updated(event_dbo) =>
-                ContratEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
+                ContratEvents::Updated(UpdatedEvent {
+                    by: event_dbo.by,
+                    at: event_dbo.at,
+                    product: event_dbo.product,
+                    formula: event_dbo.formula,
+                    vehicle: event_dbo.vehicle,
+                    premium: event_dbo.premium,
+                }),
             ContratDboEvent::ApprovedDbo(event_dbo) =>
                 ContratEvents::Approved(ApprovedEvent {
                     approved_by: event_dbo.approved_by.into(),
@@ -72,7 +79,10 @@ impl From<ContratEvents> for ContratDboEvent {
                 ContratUpdatedDbo {
                     by: updated.by,
                     at: updated.at,
-                    data: updated.data,
+                    product: updated.product,
+                    formula: updated.formula,
+                    vehicle: updated.vehicle,
+                    premium: updated.premium,
                 }),
             ContratEvents::Approved(approved) => ContratDboEvent::ApprovedDbo(
                 ApprovedDbo {

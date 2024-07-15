@@ -1,7 +1,7 @@
 use serde::{Deserialize, Serialize};
 use utoipa::ToSchema;
 use crate::core::contrats::data::UserInfo;
-use crate::models::contrats::shared::{ContractData, CurrencyValue};
+use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
 
 #[derive(Serialize, Deserialize, Clone, Debug)]
 #[serde(tag = "statusType")]
@@ -19,7 +19,7 @@ pub enum ContractViewState {
 pub enum ContractViewEvent {
     #[serde(rename = "created")]
     Created(ContractCreatedView),
-    #[serde(rename = "updated")]
+    #[serde(rename = "amended")]
     Updated(ContractUpdatedView),
     #[serde(rename = "approved")]
     Approved(ContractApprovedView),
@@ -44,8 +44,10 @@ pub struct BaseContractStateView {
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]
 pub struct ContractUpdatedView {
-    #[serde(flatten)]
-    pub data: ContractData,
+    pub product: String,
+    pub formula: String,
+    pub vehicle: Vehicle,
+    pub premium: CurrencyValue,
 }
 
 #[derive(Serialize, Deserialize, Clone, ToSchema, Debug)]

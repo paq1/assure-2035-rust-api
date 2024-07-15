@@ -2,7 +2,7 @@ use chrono::{DateTime, Utc};
 use chrono::serde::ts_seconds;
 use serde::{Deserialize, Serialize};
 
-use crate::models::contrats::shared::{ContractData, CurrencyValue};
+use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
 use crate::models::contrats::views::{BaseContractStateView, ContractApprovedView, ContractCreatedView, ContractRefusedView, ContractUpdatedView, ContractViewEvent, ContractViewState};
 use crate::models::shared::jsonapi::{CanBeView, CanGetTypee};
 
@@ -77,8 +77,13 @@ impl PendingContract {
             ContratEvents::Updated(e) => Some(
                 ContratStates::Pending(
                     PendingContract {
-                        data: e.data.clone(),
-                        premium: self.premium.clone(),
+                        data: ContractData {
+                            holder: self.data.holder.clone(),
+                            product: e.product.clone(),
+                            formula: e.formula.clone(),
+                            vehicle: e.vehicle.clone(),
+                        },
+                        premium: e.premium.clone(),
                     })),
             ContratEvents::Approved(_) => Some(
                 ContratStates::Actif(
@@ -133,7 +138,13 @@ impl CanBeView<ContractViewEvent> for ContratEvents {
     fn to_view(&self) -> ContractViewEvent {
         match self {
             ContratEvents::Created(c) => ContractViewEvent::Created(ContractCreatedView { data: c.data.clone(), premium: c.premium.clone() }),
-            ContratEvents::Updated(c) => ContractViewEvent::Updated(ContractUpdatedView { data: c.data.clone() }),
+            ContratEvents::Updated(c) => ContractViewEvent::Updated(
+                ContractUpdatedView {
+                    formula: c.formula.clone(),
+                    product: c.product.clone(),
+                    vehicle: c.vehicle.clone(),
+                    premium: c.premium.clone(),
+                }),
             ContratEvents::Approved(c) => ContractViewEvent::Approved(ContractApprovedView {
                 approved_by: c.approved_by.clone()
             }),
@@ -195,6 +206,8 @@ pub struct UpdatedEvent {
     pub by: String,
     #[serde(with = "ts_seconds")]
     pub at: DateTime<Utc>,
-    #[serde(flatten)]
-    pub data: ContractData,
+    pub product: String,
+    pub formula: String,
+    pub vehicle: Vehicle,
+    pub premium: CurrencyValue,
 }

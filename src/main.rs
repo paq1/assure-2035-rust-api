@@ -147,7 +147,7 @@ async fn main() -> std::io::Result<()> {
     let engine_contrat: Arc<Engine<ContratStates, ContratsCommands, ContratEvents>> = Arc::new(Engine {
         handlers: vec![
             CommandHandler::Create(Box::new(CreateContratHandler { contract_service: Arc::clone(&contrats_service) })),
-            CommandHandler::Update(Box::new(UpdateContratHandler {})),
+            CommandHandler::Update(Box::new(UpdateContratHandler { contract_service: Arc::clone(&contrats_service) })),
             CommandHandler::Update(Box::new(ApproveContractHandler {})),
             CommandHandler::Update(Box::new(RefuseContractHandler {})),
         ],

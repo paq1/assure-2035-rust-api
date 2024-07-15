@@ -146,7 +146,7 @@ pub async fn refuse_one_contrat(
     ("bearer_auth" = [])
     )
 )]
-#[put("/contracts/commands/update/{entity_id}")]
+#[put("/contracts/{entity_id}/commands/amend")]
 pub async fn update_one_contrat(
     path: web::Path<String>,
     req: HttpRequest,
@@ -163,20 +163,15 @@ pub async fn update_one_contrat(
             let event = engine
                 .compute(command, id, "update-contrat".to_string(), &ctx).await;
 
-            match event {
-                Ok((event, _state)) => {
-                    HttpResponse::Created().json(
-                        // fixme faire un view pour le contract
-                        from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
-                            event,
-                            "contracts".to_string(),
-                            "org:example:insurance:contract".to_string(),
-                            &ctx,
-                        )
-                    )
-                }
-                Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
-            }
+            event.map(|(event, _)| {
+                from_output_command_handler_to_view::<ContratEvents, ContractViewEvent>(
+                    event,
+                    "contracts".to_string(),
+                    "org:example:insurance:contract".to_string(),
+                    &ctx,
+                )
+            })
+                .to_http_response_with_error_mapping(HttpKindResponse::Ok)
         }
         Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
     }

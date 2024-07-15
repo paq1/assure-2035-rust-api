@@ -1,7 +1,7 @@
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 
-use crate::models::contrats::shared::{ContractData, CurrencyValue};
+use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 #[serde(tag = "type")]
@@ -75,6 +75,8 @@ pub struct CreatedDbo {
 pub struct ContratUpdatedDbo {
     pub by: String,
     pub at: DateTime<Utc>,
-    #[serde(flatten)]
-    pub data: ContractData,
+    pub product: String,
+    pub formula: String,
+    pub vehicle: Vehicle,
+    pub premium: CurrencyValue,
 }
