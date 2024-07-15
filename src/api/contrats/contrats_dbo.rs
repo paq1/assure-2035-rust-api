@@ -7,6 +7,7 @@ use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
 #[serde(tag = "type")]
 pub enum ContratDboState {
     ContratPendingDbo(ContractPendingDbo),
+    ContratPendingAmendmentDbo(ContractPendingDbo),
     ContratActifDbo(ContractActifDbo),
     ContratInactifDbo(ContractInactifDbo),
 }

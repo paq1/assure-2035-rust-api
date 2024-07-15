@@ -76,6 +76,7 @@ impl UpdateContratHandler {
     fn get_holder(state: &ContratStates) -> String {
         match state {
             ContratStates::Pending(p) => p.data.holder.clone(),
+            ContratStates::PendingAmendment(p) => p.data.holder.clone(),
             ContratStates::Actif(a) => a.data.holder.clone(),
             ContratStates::Inactif(i) => i.data.holder.clone(),
         }

@@ -8,6 +8,8 @@ use crate::models::contrats::shared::{ContractData, CurrencyValue, Vehicle};
 pub enum ContractViewState {
     #[serde(rename = "pending-subscription")]
     Pending(BaseContractStateView),
+    #[serde(rename = "pending-amendment")]
+    PendingAmendment(BaseContractStateView),
     #[serde(rename = "actif")]
     Actif(BaseContractStateView),
     #[serde(rename = "inactif")]

@@ -10,6 +10,10 @@ impl From<ContratDboState> for ContratStates {
                 data: dbo.data,
                 premium: dbo.premium,
             }),
+            ContratDboState::ContratPendingAmendmentDbo(dbo) => ContratStates::PendingAmendment(PendingContract {
+                data: dbo.data,
+                premium: dbo.premium,
+            }),
             ContratDboState::ContratActifDbo(dbo) => ContratStates::Actif(ActifContract {
                 data: dbo.data,
                 premium: dbo.premium,
@@ -38,6 +42,12 @@ impl From<ContratStates> for ContratDboState {
     fn from(value: ContratStates) -> Self {
         match value {
             ContratStates::Pending(contract) => ContratDboState::ContratPendingDbo(
+                ContractPendingDbo {
+                    data: contract.data,
+                    premium: contract.premium,
+                }
+            ),
+            ContratStates::PendingAmendment(contract) => ContratDboState::ContratPendingAmendmentDbo(
                 ContractPendingDbo {
                     data: contract.data,
                     premium: contract.premium,
