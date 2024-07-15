@@ -6,3 +6,4 @@ pub mod clients_event_mongo_repository;
 pub mod mappers;
 pub mod routes;
 pub mod query;
+pub mod client_component;
