@@ -49,10 +49,10 @@ pub async fn insert_one_client(
                             &ctx,
                         )
                     ),
-                Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+                Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
             }
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 
@@ -92,10 +92,10 @@ pub async fn update_one_client(
                             &ctx,
                         )
                     ),
-                Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+                Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
             }
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 
@@ -133,10 +133,10 @@ pub async fn disable_one_client(
                         "org:example:insurance:client".to_string(),
                         &ctx,
                     )),
-                Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+                Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
             }
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 

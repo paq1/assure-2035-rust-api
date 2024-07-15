@@ -52,7 +52,7 @@ pub async fn insert_one_contrat(
             })
                 .to_http_response_with_error_mapping(HttpKindResponse::Created)
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 
@@ -93,7 +93,7 @@ pub async fn approve_one_contrat(
             })
                 .to_http_response_with_error_mapping(HttpKindResponse::Ok)
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 
@@ -134,7 +134,7 @@ pub async fn reject_one_contrat(
             })
                 .to_http_response_with_error_mapping(HttpKindResponse::Ok)
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 
@@ -175,7 +175,7 @@ pub async fn terminate_one_contrat(
             })
                 .to_http_response_with_error_mapping(HttpKindResponse::Ok)
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 
@@ -215,7 +215,7 @@ pub async fn update_one_contrat(
             })
                 .to_http_response_with_error_mapping(HttpKindResponse::Ok)
         }
-        Err(_err) => HttpResponse::Unauthorized().json(http_error.unauthorized.clone())
+        Err(_err) => HttpResponse::Unauthorized().json(&http_error.unauthorized)
     }
 }
 

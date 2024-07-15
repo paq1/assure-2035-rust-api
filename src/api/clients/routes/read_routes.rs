@@ -54,7 +54,7 @@ pub async fn fetch_many_client(
 
             HttpResponse::Ok().json(paged_view.to_many_view(&ctx, "clients".to_string(), HashMap::from([("clients".to_string(), "clients".to_string()), ("contracts".to_string(), "contracts".to_string())])))
         }
-        Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+        Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
     }
 }
 
@@ -84,8 +84,8 @@ pub async fn fetch_one_client(
 
             HttpResponse::Ok().json(view)
         }
-        Ok(_) => HttpResponse::NotFound().json(http_error.not_found.clone()),
-        Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+        Ok(_) => HttpResponse::NotFound().json(&http_error.not_found),
+        Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
     }
 }
 
@@ -147,7 +147,7 @@ pub async fn fetch_events_client(
 
             HttpResponse::Ok().json(paged_view.to_many_view(&ctx, "clients".to_string(), HashMap::new()))
         }
-        Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+        Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
     }
 }
 
@@ -186,10 +186,10 @@ pub async fn fetch_one_client_event(
                     HttpResponse::Ok().json(view)
                 }
                 None => {
-                    HttpResponse::InternalServerError().json(http_error.not_found.clone())
+                    HttpResponse::InternalServerError().json(&http_error.not_found)
                 }
             }
         }
-        Err(_) => HttpResponse::InternalServerError().json(http_error.internal_server_error.clone())
+        Err(_) => HttpResponse::InternalServerError().json(&http_error.internal_server_error)
     }
 }

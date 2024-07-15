@@ -75,8 +75,8 @@ impl WriteOnlyEntityRepo<ClientStates, String> for ClientsMongoRepository {
     async fn update(&self, id: &String, client: &Entity<ClientStates, String>) -> ResultErr<String> {
         let entity_dbo: EntityDBO<ClientDboState, String> = client.clone().into();
         let sanitize_version: EntityDBO<ClientDboState, String> = EntityDBO {
-            version: entity_dbo.clone().version.map(|old| old + 1),
-            ..entity_dbo.clone()
+            version: entity_dbo.version.map(|old| old + 1),
+            ..entity_dbo
         };
 
         self.dao
