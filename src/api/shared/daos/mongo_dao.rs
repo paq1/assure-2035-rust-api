@@ -41,7 +41,7 @@ impl<DBO> ReadOnlyDAO<DBO, String> for MongoDAO<DBO>
 where
     DBO: DeserializeOwned + Send + Sync,
 {
-    async fn fetch_one(&self, id: String) -> ResultErr<Option<DBO>> {
+    async fn fetch_one(&self, id: &String) -> ResultErr<Option<DBO>> {
         let filter = doc! {"id": id};
         self.collection
             .find_one(filter)
@@ -61,7 +61,7 @@ where
     DBO: CanGetId<String> + Serialize
 ,
 {
-    async fn insert(&self, entity: DBO) -> ResultErr<String> {
+    async fn insert(&self, entity: &DBO) -> ResultErr<String> {
         self.collection
             .insert_one(entity.clone())
             .await
@@ -69,8 +69,8 @@ where
             .map(|_| entity.id().clone())
     }
 
-    async fn update(&self, id: String, entity: DBO) -> ResultErr<String> {
-        let filter = doc! { "id": id.clone() };
+    async fn update(&self, id: &String, entity: &DBO) -> ResultErr<String> {
+        let filter = doc! { "id": id };
         self.collection
             .replace_one(filter, entity)
             .await
@@ -78,10 +78,10 @@ where
             .map_err(|err| Error::Simple(err.to_string()))
     }
 
-    async fn delete(&self, id: String) -> ResultErr<String> {
-        let filter = doc! { "id": id.clone() };
+    async fn delete(&self, id: &String) -> ResultErr<String> {
+        let filter = doc! { "id": id };
         self.collection.delete_one(filter).await
-            .map(|_| id)
+            .map(|_| id.clone())
             .map_err(|err| Error::Simple(err.to_string()))
     }
 }

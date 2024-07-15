@@ -10,12 +10,12 @@ pub trait RepositoryEntity<DATA: Clone, ID: Clone>: ReadOnlyEntityRepo<DATA, ID>
 
 #[async_trait]
 pub trait ReadOnlyEntityRepo<DATA: Clone, ID: Clone>: CanFetchAll<Entity<DATA, ID>> + CanFetchMany<Entity<DATA, ID>> + Sync + Send {
-    async fn fetch_one(&self, id: ID) -> ResultErr<Option<Entity<DATA, ID>>>;
+    async fn fetch_one(&self, id: &ID) -> ResultErr<Option<Entity<DATA, ID>>>;
 }
 
 #[async_trait]
 pub trait WriteOnlyEntityRepo<DATA: Clone, ID: Clone> {
-    async fn insert(&self, entity: Entity<DATA, ID>) -> ResultErr<ID>;
-    async fn update(&self, id: ID, entity: Entity<DATA, ID>) -> ResultErr<ID>;
-    async fn delete(&self, id: ID) -> ResultErr<ID>;
+    async fn insert(&self, entity: &Entity<DATA, ID>) -> ResultErr<ID>;
+    async fn update(&self, id: &ID, entity: &Entity<DATA, ID>) -> ResultErr<ID>;
+    async fn delete(&self, id: &ID) -> ResultErr<ID>;
 }

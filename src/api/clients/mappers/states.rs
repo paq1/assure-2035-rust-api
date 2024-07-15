@@ -33,7 +33,7 @@ impl From<Entity<ClientStates, String>> for EntityDBO<ClientDboState, String> {
         EntityDBO {
             id_mongo: None,
             version: value.version,
-            entity_id: value.entity_id.clone(),
+            entity_id: value.entity_id,
             data: value.data.into(),
         }
     }

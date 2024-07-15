@@ -78,7 +78,7 @@ pub async fn fetch_one_client(
 
     let ctx = Context::empty().decore_with_http_header(&req);
 
-    match store.fetch_one(id).await {
+    match store.fetch_one(&id).await {
         Ok(Some(entity)) => {
             let view = from_states_to_view(entity, "clients".to_string(), &ctx);
 
@@ -173,7 +173,7 @@ pub async fn fetch_one_client_event(
     let ctx = Context::empty()
         .decore_with_http_header(&req);
 
-    match journal.fetch_one(event_id).await {
+    match journal.fetch_one(&event_id).await {
         Ok(maybe_event) => {
             match maybe_event {
                 Some(event) => {

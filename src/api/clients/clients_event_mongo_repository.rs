@@ -43,7 +43,7 @@ impl CanFetchMany<EntityEvent<ClientEvents, String>> for ClientsEventMongoReposi
 
 #[async_trait]
 impl ReadOnlyEventRepo<ClientEvents, String> for ClientsEventMongoRepository {
-    async fn fetch_one(&self, event_id: String) -> ResultErr<Option<EntityEvent<ClientEvents, String>>> {
+    async fn fetch_one(&self, event_id: &String) -> ResultErr<Option<EntityEvent<ClientEvents, String>>> {
         self.dao.lock().await.fetch_one(event_id).await.map(|maybevent| {
             maybevent.map(|event_dbo| {
                 event_dbo.into()
@@ -60,14 +60,14 @@ impl CanGetId<String> for EventDBO<ClientDboEvent, String> {
 
 #[async_trait]
 impl WriteOnlyEventRepo<ClientEvents, String> for ClientsEventMongoRepository {
-    async fn insert(&self, client: EntityEvent<ClientEvents, String>) -> ResultErr<String> {
-        let dao: EventDBO<ClientDboEvent, String> = client.into();
+    async fn insert(&self, client: &EntityEvent<ClientEvents, String>) -> ResultErr<String> {
+        let dao: EventDBO<ClientDboEvent, String> = client.clone().into();
 
         let dao_sanitize_version: EventDBO<ClientDboEvent, String> = EventDBO {
             version: Some(0),
-            ..dao.clone()
+            ..dao
         };
 
-        self.dao.lock().await.insert(dao_sanitize_version).await
+        self.dao.lock().await.insert(&dao_sanitize_version).await
     }
 }

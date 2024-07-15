@@ -12,8 +12,22 @@ impl From<ClientDboEvent> for ClientEvents {
                     at: event_dbo.at,
                     data: event_dbo.data,
                 }),
-            ClientDboEvent::Updated(event_dbo) => ClientEvents::Updated(UpdatedEvent { by: event_dbo.by, at: event_dbo.at, data: event_dbo.data }),
-            ClientDboEvent::Disable(event_dbo) => ClientEvents::Disabled(DisabledEvent { by: event_dbo.by, at: event_dbo.at, reason: event_dbo.reason })
+            ClientDboEvent::Updated(event_dbo) =>
+                ClientEvents::Updated(
+                    UpdatedEvent {
+                        by: event_dbo.by,
+                        at: event_dbo.at,
+                        data: event_dbo.data
+                    }
+                ),
+            ClientDboEvent::Disable(event_dbo) =>
+                ClientEvents::Disabled(
+                    DisabledEvent {
+                        by: event_dbo.by,
+                        at: event_dbo.at,
+                        reason: event_dbo.reason
+                    }
+                )
         }
     }
 }
@@ -21,9 +35,9 @@ impl From<ClientDboEvent> for ClientEvents {
 impl From<EventDBO<ClientDboEvent, String>> for EntityEvent<ClientEvents, String> {
     fn from(value: EventDBO<ClientDboEvent, String>) -> Self {
         EntityEvent {
-            entity_id: value.entity_id.clone(),
+            entity_id: value.entity_id,
             data: value.data.into(),
-            event_id: value.event_id.clone(),
+            event_id: value.event_id,
         }
     }
 }
@@ -34,9 +48,9 @@ impl From<EntityEvent<ClientEvents, String>> for EventDBO<ClientDboEvent, String
         EventDBO {
             id_mongo: None,
             version: None,
-            entity_id: value.entity_id.clone(),
+            entity_id: value.entity_id,
             data: value.data.into(),
-            event_id: value.event_id.clone(),
+            event_id: value.event_id,
         }
     }
 }
@@ -51,8 +65,22 @@ impl From<ClientEvents> for ClientDboEvent {
                     data
                 }
             ) => ClientDboEvent::Created(ClientCreatedDbo { by, at, data }),
-            ClientEvents::Updated(updated) => ClientDboEvent::Updated(ClientUpdatedDbo { by: updated.by, at: updated.at, data: updated.data }),
-            ClientEvents::Disabled(disabled) => ClientDboEvent::Disable(ClientDisabledDbo { by: disabled.by, at: disabled.at, reason: disabled.reason }),
+            ClientEvents::Updated(updated) =>
+                ClientDboEvent::Updated(
+                    ClientUpdatedDbo {
+                        by: updated.by,
+                        at: updated.at,
+                        data: updated.data
+                    }
+                ),
+            ClientEvents::Disabled(disabled) =>
+                ClientDboEvent::Disable(
+                    ClientDisabledDbo {
+                        by: disabled.by,
+                        at: disabled.at,
+                        reason: disabled.reason
+                    }
+                ),
         }
     }
 }

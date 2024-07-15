@@ -36,7 +36,7 @@ impl TokenService for JwtRSATokenService {
         })?;
 
         let kid = header.kid.ok_or(Error::Simple("jwt invalid, pas de kid dans l'entete".to_string()))?;
-        let maybe_data = self.cache.get(kid.clone()).await;
+        let maybe_data = self.cache.get(&kid).await;
 
         let jwk = match maybe_data {
             Some(data) => {

@@ -6,8 +6,8 @@ pub struct CacheAsync {
 }
 
 impl CacheAsync {
-    pub async fn get(&self, key: String) -> Option<String> {
-        self.underlying.get(&key).await
+    pub async fn get(&self, key: &String) -> Option<String> {
+        self.underlying.get(key).await
     }
 
     pub async fn upsert(&self, key: String, id: String) {

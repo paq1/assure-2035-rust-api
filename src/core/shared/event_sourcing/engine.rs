@@ -32,7 +32,7 @@ where
         })
             .ok_or(Error::Simple("pas de handler pour cette commande".to_string()))?; // fixme changer l'erreur
 
-        let maybe_entity = self.store.fetch_one(entity_id.clone()).await?;
+        let maybe_entity = self.store.fetch_one(&entity_id).await?;
         let maybe_state = maybe_entity.clone().map(|entity| entity.data);
 
         let event = match command_handler_found {
@@ -55,9 +55,9 @@ where
         };
 
         if maybe_entity.is_none() {
-            self.store.insert(new_entity.clone()).await?;
+            self.store.insert(&new_entity).await?;
         } else {
-            self.store.update(entity_id.clone(), new_entity.clone()).await?;
+            self.store.update(&entity_id, &new_entity).await?;
         }
 
         let event_entity = EntityEvent {
@@ -65,7 +65,7 @@ where
             event_id: Self::generate_id(),
             data: event.clone(),
         };
-        self.journal.insert(event_entity.clone()).await?;
+        self.journal.insert(&event_entity).await?;
         Ok((event_entity, new_entity))
     }
 

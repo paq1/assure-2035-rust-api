@@ -39,7 +39,7 @@ impl ContratService for ContratsServiceImpl {
 
     async fn get_client_country_code(&self, id_client: &String) -> ResultErr<String> {
         let maybe_client = self.store_personne
-            .fetch_one(id_client.clone()).await?;
+            .fetch_one(id_client).await?;
         match maybe_client {
             Some(entity_client) => {
                 match entity_client.data {

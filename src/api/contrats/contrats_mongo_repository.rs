@@ -43,7 +43,7 @@ impl CanFetchMany<Entity<ContratStates, String>> for ContratsMongoRepository {}
 
 #[async_trait]
 impl ReadOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
-    async fn fetch_one(&self, id: String) -> ResultErr<Option<Entity<ContratStates, String>>> {
+    async fn fetch_one(&self, id: &String) -> ResultErr<Option<Entity<ContratStates, String>>> {
         self.dao
             .lock().await
             .fetch_one(id).await
@@ -59,8 +59,8 @@ impl CanGetId<String> for EntityDBO<ContratDboState, String> {
 
 #[async_trait]
 impl WriteOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
-    async fn insert(&self, contrat: Entity<ContratStates, String>) -> ResultErr<String> {
-        let entity_dbo: EntityDBO<ContratDboState, String> = contrat.into();
+    async fn insert(&self, contrat: &Entity<ContratStates, String>) -> ResultErr<String> {
+        let entity_dbo: EntityDBO<ContratDboState, String> = contrat.clone().into();
 
         let sanitize_version: EntityDBO<ContratDboState, String> = EntityDBO {
             version: Some(0),
@@ -69,11 +69,11 @@ impl WriteOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
 
         self.dao
             .lock().await
-            .insert(sanitize_version).await
+            .insert(&sanitize_version).await
     }
 
-    async fn update(&self, id: String, contrat: Entity<ContratStates, String>) -> ResultErr<String> {
-        let entity_dbo: EntityDBO<ContratDboState, String> = contrat.into();
+    async fn update(&self, id: &String, contrat: &Entity<ContratStates, String>) -> ResultErr<String> {
+        let entity_dbo: EntityDBO<ContratDboState, String> = contrat.clone().into();
         let sanitize_version: EntityDBO<ContratDboState, String> = EntityDBO {
             version: entity_dbo.clone().version.map(|old| old + 1),
             ..entity_dbo.clone()
@@ -81,10 +81,10 @@ impl WriteOnlyEntityRepo<ContratStates, String> for ContratsMongoRepository {
 
         self.dao
             .lock().await
-            .update(id, sanitize_version).await
+            .update(id, &sanitize_version).await
     }
 
-    async fn delete(&self, id: String) -> ResultErr<String> {
+    async fn delete(&self, id: &String) -> ResultErr<String> {
         self.dao
             .lock().await
             .delete(id).await

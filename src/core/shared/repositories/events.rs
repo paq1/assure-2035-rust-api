@@ -10,10 +10,10 @@ pub trait RepositoryEvents<DATA: Clone, ID: Clone>: ReadOnlyEventRepo<DATA, ID> 
 
 #[async_trait]
 pub trait ReadOnlyEventRepo<DATA: Clone, ID: Clone>: CanFetchAll<EntityEvent<DATA, ID>> + CanFetchMany<EntityEvent<DATA, ID>> + Sync + Send {
-    async fn fetch_one(&self, id: ID) -> ResultErr<Option<EntityEvent<DATA, ID>>>;
+    async fn fetch_one(&self, id: &ID) -> ResultErr<Option<EntityEvent<DATA, ID>>>;
 }
 
 #[async_trait]
 pub trait WriteOnlyEventRepo<DATA, ID> {
-    async fn insert(&self, entity: EntityEvent<DATA, ID>) -> ResultErr<ID>;
+    async fn insert(&self, entity: &EntityEvent<DATA, ID>) -> ResultErr<ID>;
 }
